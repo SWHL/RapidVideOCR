@@ -1,17 +1,20 @@
-from __future__ import annotations
-from typing import List
-import sys
-import multiprocessing
-import pytesseract
-import cv2
 
-from . import constants
+# !/usr/bin/env python
+# -*- encoding: utf-8 -*-
+# @Author: SWHL
+# @Contact: liekkaskono@163.com
+import sys
+from typing import List
+
+import cv2
+from tqdm import tqdm
+
 from . import utils
 from .models import PredictedFrame, PredictedSubtitle
 from .opencv_adapter import Capture
 
 
-class Video:
+class Video(object):
     path: str
     lang: str
     use_fullframe: bool
@@ -21,16 +24,16 @@ class Video:
     pred_frames: List[PredictedFrame]
     pred_subs: List[PredictedSubtitle]
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, ocr_system):
         self.path = path
+        self.ocr_system = ocr_system
         with Capture(path) as v:
             self.num_frames = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
             self.fps = v.get(cv2.CAP_PROP_FPS)
             self.height = int(v.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    def run_ocr(self, lang: str, time_start: str, time_end: str,
+    def run_ocr(self, time_start: str, time_end: str,
                 conf_threshold: int, use_fullframe: bool) -> None:
-        self.lang = lang
         self.use_fullframe = use_fullframe
 
         ocr_start = utils.get_frame_index(time_start, self.fps) if time_start else 0
@@ -41,24 +44,28 @@ class Video:
         num_ocr_frames = ocr_end - ocr_start
 
         # get frames from ocr_start to ocr_end
-        with Capture(self.path) as v, multiprocessing.Pool() as pool:
+        # with Capture(self.path) as v, multiprocessing.Pool() as pool:
+        with Capture(self.path) as v:
             v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
-            frames = (v.read()[1] for _ in range(num_ocr_frames))
+            frames = [v.read()[1] for _ in range(num_ocr_frames)]
 
             # perform ocr to frames in parallel
-            it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
+            it_ocr = []
+            for frame in tqdm(frames[:20], desc='ocr...'):
+                it_ocr.append(self._image_to_data(frame))
+            # it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
             self.pred_frames = [
                 PredictedFrame(i + ocr_start, data, conf_threshold)
-                for i, data in enumerate(it_ocr)
+                for i, data in enumerate(it_ocr) if data is not None
             ]
 
     def _image_to_data(self, img) -> str:
         if not self.use_fullframe:
-            # only use bottom half of the frame by default
             img = img[self.height // 2:, :]
-        config = '--tessdata-dir "{}"'.format(constants.TESSDATA_DIR)
+
         try:
-            return pytesseract.image_to_data(img, lang=self.lang, config=config)
+            dt_boxes, rec_res = self.ocr_system(img)
+            return rec_res
         except Exception as e:
             sys.exit('{}: {}'.format(e.__class__.__name__, e))
 
