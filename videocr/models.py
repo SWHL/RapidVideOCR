@@ -22,7 +22,7 @@ class PredictedFrame:
                 self.confidence.append(score)
 
         self.confidence = sum(self.confidence)
-        self.text = ' '.join(self.words)
+        self.text = '\n'.join(self.words)
 
     def is_similar_to(self, other, threshold=70) -> bool:
         return fuzz.ratio(self.text, other.text) >= threshold

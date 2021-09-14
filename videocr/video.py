@@ -31,6 +31,7 @@ class Video(object):
             self.num_frames = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
             self.fps = v.get(cv2.CAP_PROP_FPS)
             self.height = int(v.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            self.threshold_y = self.height - self.height // 3
 
     def run_ocr(self, time_start: str, time_end: str,
                 conf_threshold: int, use_fullframe: bool) -> None:
@@ -49,35 +50,45 @@ class Video(object):
             v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
             frames = [v.read()[1] for _ in range(num_ocr_frames)]
 
-            # perform ocr to frames in parallel
             it_ocr = []
-            for frame in tqdm(frames[:20], desc='ocr...'):
-                it_ocr.append(self._image_to_data(frame))
+            for frame in tqdm(frames, desc='Extract'):
+                dt_boxes, rec_res = self._image_to_data(frame)
+                filter_result = self.filter_rec(dt_boxes, rec_res)
+                it_ocr.append(filter_result[1])
+
             # it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
             self.pred_frames = [
                 PredictedFrame(i + ocr_start, data, conf_threshold)
                 for i, data in enumerate(it_ocr) if data is not None
             ]
 
-    def _image_to_data(self, img) -> str:
+    def _image_to_data(self, img) -> tuple:
         if not self.use_fullframe:
-            img = img[self.height // 2:, :]
+            img = img[self.height // 3:, :]
 
         try:
             dt_boxes, rec_res = self.ocr_system(img)
-            return rec_res
+            return dt_boxes, rec_res
         except Exception as e:
             sys.exit('{}: {}'.format(e.__class__.__name__, e))
 
+    def filter_rec(self, dt_box, one_rec):
+        if one_rec is not None \
+                and dt_box is not None \
+                and len(dt_box) > 0 \
+                and dt_box[0][:, 1].max() > self.threshold_y:
+            return dt_box, one_rec
+        else:
+            return None, None
+
     def get_subtitles(self, sim_threshold: int) -> str:
         self._generate_subtitles(sim_threshold)
-        return ''.join(
-            '{}\n{} --> {}\n{}\n\n'.format(
-                i,
-                utils.get_srt_timestamp(sub.index_start, self.fps),
-                utils.get_srt_timestamp(sub.index_end, self.fps),
-                sub.text)
-            for i, sub in enumerate(self.pred_subs))
+        result = []
+        for i, sub in enumerate(self.pred_subs):
+            start_index = utils.get_srt_timestamp(sub.index_start, self.fps)
+            end_index = utils.get_srt_timestamp(sub.index_end, self.fps)
+            result.append(f'{i}\n{start_index} --> {end_index}\n{sub.text}\n')
+        return ''.join(result)
 
     def _generate_subtitles(self, sim_threshold: int) -> None:
         self.pred_subs = []

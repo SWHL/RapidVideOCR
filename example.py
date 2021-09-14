@@ -21,4 +21,5 @@ if __name__ == '__main__':
     print(get_subtitles('assets/1.mp4',
                         ocr_system,
                         sim_threshold=70,
-                        conf_threshold=0.8))
+                        conf_threshold=0.8,
+                        use_fullframe=True))
