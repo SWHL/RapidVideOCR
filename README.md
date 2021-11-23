@@ -1,5 +1,10 @@
 # VideoOCR
 - Forked from [videocr](https://github.com/apm1467/videocr)
+- The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
+
+#### Want to do
+- [ ] Less time to process the video.
+- [ ] Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.
 
 #### Use
 1. Download the [RapidOCR](https://github.com/RapidAI/RapidOCR) whl package with the `https://github.com/RapidAI/RapidOCR/raw/main/release/python_sdk/sdk_rapidocr_v1.0.0/rapidocr-1.0.0-py3-none-any.whl`
