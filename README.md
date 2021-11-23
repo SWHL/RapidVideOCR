@@ -3,6 +3,7 @@
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
 
 #### Want to do
+- [ ] Refactor the project code.
 - [ ] Less time to process the video.
 - [ ] Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.
 
