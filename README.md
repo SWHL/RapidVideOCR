@@ -5,7 +5,7 @@
 #### Want to do
 - [ ] Refactor the project code.
 - [ ] Less time to process the video.
-- [x] Refer[ClipVideo](https://github.com/SWHL/ClipVideo).~~Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.~~~
+- [x] Refer[ClipVideo](https://github.com/SWHL/ClipVideo). ~~Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.~~
 
 #### Use
 1. Install the rapidocr package by the following:
