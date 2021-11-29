@@ -10,7 +10,7 @@
 #### Use
 1. Install the rapidocr package by the following:
    ```shell
-   pip install https://github.com/RapidAI/RapidOCR/raw/main/release/python_sdk/sdk_rapidocr_v1.0.0/rapidocr-1.0.0-py3-none-any.whl -i https://pypi.douban.com/simple/
+   pip install https://github.com/RapidAI/RapidOCR/raw/main/release/python_sdk/sdk_rapidocr_v1.0.0/rapidocr-1.0.0-py3-none-any.whl
    ```
 3. Download the models and character dict of the RapidOCR by the link [Extract code: drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) or [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing)
 4. Put the models in the `resources/models`
