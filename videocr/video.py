@@ -5,13 +5,84 @@
 # @Contact: liekkaskono@163.com
 import sys
 from typing import List
+from fuzzywuzzy import fuzz
+import multiprocessing
 
 import cv2
 from tqdm import tqdm
 
 from . import utils
-from .models import PredictedFrame, PredictedSubtitle
-from .opencv_adapter import Capture
+
+
+class PredictedFrame(object):
+    index: int  # 0-based index of the frame
+    confidence: int  # total confidence of all words
+    text: str
+
+    def __init__(self, index: int, pred_data: str,
+                 conf_threshold: int):
+        self.index = index
+        self.words = []
+        self.confidence = []
+
+        for info in pred_data:
+            text, score = info
+            if score >= conf_threshold:
+                self.words.append(text)
+                self.confidence.append(score)
+
+        self.confidence = sum(self.confidence)
+        self.text = '\n'.join(self.words)
+
+    def is_similar_to(self, other, threshold=70) -> bool:
+        return fuzz.ratio(self.text, other.text) >= threshold
+
+
+class PredictedSubtitle(object):
+    frames: List[PredictedFrame]
+    sim_threshold: int
+    text: str
+
+    def __init__(self, frames: List[PredictedFrame], sim_threshold: int):
+        self.frames = [f for f in frames if f.confidence > 0]
+        self.sim_threshold = sim_threshold
+
+        if self.frames:
+            self.text = max(self.frames, key=lambda f: f.confidence).text
+        else:
+            self.text = ''
+
+    @property
+    def index_start(self) -> int:
+        if self.frames:
+            return self.frames[0].index
+        return 0
+
+    @property
+    def index_end(self) -> int:
+        if self.frames:
+            return self.frames[-1].index
+        return 0
+
+    def is_similar_to(self, other) -> bool:
+        return fuzz.partial_ratio(self.text, other.text) >= self.sim_threshold
+
+    def __repr__(self):
+        return '{} - {}. {}'.format(self.index_start, self.index_end, self.text)
+
+
+class Capture(object):
+    def __init__(self, video_path):
+        self.path = video_path
+
+    def __enter__(self):
+        self.cap = cv2.VideoCapture(self.path)
+        if not self.cap.isOpened():
+            raise IOError('Can not open video {}.'.format(self.path))
+        return self.cap
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.cap.release()
 
 
 class Video(object):
@@ -27,18 +98,27 @@ class Video(object):
     def __init__(self, path: str, ocr_system):
         self.path = path
         self.ocr_system = ocr_system
+
+        print('Init Video instance')
         with Capture(path) as v:
             self.num_frames = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
             self.fps = v.get(cv2.CAP_PROP_FPS)
             self.height = int(v.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            self.threshold_y = self.height - self.height // 3
+            # self.threshold_y = self.height - self.height // 3
 
     def run_ocr(self, time_start: str, time_end: str,
                 conf_threshold: int, use_fullframe: bool) -> None:
         self.use_fullframe = use_fullframe
 
-        ocr_start = utils.get_frame_index(time_start, self.fps) if time_start else 0
-        ocr_end = utils.get_frame_index(time_end, self.fps) if time_end else self.num_frames
+        if time_start:
+            ocr_start = utils.get_frame_index(time_start, self.fps)
+        else:
+            ocr_start = 0
+
+        if time_end:
+            ocr_end = utils.get_frame_index(time_end, self.fps)
+        else:
+            ocr_end = self.num_frames
 
         if ocr_end < ocr_start:
             raise ValueError('time_start is later than time_end')
@@ -46,25 +126,39 @@ class Video(object):
 
         # get frames from ocr_start to ocr_end
         # with Capture(self.path) as v, multiprocessing.Pool() as pool:
-        with Capture(self.path) as v:
+        with Capture(self.path) as v, multiprocessing.Pool() as pool:
             v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
-            frames = [v.read()[1] for _ in range(num_ocr_frames)]
+            frames = (v.read()[1] for _ in range(num_ocr_frames))
 
-            it_ocr = []
-            for frame in tqdm(frames, desc='Extract'):
-                dt_boxes, rec_res = self._image_to_data(frame)
-                filter_result = self.filter_rec(dt_boxes, rec_res)
-                it_ocr.append(filter_result[1])
-
-            # it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
+            # perform ocr to frames in parallel
+            it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
             self.pred_frames = [
                 PredictedFrame(i + ocr_start, data, conf_threshold)
-                for i, data in enumerate(it_ocr) if data is not None
+                for i, data in enumerate(it_ocr)
             ]
 
-    def _image_to_data(self, img) -> tuple:
+        # with Capture(self.path) as v:
+        #     v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
+        #     frames = [v.read()[1] for _ in range(0, num_ocr_frames)]
+        #     print(f'Obtain frame nums: {len(frames)}')
+
+        #     it_ocr = []
+        #     for i, frame in enumerate(tqdm(frames, desc='Extract')):
+        #         dt_boxes, rec_res = self._image_to_data(frame)
+        #         filter_result = self.filter_rec(dt_boxes, rec_res)
+        #         if all(filter_result):
+        #             print(f'{i}\t{filter_result[1]}')
+        #             it_ocr.append(filter_result[1])
+
+        #     # it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
+        #     self.pred_frames = [
+        #         PredictedFrame(i + ocr_start, data, conf_threshold)
+        #         for i, data in enumerate(it_ocr) if data is not None
+        #     ]
+
+    def _image_to_data(self, img):
         if not self.use_fullframe:
-            img = img[self.height // 3:, :]
+            img = img[self.height * 4 // 5:, :]
 
         try:
             dt_boxes, rec_res = self.ocr_system(img)
@@ -75,8 +169,7 @@ class Video(object):
     def filter_rec(self, dt_box, one_rec):
         if one_rec is not None \
                 and dt_box is not None \
-                and len(dt_box) > 0 \
-                and dt_box[0][:, 1].max() > self.threshold_y:
+                and len(dt_box) > 0:
             return dt_box, one_rec
         else:
             return None, None
@@ -100,8 +193,7 @@ class Video(object):
         # divide ocr of frames into subtitle paragraphs using sliding window
         WIN_BOUND = int(self.fps // 2)  # 1/2 sec sliding window boundary
         bound = WIN_BOUND
-        i = 0
-        j = 1
+        i, j = 0, 1
         while j < len(self.pred_frames):
             fi, fj = self.pred_frames[i], self.pred_frames[j]
 
