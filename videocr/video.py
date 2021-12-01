@@ -65,10 +65,12 @@ class PredictedSubtitle(object):
         return 0
 
     def is_similar_to(self, other) -> bool:
-        return fuzz.partial_ratio(self.text, other.text) >= self.sim_threshold
+        return fuzz.partial_ratio(
+            self.text, other.text) >= self.sim_threshold
 
     def __repr__(self):
-        return '{} - {}. {}'.format(self.index_start, self.index_end, self.text)
+        return '{} - {}. {}'.format(
+            self.index_start, self.index_end, self.text)
 
 
 class Capture(object):
@@ -107,7 +109,7 @@ class Video(object):
             # self.threshold_y = self.height - self.height // 3
 
     def run_ocr(self, time_start: str, time_end: str,
-                conf_threshold: int, use_fullframe: bool) -> None:
+                conf_threshold: int, use_fullframe: bool):
         self.use_fullframe = use_fullframe
 
         if time_start:
@@ -125,7 +127,7 @@ class Video(object):
         num_ocr_frames = ocr_end - ocr_start
 
         # get frames from ocr_start to ocr_end
-        # with Capture(self.path) as v, multiprocessing.Pool() as pool:
+        # 多进程
         with Capture(self.path) as v, multiprocessing.Pool() as pool:
             v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
             frames = (v.read()[1] for _ in range(num_ocr_frames))
@@ -137,6 +139,7 @@ class Video(object):
                 for i, data in enumerate(it_ocr)
             ]
 
+        # 单进程
         # with Capture(self.path) as v:
         #     v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
         #     frames = [v.read()[1] for _ in range(0, num_ocr_frames)]

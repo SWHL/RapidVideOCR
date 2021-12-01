@@ -1,53 +1,46 @@
-import multiprocessing
-import time
+import multiprocessing as mp
+
+import numpy as np
+import onnxruntime as ort
 
 
-cond = multiprocessing.Condition()
+# This is a wrapper to make the current InferenceSession class pickable.
+class PickableInferenceSession:
+    def __init__(self, model_path):
+        self.model_path = model_path
+        self.sess = self.init_session(self.model_path)
+
+    def run(self, *args):
+        return self.sess.run(*args)
+
+    def __getstate__(self):
+        return {'model_path': self.model_path}
+
+    def __setstate__(self, values):
+        self.model_path = values['model_path']
+        self.sess = self.init_session(self.model_path)
+
+    def init_session(self, model_path):
+        EP_list = ['CPUExecutionProvider']
+        sess = ort.InferenceSession(model_path, providers=EP_list)
+        return sess
 
 
-def domywork(processid):
-    print(processid, end='')
+class IOProcess(mp.Process):
+    def __init__(self):
+        super(IOProcess, self).__init__()
+        self.sess = PickableInferenceSession('resources/models/ch_mobile_v2.0_rec_infer.onnx')
 
-
-class myprocess(multiprocessing.Process):
-    def __init__(self, nowprocessid, processid, jobcnt, processcnt, cond):
-        multiprocessing.Process.__init__(self)  # *** 注意不要忘记初始化父进程 ***
-
-        self.nowprocessid = nowprocessid
-        self.processid = processid
-        self.jobcnt = jobcnt
-        self.processcnt = processcnt
-        self.cond = cond
-
-    def run(self) -> None:
-        for i in range(self.jobcnt):
-            with self.cond:
-                while self.nowprocessid.value != self.processid:
-                    self.cond.wait()
-
-                # 控制轮到下一个进程（一共开了processcnt个进程，所以模processcnt）来执行打印
-                # 注意：这里进程号要从1开始，即：myprocess(nowprocessid, i + 1, jobcnt, prccnt, cond)
-                self.nowprocessid.value = (self.nowprocessid.value % self.processcnt) + 1
-
-                # 处理进程的各自业务
-                domywork(self.processid)
-
-                # 通知其他所有进程
-                self.cond.notify_all()
+    def run(self):
+        print("calling run")
+        onnx_inputs = {self.sess.sess.get_inputs()[0].name: np.zeros((1, 3, 32, 320), dtype=np.float32)}
+        print(self.sess.run({}, onnx_inputs))
+        # print(self.sess)
 
 
 if __name__ == '__main__':
-    mprclist = []
-    jobcnt = 20
-    prccnt = 5
-    nowprocessid = multiprocessing.Value('i', 1)
-
-    for i in range(prccnt):
-        mprc = myprocess(nowprocessid, i + 1, jobcnt, prccnt, cond)  # 注意：cond对象必须传给进程类
-        mprclist.append(mprc)
-        mprc.start()
-
-    for i in mprclist:
-        i.join()
-
-    print('\nfinished')
+    # This is important and MUST be inside the name==main block.
+    mp.set_start_method('spawn')
+    io_process = IOProcess()
+    io_process.start()
+    io_process.join()
