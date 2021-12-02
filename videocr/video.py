@@ -146,6 +146,14 @@ class Video(object):
             frames = [v.read()[1] for _ in range(0, num_ocr_frames)]
             print(f'Obtain frame nums: {len(frames)}')
 
+            # 计算相邻两帧的相似度，如果十分相似，则予以丢弃
+            # for i, frame in enumerate(frames):
+            #     cv2.imwrite(f'temp/{i}.jpg', frame)
+            # exit()
+            a = frames[0][self.height - 40:, :]
+            b = frames[1][self.height - 40:, :]
+
+
             it_ocr = []
             for i, frame in enumerate(tqdm(frames, desc='Extract')):
                 dt_boxes, rec_res = self._image_to_data(frame)

@@ -1,46 +1,38 @@
-import multiprocessing as mp
+# -*- encoding=utf-8 -*-
 
-import numpy as np
-import onnxruntime as ort
-
-
-# This is a wrapper to make the current InferenceSession class pickable.
-class PickableInferenceSession:
-    def __init__(self, model_path):
-        self.model_path = model_path
-        self.sess = self.init_session(self.model_path)
-
-    def run(self, *args):
-        return self.sess.run(*args)
-
-    def __getstate__(self):
-        return {'model_path': self.model_path}
-
-    def __setstate__(self, values):
-        self.model_path = values['model_path']
-        self.sess = self.init_session(self.model_path)
-
-    def init_session(self, model_path):
-        EP_list = ['CPUExecutionProvider']
-        sess = ort.InferenceSession(model_path, providers=EP_list)
-        return sess
+from PIL import Image
 
 
-class IOProcess(mp.Process):
-    def __init__(self):
-        super(IOProcess, self).__init__()
-        self.sess = PickableInferenceSession('resources/models/ch_mobile_v2.0_rec_infer.onnx')
+def make_regalur_image(img, size=(256, 256)):
+    """我们有必要把所有的图片都统一到特别的规格，在这里我选择是的256x256的分辨率。"""
+    return img.resize(size).convert('RGB')
 
-    def run(self):
-        print("calling run")
-        onnx_inputs = {self.sess.sess.get_inputs()[0].name: np.zeros((1, 3, 32, 320), dtype=np.float32)}
-        print(self.sess.run({}, onnx_inputs))
-        # print(self.sess)
+
+def hist_similar(lh, rh):
+    assert len(lh) == len(rh)
+    return sum(1 - (0 if l == r else float(abs(l - r))/max(l, r)) for l, r in zip(lh, rh))/len(lh)
+
+
+def calc_similar(li, ri):
+    return sum(hist_similar(l.histogram(), r.histogram()) for l, r in zip(split_image(li), split_image(ri))) / 16.0
+
+
+def calc_similar_by_path(lf, rf):
+    li, ri = make_regalur_image(Image.open(
+        lf)), make_regalur_image(Image.open(rf))
+    return calc_similar(li, ri)
+
+
+def split_image(img, part_size=(64, 64)):
+    w, h = img.size
+    pw, ph = part_size
+    assert w % pw == h % ph == 0
+    return [img.crop((i, j, i+pw, j+ph)).copy() for i in range(0, w, pw)
+            for j in range(0, h, ph)]
 
 
 if __name__ == '__main__':
-    # This is important and MUST be inside the name==main block.
-    mp.set_start_method('spawn')
-    io_process = IOProcess()
-    io_process.start()
-    io_process.join()
+    img1_path = r'a.jpg'
+    img2_path = r'b.jpg'
+    similary = calc_similar_by_path(img1_path, img2_path)
+    print("两张图片相似度为:%s" % similary)
