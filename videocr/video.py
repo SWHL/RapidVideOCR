@@ -3,12 +3,12 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import multiprocessing
 import sys
 from typing import List
-from fuzzywuzzy import fuzz
-import multiprocessing
 
 import cv2
+from fuzzywuzzy import fuzz
 from tqdm import tqdm
 
 from . import utils
@@ -26,10 +26,11 @@ class PredictedFrame(object):
         self.confidence = []
 
         for info in pred_data:
-            text, score = info
-            if score >= conf_threshold:
-                self.words.append(text)
-                self.confidence.append(score)
+            if info is not None:
+                text, score = info
+                if score >= conf_threshold:
+                    self.words.append(text)
+                    self.confidence.append(score)
 
         self.confidence = sum(self.confidence)
         self.text = '\n'.join(self.words)
@@ -128,36 +129,36 @@ class Video(object):
 
         # get frames from ocr_start to ocr_end
         # 多进程
-        with Capture(self.path) as v, multiprocessing.Pool() as pool:
-            v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
-            frames = (v.read()[1] for _ in range(num_ocr_frames))
-
-            # perform ocr to frames in parallel
-            it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
-            self.pred_frames = [
-                PredictedFrame(i + ocr_start, data, conf_threshold)
-                for i, data in enumerate(it_ocr)
-            ]
-
-        # 单进程
-        # with Capture(self.path) as v:
+        # with Capture(self.path) as v, multiprocessing.Pool(2) as pool:
         #     v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
-        #     frames = [v.read()[1] for _ in range(0, num_ocr_frames)]
-        #     print(f'Obtain frame nums: {len(frames)}')
+        #     frames = (v.read()[1] for _ in range(num_ocr_frames))
 
-        #     it_ocr = []
-        #     for i, frame in enumerate(tqdm(frames, desc='Extract')):
-        #         dt_boxes, rec_res = self._image_to_data(frame)
-        #         filter_result = self.filter_rec(dt_boxes, rec_res)
-        #         if all(filter_result):
-        #             print(f'{i}\t{filter_result[1]}')
-        #             it_ocr.append(filter_result[1])
-
-        #     # it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
+        #     # perform ocr to frames in parallel
+        #     it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
         #     self.pred_frames = [
         #         PredictedFrame(i + ocr_start, data, conf_threshold)
-        #         for i, data in enumerate(it_ocr) if data is not None
+        #         for i, data in enumerate(it_ocr)
         #     ]
+
+        # 单进程
+        with Capture(self.path) as v:
+            v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
+            frames = [v.read()[1] for _ in range(0, num_ocr_frames)]
+            print(f'Obtain frame nums: {len(frames)}')
+
+            it_ocr = []
+            for i, frame in enumerate(tqdm(frames, desc='Extract')):
+                dt_boxes, rec_res = self._image_to_data(frame)
+                filter_result = self.filter_rec(dt_boxes, rec_res)
+                if all(filter_result):
+                    print(f'{i}\t{filter_result[1]}')
+                    it_ocr.append(filter_result[1])
+
+            # it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
+            self.pred_frames = [
+                PredictedFrame(i + ocr_start, data, conf_threshold)
+                for i, data in enumerate(it_ocr) if data is not None
+            ]
 
     def _image_to_data(self, img):
         if not self.use_fullframe:

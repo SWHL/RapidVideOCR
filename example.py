@@ -3,7 +3,6 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 from rapidocr import TextSystem
-
 from videocr import get_subtitles
 
 det_model_path = "resources/models/ch_ppocr_mobile_v2.0_det_infer.onnx"
@@ -18,9 +17,9 @@ ocr_system = TextSystem(det_model_path,
 
 
 if __name__ == '__main__':
-    result = get_subtitles('assets/2.mp4',
+    result = get_subtitles('assets/1.mp4',
                            ocr_system,
                            sim_threshold=70,
                            conf_threshold=0.8,
-                           use_fullframe=False)
+                           use_fullframe=True)
     print(result)
