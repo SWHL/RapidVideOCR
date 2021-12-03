@@ -3,7 +3,7 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-import multiprocessing
+import copy
 import sys
 from typing import List
 
@@ -45,9 +45,12 @@ class PredictedSubtitle(object):
     sim_threshold: int
     text: str
 
-    def __init__(self, frames: List[PredictedFrame], sim_threshold: int):
-        self.frames = [f for f in frames if f.confidence > 0]
+    def __init__(self, frames: List[PredictedFrame],
+                 frames_list,
+                 sim_threshold: int):
+        self.frames = [f for f in [frames] if f.confidence > 0]
         self.sim_threshold = sim_threshold
+        self.frames_list = frames_list
 
         if self.frames:
             self.text = max(self.frames, key=lambda f: f.confidence).text
@@ -56,14 +59,14 @@ class PredictedSubtitle(object):
 
     @property
     def index_start(self) -> int:
-        if self.frames:
-            return self.frames[0].index
+        if self.frames_list:
+            return self.frames_list[0]
         return 0
 
     @property
     def index_end(self) -> int:
-        if self.frames:
-            return self.frames[-1].index
+        if self.frames_list:
+            return self.frames_list[-1]
         return 0
 
     def is_similar_to(self, other) -> bool:
@@ -129,55 +132,44 @@ class Video(object):
         num_ocr_frames = ocr_end - ocr_start
 
         # get frames from ocr_start to ocr_end
-        # 多进程
-        # with Capture(self.path) as v, multiprocessing.Pool(2) as pool:
-        #     v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
-        #     frames = (v.read()[1] for _ in range(num_ocr_frames))
-
-        #     # perform ocr to frames in parallel
-        #     it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
-        #     self.pred_frames = [
-        #         PredictedFrame(i + ocr_start, data, conf_threshold)
-        #         for i, data in enumerate(it_ocr)
-        #     ]
-
-        # 单进程
         with Capture(self.path) as v:
             v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
             frames = [v.read()[1] for _ in range(0, num_ocr_frames)]
             print(f'Obtain frame nums: {len(frames)}')
 
-            # 计算相邻两帧的相似度，如果十分相似，则予以丢弃
-            slow, fast = 0, 0
-            n = len(frames)
-            result = {}
-            while fast < n:
-                a = frames[slow][self.height - 40:, :]
-                b = frames[fast][self.height - 40:, :]
-                if is_similar(a, b, threshold=0.95):
-                    if slow in result:
-                        result[slow].append(fast)
-                    else:
-                        result[slow] = [slow]
+        # 计算相邻两帧的相似度，如果十分相似，则予以丢弃
+        print('Get the key point frame...')
+        slow, fast = 0, 0
+        n = len(frames)
+        self.key_point_dict = {}
+        while fast < n:
+            a = frames[slow][self.height - 40:, :]
+            b = frames[fast][self.height - 40:, :]
+            if is_similar(a, b, threshold=0.95):
+                if slow in self.key_point_dict:
+                    self.key_point_dict[slow].append(fast)
                 else:
-                    slow = fast
-                fast += 1
+                    self.key_point_dict[slow] = [slow]
+            else:
+                slow = fast
+            fast += 1
 
-            new_frames = [frames[i] for i in result.keys()]
-            [cv2.imwrite(f'temp/{i}.jpg', frames[i]) for i in result.keys()]
+        it_ocr = []
+        temp_key_point = copy.deepcopy(self.key_point_dict)
+        for key in tqdm(temp_key_point.keys(), desc='Extract'):
+            frame = frames[key]
+            dt_boxes, rec_res = self._image_to_data(frame)
+            filter_result = self.filter_rec(dt_boxes, rec_res)
+            if all(filter_result):
+                print(f'{key}\t{filter_result[1]}')
+                it_ocr.append(filter_result[1])
+            else:
+                del self.key_point_dict[key]
 
-            it_ocr = []
-            for i, frame in enumerate(tqdm(new_frames, desc='Extract')):
-                dt_boxes, rec_res = self._image_to_data(frame)
-                filter_result = self.filter_rec(dt_boxes, rec_res)
-                if all(filter_result):
-                    print(f'{i}\t{filter_result[1]}')
-                    it_ocr.append(filter_result[1])
-
-            self.pred_frames = [
-                PredictedFrame(i + ocr_start, data, conf_threshold)
-                for i, data in enumerate(it_ocr) if data is not None
-            ]
+        self.pred_frames = [
+            PredictedFrame(i + ocr_start, data, conf_threshold)
+            for i, data in enumerate(it_ocr) if data is not None
+        ]
 
     def _image_to_data(self, img):
         if not self.use_fullframe:
@@ -213,41 +205,6 @@ class Video(object):
             raise AttributeError(
                 'Please call self.run_ocr() first to perform ocr on frames')
 
-        # divide ocr of frames into subtitle paragraphs using sliding window
-        WIN_BOUND = int(self.fps // 2)  # 1/2 sec sliding window boundary
-        bound = WIN_BOUND
-        i, j = 0, 1
-        while j < len(self.pred_frames):
-            fi, fj = self.pred_frames[i], self.pred_frames[j]
-
-            if fi.is_similar_to(fj):
-                bound = WIN_BOUND
-            elif bound > 0:
-                bound -= 1
-            else:
-                # divide subtitle paragraphs
-                para_new = j - WIN_BOUND
-                self._append_sub(PredictedSubtitle(
-                    self.pred_frames[i:para_new], sim_threshold))
-                i = para_new
-                j = i
-                bound = WIN_BOUND
-
-            j += 1
-
-        # also handle the last remaining frames
-        if i < len(self.pred_frames) - 1:
-            self._append_sub(PredictedSubtitle(
-                self.pred_frames[i:], sim_threshold))
-
-    def _append_sub(self, sub: PredictedSubtitle) -> None:
-        if len(sub.text) == 0:
-            return
-
-        # merge new sub to the last subs if they are similar
-        while self.pred_subs and sub.is_similar_to(self.pred_subs[-1]):
-            ls = self.pred_subs[-1]
-            del self.pred_subs[-1]
-            sub = PredictedSubtitle(ls.frames + sub.frames, sub.sim_threshold)
-
-        self.pred_subs.append(sub)
+        for i, (k, v) in enumerate(self.key_point_dict.items()):
+            self.pred_subs.append(PredictedSubtitle(self.pred_frames[i], v,
+                                                    sim_threshold))
