@@ -1,38 +1,52 @@
 # -*- encoding=utf-8 -*-
-
-from PIL import Image
-
-
-def make_regalur_image(img, size=(256, 256)):
-    """我们有必要把所有的图片都统一到特别的规格，在这里我选择是的256x256的分辨率。"""
-    return img.resize(size).convert('RGB')
+import cv2
 
 
-def hist_similar(lh, rh):
-    assert len(lh) == len(rh)
-    return sum(1 - (0 if l == r else float(abs(l - r))/max(l, r)) for l, r in zip(lh, rh))/len(lh)
+def compute_similar(img_a, img_b, size=(256, 40)):
+    if img_a.ndim == 3:
+        img_a = cv2.cvtColor(img_a, cv2.COLOR_RGB2GRAY)
+        img_a = cv2.resize(img_a, size)
 
+    if img_b.ndim == 3:
+        img_b = cv2.cvtColor(img_b, cv2.COLOR_RGB2GRAY)
+        img_b = cv2.resize(img_b, size)
 
-def calc_similar(li, ri):
-    return sum(hist_similar(l.histogram(), r.histogram()) for l, r in zip(split_image(li), split_image(ri))) / 16.0
+    hist_a = cv2.calcHist(images=[img_a],
+                          channels=[0], mask=None,
+                          histSize=[img_a.shape[0]],
+                          ranges=[0.0, 256.0])
 
+    hist_b = cv2.calcHist(images=[img_b],
+                          channels=[0], mask=None,
+                          histSize=[img_b.shape[0]],
+                          ranges=[0.0, 256.0])
 
-def calc_similar_by_path(lf, rf):
-    li, ri = make_regalur_image(Image.open(
-        lf)), make_regalur_image(Image.open(rf))
-    return calc_similar(li, ri)
-
-
-def split_image(img, part_size=(64, 64)):
-    w, h = img.size
-    pw, ph = part_size
-    assert w % pw == h % ph == 0
-    return [img.crop((i, j, i+pw, j+ph)).copy() for i in range(0, w, pw)
-            for j in range(0, h, ph)]
+    return 1 - cv2.compareHist(hist_a, hist_b, 1)
 
 
 if __name__ == '__main__':
     img1_path = r'a.jpg'
     img2_path = r'b.jpg'
-    similary = calc_similar_by_path(img1_path, img2_path)
-    print("两张图片相似度为:%s" % similary)
+    # similary = calc_similar_by_path(img1_path, img2_path)
+    # print("两张图片相似度为:%s" % similary)
+
+    img_a = cv2.imread(img1_path)
+    img_b = cv2.imread(img2_path)
+    res = compute_similar(img_a, img_b)
+    print(res)
+
+    # grey_img_a = cv2.cvtColor(img_a, cv2.COLOR_RGB2GRAY)
+    # grey_img_b = cv2.cvtColor(img_b, cv2.COLOR_RGB2GRAY)
+
+    # hist_a = cv2.calcHist(images=[grey_img_a],
+    #                       channels=[0], mask=None,
+    #                       histSize=[grey_img_a.shape[0]],
+    #                       range=[0.0, 256.0])
+
+    # hist_b = cv2.calcHist(images=[grey_img_b],
+    #                       channels=[0], mask=None,
+    #                       histSize=[grey_img_b.shape[0]],
+    #                       range=[0.0, 256.0])
+
+    # res = 1 - cv2.compareHist(hist_a, hist_b, 1)
+    # print(res)

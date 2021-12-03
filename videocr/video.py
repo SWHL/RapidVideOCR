@@ -12,6 +12,7 @@ from fuzzywuzzy import fuzz
 from tqdm import tqdm
 
 from . import utils
+from .utils import is_similar
 
 
 class PredictedFrame(object):
@@ -147,22 +148,32 @@ class Video(object):
             print(f'Obtain frame nums: {len(frames)}')
 
             # 计算相邻两帧的相似度，如果十分相似，则予以丢弃
-            # for i, frame in enumerate(frames):
-            #     cv2.imwrite(f'temp/{i}.jpg', frame)
-            # exit()
-            a = frames[0][self.height - 40:, :]
-            b = frames[1][self.height - 40:, :]
+            slow, fast = 0, 0
+            n = len(frames)
+            result = {}
+            while fast < n:
+                a = frames[slow][self.height - 40:, :]
+                b = frames[fast][self.height - 40:, :]
+                if is_similar(a, b, threshold=0.999999999999999):
+                    if slow in result:
+                        result[slow].append(fast)
+                    else:
+                        result[slow] = [slow]
+                else:
+                    slow = fast
+                fast += 1
 
+            new_frames = [frames[i] for i in result.keys()]
+            [cv2.imwrite(f'temp/{i}.jpg', frames[i]) for i in result.keys()]
 
             it_ocr = []
-            for i, frame in enumerate(tqdm(frames, desc='Extract')):
+            for i, frame in enumerate(tqdm(new_frames, desc='Extract')):
                 dt_boxes, rec_res = self._image_to_data(frame)
                 filter_result = self.filter_rec(dt_boxes, rec_res)
                 if all(filter_result):
                     print(f'{i}\t{filter_result[1]}')
                     it_ocr.append(filter_result[1])
 
-            # it_ocr = pool.imap(self._image_to_data, frames, chunksize=10)
             self.pred_frames = [
                 PredictedFrame(i + ocr_start, data, conf_threshold)
                 for i, data in enumerate(it_ocr) if data is not None

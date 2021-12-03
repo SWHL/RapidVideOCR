@@ -17,9 +17,9 @@ ocr_system = TextSystem(det_model_path,
 
 
 if __name__ == '__main__':
-    result = get_subtitles('assets/2.mp4',
+    result = get_subtitles('assets/1.mp4',
                            ocr_system,
                            sim_threshold=70,
                            conf_threshold=0.8,
-                           use_fullframe=True)
+                           use_fullframe=False)
     print(result)

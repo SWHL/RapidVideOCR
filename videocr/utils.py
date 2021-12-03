@@ -4,6 +4,8 @@
 # @Contact: liekkaskono@163.com
 import datetime
 
+import cv2
+
 
 # convert time string to frame index
 def get_frame_index(time_str: str, fps: float):
@@ -27,3 +29,26 @@ def get_srt_timestamp(frame_index: int, fps: float):
     m, s = divmod(td.seconds, 60)
     h, m = divmod(m, 60)
     return '{:02d}:{:02d}:{:02d},{:03d}'.format(h, m, s, ms)
+
+
+def is_similar(img_a, img_b, size=(256, 40), threshold=0.9999999):
+    if img_a.ndim == 3:
+        img_a = cv2.cvtColor(img_a, cv2.COLOR_RGB2GRAY)
+        img_a = cv2.resize(img_a, size)
+
+    if img_b.ndim == 3:
+        img_b = cv2.cvtColor(img_b, cv2.COLOR_RGB2GRAY)
+        img_b = cv2.resize(img_b, size)
+
+    hist_a = cv2.calcHist(images=[img_a],
+                          channels=[0], mask=None,
+                          histSize=[img_a.shape[1]],
+                          ranges=[0.0, 256.0])
+
+    hist_b = cv2.calcHist(images=[img_b],
+                          channels=[0], mask=None,
+                          histSize=[img_b.shape[1]],
+                          ranges=[0.0, 256.0])
+    similar_value = cv2.compareHist(hist_a, hist_b, cv2.HISTCMP_KL_DIV)
+    print(similar_value)
+    return similar_value > threshold
