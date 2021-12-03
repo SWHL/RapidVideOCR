@@ -154,7 +154,7 @@ class Video(object):
             while fast < n:
                 a = frames[slow][self.height - 40:, :]
                 b = frames[fast][self.height - 40:, :]
-                if is_similar(a, b, threshold=0.999999999999999):
+                if is_similar(a, b, threshold=0.95):
                     if slow in result:
                         result[slow].append(fast)
                     else:

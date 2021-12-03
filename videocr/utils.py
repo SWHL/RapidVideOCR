@@ -5,6 +5,7 @@
 import datetime
 
 import cv2
+import numpy as np
 
 
 # convert time string to frame index
@@ -40,15 +41,22 @@ def is_similar(img_a, img_b, size=(256, 40), threshold=0.9999999):
         img_b = cv2.cvtColor(img_b, cv2.COLOR_RGB2GRAY)
         img_b = cv2.resize(img_b, size)
 
-    hist_a = cv2.calcHist(images=[img_a],
-                          channels=[0], mask=None,
-                          histSize=[img_a.shape[1]],
-                          ranges=[0.0, 256.0])
+    img_a = img_a / 255
+    img_b = img_b / 255
 
-    hist_b = cv2.calcHist(images=[img_b],
-                          channels=[0], mask=None,
-                          histSize=[img_b.shape[1]],
-                          ranges=[0.0, 256.0])
-    similar_value = cv2.compareHist(hist_a, hist_b, cv2.HISTCMP_KL_DIV)
-    print(similar_value)
-    return similar_value > threshold
+    error = np.sum((img_a - img_b) ** 2) / img_a.size
+    print(1 - error)
+
+    return (1 - error) > threshold
+    # hist_a = cv2.calcHist(images=[img_a],
+    #                       channels=[0], mask=None,
+    #                       histSize=[img_a.shape[1]],
+    #                       ranges=[0.0, 256.0])
+
+    # hist_b = cv2.calcHist(images=[img_b],
+    #                       channels=[0], mask=None,
+    #                       histSize=[img_b.shape[1]],
+    #                       ranges=[0.0, 256.0])
+    # similar_value = cv2.compareHist(hist_a, hist_b, cv2.HISTCMP_KL_DIV)
+    # print(similar_value)
+    # return similar_value > threshold
