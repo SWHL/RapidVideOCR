@@ -8,6 +8,38 @@ import cv2
 import numpy as np
 
 
+class Capture(object):
+    def __init__(self, video_path):
+        self.path = video_path
+
+    def __enter__(self):
+        self.cap = cv2.VideoCapture(self.path)
+        if not self.cap.isOpened():
+            raise IOError('Can not open video {}.'.format(self.path))
+        return self.cap
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.cap.release()
+
+
+def get_specified_frame(v, index, video_path=None):
+    if video_path is not None:
+        with Capture(video_path) as v:
+            v.set(cv2.CAP_PROP_POS_FRAMES, index)
+            return v.read()[1]
+    else:
+        v.set(cv2.CAP_PROP_POS_FRAMES, index)
+        return v.read()[1]
+
+
+def get_frame_from_time(time_str, fps):
+    if time_str:
+        frame_index = get_frame_index(time_str, fps)
+    else:
+        frame_index = 0
+    return frame_index
+
+
 # convert time string to frame index
 def get_frame_index(time_str: str, fps: float):
     t = time_str.split(':')
@@ -18,7 +50,7 @@ def get_frame_index(time_str: str, fps: float):
         td = datetime.timedelta(minutes=t[0], seconds=t[1])
     else:
         raise ValueError(
-            'Time data "{}" does not match format "%H:%M:%S"'.format(time_str))
+            f'Time data "{time_str}" does not match format "%H:%M:%S"')
     index = int(td.total_seconds() * fps)
     return index
 

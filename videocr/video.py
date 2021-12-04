@@ -5,103 +5,16 @@
 # @Contact: liekkaskono@163.com
 import copy
 import sys
-from typing import List
 
 import cv2
-from fuzzywuzzy import fuzz
 from tqdm import tqdm
 
-from . import utils
-from .utils import is_similar
-
-
-class PredictedFrame(object):
-    index: int  # 0-based index of the frame
-    confidence: int  # total confidence of all words
-    text: str
-
-    def __init__(self, index: int, pred_data: str,
-                 conf_threshold: int):
-        self.index = index
-        self.words = []
-        self.confidence = []
-
-        for info in pred_data:
-            if info is not None:
-                text, score = info
-                if score >= conf_threshold:
-                    self.words.append(text)
-                    self.confidence.append(score)
-
-        self.confidence = sum(self.confidence)
-        self.text = '\n'.join(self.words)
-
-    def is_similar_to(self, other, threshold=70) -> bool:
-        return fuzz.ratio(self.text, other.text) >= threshold
-
-
-class PredictedSubtitle(object):
-    frames: List[PredictedFrame]
-    sim_threshold: int
-    text: str
-
-    def __init__(self, frames: List[PredictedFrame],
-                 frames_list,
-                 sim_threshold: int):
-        self.frames = [f for f in [frames] if f.confidence > 0]
-        self.sim_threshold = sim_threshold
-        self.frames_list = frames_list
-
-        if self.frames:
-            self.text = max(self.frames, key=lambda f: f.confidence).text
-        else:
-            self.text = ''
-
-    @property
-    def index_start(self) -> int:
-        if self.frames_list:
-            return self.frames_list[0]
-        return 0
-
-    @property
-    def index_end(self) -> int:
-        if self.frames_list:
-            return self.frames_list[-1]
-        return 0
-
-    def is_similar_to(self, other) -> bool:
-        return fuzz.partial_ratio(
-            self.text, other.text) >= self.sim_threshold
-
-    def __repr__(self):
-        return '{} - {}. {}'.format(
-            self.index_start, self.index_end, self.text)
-
-
-class Capture(object):
-    def __init__(self, video_path):
-        self.path = video_path
-
-    def __enter__(self):
-        self.cap = cv2.VideoCapture(self.path)
-        if not self.cap.isOpened():
-            raise IOError('Can not open video {}.'.format(self.path))
-        return self.cap
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.cap.release()
+from .utils import (Capture, is_similar,
+                    get_srt_timestamp, get_specified_frame,
+                    get_frame_from_time)
 
 
 class Video(object):
-    path: str
-    lang: str
-    use_fullframe: bool
-    num_frames: int
-    fps: float
-    height: int
-    pred_frames: List[PredictedFrame]
-    pred_subs: List[PredictedSubtitle]
-
     def __init__(self, path: str, ocr_system):
         self.path = path
         self.ocr_system = ocr_system
@@ -111,44 +24,35 @@ class Video(object):
             self.num_frames = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
             self.fps = v.get(cv2.CAP_PROP_FPS)
             self.height = int(v.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            # self.threshold_y = self.height - self.height // 3
 
-    @staticmethod
-    def get_frame(v, index, video_path=None):
-        if video_path is not None:
-            with Capture(video_path) as v:
-                v.set(cv2.CAP_PROP_POS_FRAMES, index)
-                return v.read()[1]
-        else:
-            v.set(cv2.CAP_PROP_POS_FRAMES, index)
-            return v.read()[1]
-
-    def run_ocr(self, time_start: str, time_end: str,
-                conf_threshold: int, use_fullframe: bool):
+    def run_ocr(self,
+                time_start: str,
+                time_end: str,
+                use_fullframe: bool):
         self.use_fullframe = use_fullframe
 
-        if time_start:
-            ocr_start = utils.get_frame_index(time_start, self.fps)
-        else:
-            ocr_start = 0
-
-        if time_end:
-            ocr_end = utils.get_frame_index(time_end, self.fps)
-        else:
-            ocr_end = self.num_frames
+        # From the time string to specified frame index.
+        ocr_start = get_frame_from_time(time_start, self.fps)
+        ocr_end = get_frame_from_time(time_end, self.fps)
+        ocr_end = self.num_frames if ocr_end == 0 else ocr_end
 
         if ocr_end < ocr_start:
             raise ValueError('time_start is later than time_end')
+
+        # All frame between the start and end frame index.
         num_ocr_frames = ocr_end - ocr_start
 
         self.key_point_dict = {}
-        with Capture(self.path) as v, tqdm(total=num_ocr_frames-1) as pbar:
+        with tqdm(total=num_ocr_frames-1, desc='Get the key point') as pbar, \
+                Capture(self.path) as v:
+
+            # Use two fast and slow pointers to filter duplicate frame.
             slow, fast = 0, ocr_start
             while fast < num_ocr_frames - 1:
                 pbar.update(1)
 
-                slow_frame = self.get_frame(v, slow)[self.height - 40:, :]
-                fast_frame = self.get_frame(v, fast)[self.height - 40:, :]
+                slow_frame = get_specified_frame(v, slow)[self.height-40:, :]
+                fast_frame = get_specified_frame(v, fast)[self.height-40:, :]
 
                 if is_similar(slow_frame, fast_frame, threshold=0.95):
                     if slow in self.key_point_dict:
@@ -159,23 +63,34 @@ class Video(object):
                     slow = fast
                 fast += 1
 
+        # Extract the filtered frames content.
         it_ocr = []
+        self.pred_frames = []
         temp_key_point = copy.deepcopy(self.key_point_dict)
-        for key in tqdm(temp_key_point.keys(), desc='Extract'):
-            frame = self.get_frame(v, key, self.path)
+        for key in tqdm(temp_key_point.keys(), desc='Extract content'):
+            frame = get_specified_frame(v, key, self.path)
 
-            dt_boxes, rec_res = self._image_to_data(frame)
-            filter_result = self.filter_rec(dt_boxes, rec_res)
-            if all(filter_result):
-                print(f'{key}\t{filter_result[1]}')
-                it_ocr.append(filter_result[1])
-            else:
+            _, rec_res = self._image_to_data(frame)
+
+            if rec_res is None or len(rec_res) <= 0:
                 del self.key_point_dict[key]
+            else:
+                it_ocr.append(rec_res)
+                text, confidence = list(zip(*rec_res))
+                text = '\n'.join(text)
+                confidence = sum(confidence) / len(confidence)
 
-        self.pred_frames = [
-            PredictedFrame(i + ocr_start, data, conf_threshold)
-            for i, data in enumerate(it_ocr) if data is not None
-        ]
+                self.pred_frames.append((text, confidence))
+
+        self.pred_frames = []
+        for data in it_ocr:
+            if data is not None:
+                text, confidence = list(zip(*data))
+                text = '\n'.join(text)
+
+                confidence = sum(confidence) / len(confidence)
+
+                self.pred_frames.append((text, confidence))
 
     def _image_to_data(self, img):
         if not self.use_fullframe:
@@ -187,30 +102,11 @@ class Video(object):
         except Exception as e:
             sys.exit('{}: {}'.format(e.__class__.__name__, e))
 
-    def filter_rec(self, dt_box, one_rec):
-        if one_rec is not None \
-                and dt_box is not None \
-                and len(dt_box) > 0:
-            return dt_box, one_rec
-        else:
-            return None, None
-
-    def get_subtitles(self, sim_threshold: int) -> str:
-        self._generate_subtitles(sim_threshold)
+    def get_subtitles(self):
         result = []
-        for i, sub in enumerate(self.pred_subs):
-            start_index = utils.get_srt_timestamp(sub.index_start, self.fps)
-            end_index = utils.get_srt_timestamp(sub.index_end, self.fps)
-            result.append(f'{i}\n{start_index} --> {end_index}\n{sub.text}\n')
+        for i, v in enumerate(self.key_point_dict.values()):
+            start_index = get_srt_timestamp(v[0], self.fps)
+            end_index = get_srt_timestamp(v[-1], self.fps)
+            result.append(
+                f'\n{i}  {start_index} -> {end_index} : {self.pred_frames[i][0]}\n')
         return ''.join(result)
-
-    def _generate_subtitles(self, sim_threshold: int) -> None:
-        self.pred_subs = []
-
-        if self.pred_frames is None:
-            raise AttributeError(
-                'Please call self.run_ocr() first to perform ocr on frames')
-
-        for i, (k, v) in enumerate(self.key_point_dict.items()):
-            self.pred_subs.append(PredictedSubtitle(self.pred_frames[i], v,
-                                                    sim_threshold))

@@ -9,14 +9,11 @@ def get_subtitles(video_path: str,
                   ocr_system,
                   time_start='0:00',
                   time_end='',
-                  conf_threshold=65,
-                  sim_threshold=90,
                   use_fullframe=False) -> str:
 
     v = Video(video_path, ocr_system)
-    v.run_ocr(time_start, time_end,
-              conf_threshold, use_fullframe)
-    return v.get_subtitles(sim_threshold)
+    v.run_ocr(time_start, time_end, use_fullframe)
+    return v.get_subtitles()
 
 
 def save_subtitles_to_file(video_path: str,

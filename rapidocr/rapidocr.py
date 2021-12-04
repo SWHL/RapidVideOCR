@@ -342,14 +342,16 @@ class TextSystem(object):
             img_crop = self.get_rotate_crop_image(img, tmp_box)
             img_crop_list.append(img_crop)
 
-        # img_crop_list, _, elapse = self.text_classifier(img_crop_list)
-
         rec_res, elapse = self.text_recognizer(img_crop_list)
 
         filter_boxes, filter_rec_res = [], []
         for box, rec_result in zip(dt_boxes, rec_res):
             text, score = rec_result
-            if score >= drop_score:
+            if score >= drop_score \
+                    and rec_result is not None \
+                    and len(rec_result) > 0 \
+                    and box is not None \
+                    and len(box) > 0:
                 filter_boxes.append(box)
                 filter_rec_res.append(rec_result)
         return filter_boxes, filter_rec_res
