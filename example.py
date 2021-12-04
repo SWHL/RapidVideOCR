@@ -5,7 +5,7 @@
 from rapidocr import TextSystem
 from videocr import get_subtitles
 
-det_model_path = "resources/models/ch_ppocr_mobile_v2.0_det_infer.onnx"
+det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
 cls_model_path = "resources/models/ch_ppocr_mobile_v2.0_cls_infer.onnx"
 rec_model_path = "resources/models/ch_mobile_v2.0_rec_infer.onnx"
 dict_path = "resources/ppocr_keys_v1.txt"
@@ -17,7 +17,7 @@ ocr_system = TextSystem(det_model_path,
 
 
 if __name__ == '__main__':
-    result = get_subtitles('assets/1.mp4',
+    result = get_subtitles('assets/4.mp4',
                            ocr_system,
                            sim_threshold=70,
                            conf_threshold=0.8,

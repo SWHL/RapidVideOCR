@@ -113,6 +113,16 @@ class Video(object):
             self.height = int(v.get(cv2.CAP_PROP_FRAME_HEIGHT))
             # self.threshold_y = self.height - self.height // 3
 
+    @staticmethod
+    def get_frame(v, index, video_path=None):
+        if video_path is not None:
+            with Capture(video_path) as v:
+                v.set(cv2.CAP_PROP_POS_FRAMES, index)
+                return v.read()[1]
+        else:
+            v.set(cv2.CAP_PROP_POS_FRAMES, index)
+            return v.read()[1]
+
     def run_ocr(self, time_start: str, time_end: str,
                 conf_threshold: int, use_fullframe: bool):
         self.use_fullframe = use_fullframe
@@ -131,33 +141,29 @@ class Video(object):
             raise ValueError('time_start is later than time_end')
         num_ocr_frames = ocr_end - ocr_start
 
-        # get frames from ocr_start to ocr_end
-        with Capture(self.path) as v:
-            v.set(cv2.CAP_PROP_POS_FRAMES, ocr_start)
-            frames = [v.read()[1] for _ in range(0, num_ocr_frames)]
-            print(f'Obtain frame nums: {len(frames)}')
-
-        # 计算相邻两帧的相似度，如果十分相似，则予以丢弃
-        print('Get the key point frame...')
-        slow, fast = 0, 0
-        n = len(frames)
         self.key_point_dict = {}
-        while fast < n:
-            a = frames[slow][self.height - 40:, :]
-            b = frames[fast][self.height - 40:, :]
-            if is_similar(a, b, threshold=0.95):
-                if slow in self.key_point_dict:
-                    self.key_point_dict[slow].append(fast)
+        with Capture(self.path) as v, tqdm(total=num_ocr_frames-1) as pbar:
+            slow, fast = 0, ocr_start
+            while fast < num_ocr_frames - 1:
+                pbar.update(1)
+
+                slow_frame = self.get_frame(v, slow)[self.height - 40:, :]
+                fast_frame = self.get_frame(v, fast)[self.height - 40:, :]
+
+                if is_similar(slow_frame, fast_frame, threshold=0.95):
+                    if slow in self.key_point_dict:
+                        self.key_point_dict[slow].append(fast)
+                    else:
+                        self.key_point_dict[slow] = [slow]
                 else:
-                    self.key_point_dict[slow] = [slow]
-            else:
-                slow = fast
-            fast += 1
+                    slow = fast
+                fast += 1
 
         it_ocr = []
         temp_key_point = copy.deepcopy(self.key_point_dict)
         for key in tqdm(temp_key_point.keys(), desc='Extract'):
-            frame = frames[key]
+            frame = self.get_frame(v, key, self.path)
+
             dt_boxes, rec_res = self._image_to_data(frame)
             filter_result = self.filter_rec(dt_boxes, rec_res)
             if all(filter_result):

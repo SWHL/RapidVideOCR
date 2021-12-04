@@ -4,7 +4,7 @@
 
 #### Want to do
 - [ ] Refactor the project code.
-- [ ] Less time to process the video.
+- [ ] Less time to process the video.→ Refer to the [Lightning Fast Video Reading in Python](https://towardsdatascience.com/lightning-fast-video-reading-in-python-c1438771c4e6)（Tend to the decord）
 - [x] Refer the repo [**ClipVideo**](https://github.com/SWHL/ClipVideo). ~~Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.~~
 
 #### Use
