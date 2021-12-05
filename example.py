@@ -3,7 +3,7 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 from rapidocr import TextSystem
-from videocr import get_subtitles
+from videocr import get_subtitles, write_txt
 
 det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
 cls_model_path = "resources/models/ch_ppocr_mobile_v2.0_cls_infer.onnx"
@@ -19,5 +19,8 @@ ocr_system = TextSystem(det_model_path,
 if __name__ == '__main__':
     result = get_subtitles('assets/1.mp4',
                            ocr_system,
+                        #    time_start='00:00:04',
+                        #    time_end='00:00:50',
                            use_fullframe=False)
+    write_txt('result.txt', result)
     print(result)

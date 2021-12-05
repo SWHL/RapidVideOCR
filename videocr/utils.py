@@ -22,14 +22,14 @@ class Capture(object):
         self.cap.release()
 
 
-def get_specified_frame(v, index, video_path=None):
-    if video_path is not None:
+def get_specified_frame(index, video_path=None, v=None):
+    if video_path is None and v is not None:
+        v.set(cv2.CAP_PROP_POS_FRAMES, index)
+        return v.read()[1]
+    else:
         with Capture(video_path) as v:
             v.set(cv2.CAP_PROP_POS_FRAMES, index)
             return v.read()[1]
-    else:
-        v.set(cv2.CAP_PROP_POS_FRAMES, index)
-        return v.read()[1]
 
 
 def get_frame_from_time(time_str, fps):
@@ -78,3 +78,16 @@ def is_similar(img_a, img_b, size=(256, 40), threshold=0.9999999):
 
     error = np.sum((img_a - img_b) ** 2) / img_a.size
     return (1 - error) > threshold
+
+
+def write_txt(save_path: str, content: list, mode='w'):
+    """
+    将list内容写入txt中
+    @param
+    content: list格式内容
+    save_path: 绝对路径str
+    @return:None
+    """
+    with open(save_path, mode, encoding='utf-8') as f:
+        for value in content:
+            f.write(value + '\n')
