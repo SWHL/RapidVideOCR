@@ -1,4 +1,6 @@
 # VideoOCR
+- The `main` branch is the Decord version, it's faster than the OpenCV version.
+- The OpenCV version is in the branch `opencv_version`.
 - Forked from [videocr](https://github.com/apm1467/videocr)
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
 
