@@ -3,8 +3,16 @@
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
 
 #### Want to do
-- [ ] Refactor the project code.
-- [ ] Less time to process the video.→ Refer to the [Lightning Fast Video Reading in Python](https://towardsdatascience.com/lightning-fast-video-reading-in-python-c1438771c4e6)（Tend to the decord）
+- [ ] The number of video frames cannot be divisible by batch_size.
+- [x] Refactor the project code.
+- [x] Less time to process the video.
+  - Accept the Decord package to load frame of the video. The following table is a comparison of the time taken by OpenCV and Decord to extract all the frames in the same video.
+      |Method|Cost time(s)|Total Frames|
+      |:---: |:---:|:---:|
+      |OpenCV|9.4021|5987|
+      |Decord|721.5981|5987|
+  - Use batch processing to compare the similarity between frames, which greatly speeds up video processing.
+
 - [x] Refer the repo [**ClipVideo**](https://github.com/SWHL/ClipVideo). ~~Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.~~
 
 #### Use

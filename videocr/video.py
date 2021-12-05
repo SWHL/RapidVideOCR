@@ -3,15 +3,14 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-import copy
-import sys
-
-import cv2
+import numpy as np
+from decord import VideoReader
+from decord import cpu
 from tqdm import tqdm
 
-from .utils import (Capture, is_similar,
-                    get_srt_timestamp, get_specified_frame,
-                    get_frame_from_time)
+from .utils import (is_similar,
+                    get_srt_timestamp,
+                    get_frame_from_time, is_similar_batch)
 
 
 class Video(object):
@@ -20,37 +19,52 @@ class Video(object):
         self.ocr_system = ocr_system
 
         print('Init Video instance')
-        with Capture(path) as v:
-            self.num_frames = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
-            self.fps = v.get(cv2.CAP_PROP_FPS)
-            self.height = int(v.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.vr = VideoReader(path, ctx=cpu(0))
+        self.num_frames = len(self.vr)
+        self.fps = self.vr.get_avg_fps()
+        self.height = int(self.vr[0].shape[0])
 
     def get_key_point(self):
         self.key_point_dict = {}
-        with tqdm(total=self.ocr_end, desc='Get the key point') as pbar, \
-                Capture(self.path) as v:
-
+        batch_size = int(self.fps) * 2
+        with tqdm(total=self.ocr_end, desc='Get the key point') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
-            slow, fast = 0, self.ocr_start
-            while fast < self.ocr_end:
-                pbar.update(1)
+            slow, fast = 0, 1
+            while fast + batch_size < self.ocr_end:
+                pbar.update(batch_size)
 
-                slow_frame = get_specified_frame(slow, v=v)[self.height-40:, :]
-                fast_frame = get_specified_frame(fast, v=v)[self.height-40:, :]
+                slow_frame = self.vr[slow].asnumpy()[self.height-40:, :, :]
 
-                if is_similar(slow_frame, fast_frame, threshold=0.95):
+                batch_list = list(range(fast, fast+batch_size))
+                fast_frames = self.vr.get_batch(batch_list).asnumpy()
+                fast_frames = fast_frames[:, self.height-40:, :, :]
+
+                compare_result = is_similar_batch(slow_frame, fast_frames,
+                                                  threshold=0.95)
+                batch_array = np.array(batch_list)
+                not_similar_index = batch_array[np.logical_not(compare_result)]
+                if not_similar_index.size == 0:
+                    # All are similar with the slow frame.
                     if slow in self.key_point_dict:
-                        self.key_point_dict[slow].append(fast)
+                        self.key_point_dict[slow].extend(batch_list)
                     else:
-                        self.key_point_dict[slow] = [slow]
+                        self.key_point_dict[slow] = batch_list
+
+                    # slow += fast + batch_size
+                    fast += batch_size
                 else:
-                    slow = fast
-                fast += 1
+                    # Exist the non similar frame.
+                    slow = not_similar_index[0]
+                    fast = slow + 1
 
     def run_ocr(self, time_start, time_end, use_fullframe):
         self.ocr_start = get_frame_from_time(time_start, self.fps)
-        ocr_end = get_frame_from_time(time_end, self.fps)
-        self.ocr_end = self.num_frames-1 if ocr_end == 0 else ocr_end
+
+        if time_end == '0':
+            self.ocr_end = self.num_frames - 1
+        else:
+            self.ocr_end = get_frame_from_time(time_end, self.fps)
+
         if self.ocr_end < self.ocr_start:
             raise ValueError('time_start is later than time_end')
 
@@ -58,12 +72,13 @@ class Video(object):
 
         # Extract the filtered frames content.
         self.pred_frames = []
-        temp_key_point = copy.deepcopy(self.key_point_dict)
-        for key in tqdm(temp_key_point.keys(), desc='Extract content'):
-            frame = get_specified_frame(key, self.path)
+        key_index_frames = list(self.key_point_dict.keys())
+        frames = self.vr.get_batch(key_index_frames).asnumpy()
 
+        for key, frame in tqdm(list(zip(key_index_frames, frames)),
+                               desc='Extract content'):
             if not use_fullframe:
-                frame = frame[self.height * 4 // 5:, :]
+                frame = frame[self.height * 4 // 5:, :, :]
 
             _, rec_res = self.ocr_system(frame)
 

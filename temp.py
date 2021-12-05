@@ -1,52 +1,37 @@
-# -*- encoding=utf-8 -*-
+from decord import VideoReader
+from decord import cpu, gpu
+from tqdm import tqdm
+from videocr.utils import Capture
+import time
 import cv2
 
-
-def compute_similar(img_a, img_b, size=(256, 40)):
-    if img_a.ndim == 3:
-        img_a = cv2.cvtColor(img_a, cv2.COLOR_RGB2GRAY)
-        img_a = cv2.resize(img_a, size)
-
-    if img_b.ndim == 3:
-        img_b = cv2.cvtColor(img_b, cv2.COLOR_RGB2GRAY)
-        img_b = cv2.resize(img_b, size)
-
-    hist_a = cv2.calcHist(images=[img_a],
-                          channels=[0], mask=None,
-                          histSize=[img_a.shape[0]],
-                          ranges=[0.0, 256.0])
-
-    hist_b = cv2.calcHist(images=[img_b],
-                          channels=[0], mask=None,
-                          histSize=[img_b.shape[0]],
-                          ranges=[0.0, 256.0])
-
-    return 1 - cv2.compareHist(hist_a, hist_b, 1)
+video_path = 'assets/4.mp4'
+start = time.time()
+with open(video_path, 'rb') as f:
+    vr = VideoReader(f, ctx=cpu(0))
+print('video frames:', len(vr))
+for i in tqdm(range(len(vr))):
+    frame = vr[i]
+    # Gray = R*0.299 + G*0.587 + B*0.114 
+    print('ok')
+    # print(frame.shape)
 
 
-if __name__ == '__main__':
-    img1_path = r'a.jpg'
-    img2_path = r'b.jpg'
-    # similary = calc_similar_by_path(img1_path, img2_path)
-    # print("两张图片相似度为:%s" % similary)
+# # To get multiple frames at once, use get_batch
+# # this is the efficient way to obtain a long list of frames
+# frames = vr.get_batch([1, 3, 5, 7, 9])
+# print(frames.shape)
+# # (5, 240, 320, 3)
+# # duplicate frame indices will be accepted and handled internally to avoid duplicate decoding
+# frames2 = vr.get_batch([1, 2, 3, 2, 3, 4, 3, 4, 5]).asnumpy()
+# print(frames2.shape)
+# # (9, 240, 320, 3)
 
-    img_a = cv2.imread(img1_path)
-    img_b = cv2.imread(img2_path)
-    res = compute_similar(img_a, img_b)
-    print(res)
-
-    # grey_img_a = cv2.cvtColor(img_a, cv2.COLOR_RGB2GRAY)
-    # grey_img_b = cv2.cvtColor(img_b, cv2.COLOR_RGB2GRAY)
-
-    # hist_a = cv2.calcHist(images=[grey_img_a],
-    #                       channels=[0], mask=None,
-    #                       histSize=[grey_img_a.shape[0]],
-    #                       range=[0.0, 256.0])
-
-    # hist_b = cv2.calcHist(images=[grey_img_b],
-    #                       channels=[0], mask=None,
-    #                       histSize=[grey_img_b.shape[0]],
-    #                       range=[0.0, 256.0])
-
-    # res = 1 - cv2.compareHist(hist_a, hist_b, 1)
-    # print(res)
+# # 2. you can do cv2 style reading as well
+# # skip 100 frames
+# vr.skip_frames(100)
+# # seek to start
+# vr.seek(0)
+# batch = vr.next()
+# print('frame shape:', batch.shape)
+# print('numpy frames:', batch.asnumpy())

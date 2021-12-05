@@ -3,9 +3,11 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import datetime
-
+from decord import VideoReader
+from decord import cpu
 import cv2
 import numpy as np
+from numpy.lib.function_base import diff
 
 
 class Capture(object):
@@ -13,23 +15,12 @@ class Capture(object):
         self.path = video_path
 
     def __enter__(self):
-        self.cap = cv2.VideoCapture(self.path)
-        if not self.cap.isOpened():
-            raise IOError('Can not open video {}.'.format(self.path))
-        return self.cap
+        with open(self.path, 'rb') as f:
+            self.vr = VideoReader(f, ctx=cpu(0))
+        return self.vr
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.cap.release()
-
-
-def get_specified_frame(index, video_path=None, v=None):
-    if video_path is None and v is not None:
-        v.set(cv2.CAP_PROP_POS_FRAMES, index)
-        return v.read()[1]
-    else:
-        with Capture(video_path) as v:
-            v.set(cv2.CAP_PROP_POS_FRAMES, index)
-            return v.read()[1]
+        self.vr.__del__()
 
 
 def get_frame_from_time(time_str, fps):
@@ -64,7 +55,7 @@ def get_srt_timestamp(frame_index: int, fps: float):
     return '{:02d}:{:02d}:{:02d},{:03d}'.format(h, m, s, ms)
 
 
-def is_similar(img_a, img_b, size=(256, 40), threshold=0.9999999):
+def is_similar(img_a, img_b, size=(256, 40), threshold=0.9):
     if img_a.ndim == 3:
         img_a = cv2.cvtColor(img_a, cv2.COLOR_RGB2GRAY)
         img_a = cv2.resize(img_a, size)
@@ -78,6 +69,23 @@ def is_similar(img_a, img_b, size=(256, 40), threshold=0.9999999):
 
     error = np.sum((img_a - img_b) ** 2) / img_a.size
     return (1 - error) > threshold
+
+
+def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.9):
+    img_a = rgb_to_grey(img_a) / 255
+    img_batch = rgb_to_grey(img_batch) / 255
+
+    difference = (img_a - img_batch) ** 2
+    difference = difference.reshape(img_batch.shape[0], -1)
+    error = np.sum(difference, axis=1) / img_a.size
+    return (1 - error) > threshold
+
+
+def rgb_to_grey(img):
+    if img.ndim == 3:
+        img = img[np.newaxis, :, :, :]
+
+    return img[..., 0] * 0.114 + img[..., 1] * 0.587 + img[..., 2] * 0.299
 
 
 def write_txt(save_path: str, content: list, mode='w'):
