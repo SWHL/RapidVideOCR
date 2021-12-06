@@ -1,13 +1,18 @@
 # VideoOCR
-- The `main` branch is the Decord version, it's faster than the OpenCV version.
-- The OpenCV version is in the branch `opencv_version`.
-- Forked from [videocr](https://github.com/apm1467/videocr)
+- The `main` branch is the Decord version, it's faster than the OpenCV version. The OpenCV version is in the branch `opencv_version`.
+- Modified from [videocr](https://github.com/apm1467/videocr)
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
+- Currently, the project only supports subtitles appearing separately under the video. Like the following example:
+  <div align="center">
+    <img src="./assets/demo.jpg" width="50%" height="50%"/>
+  </div>
 
-#### Want to do
-- [ ] The number of video frames cannot be divisible by batch_size.
-- [x] Refactor the project code.
-- [x] Less time to process the video.
+#### TODO
+- [ ] Adapt to the situation where subtitles appear on the video.
+- [ ] Organize the relevant parameters of the API.
+- [x] (2021-12-06)The number of video frames cannot be divisible by batch_size.
+- [x] (2021-12-05)Refactor the project code.
+- [x] (2021-12-05)Less time to process the video.
   - Accept the Decord package to load frame of the video. The following table is a comparison of the time taken by OpenCV and Decord to extract all the frames in the same video.
       |Method|Cost time(s)|Total Frames|
       |:---: |:---:|:---:|
@@ -15,7 +20,7 @@
       |OpenCV|721.5981|5987|
   - Use batch processing to compare the similarity between frames, which greatly speeds up video processing.
 
-- [x] Refer the repo [**ClipVideo**](https://github.com/SWHL/ClipVideo). ~~Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.~~
+- [x] (2021-12-01)Refer the repo [**ClipVideo**](https://github.com/SWHL/ClipVideo). ~~Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.~~
 
 #### Use
 1. Install the rapidocr package by the following:

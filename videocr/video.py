@@ -4,13 +4,11 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import numpy as np
-from decord import VideoReader
-from decord import cpu
+from decord import VideoReader, cpu
 from tqdm import tqdm
 
-from .utils import (is_similar,
-                    get_srt_timestamp,
-                    get_frame_from_time, is_similar_batch)
+from .utils import (get_frame_from_time, get_srt_timestamp, is_similar,
+                    is_similar_batch)
 
 
 class Video(object):
@@ -30,7 +28,7 @@ class Video(object):
         with tqdm(total=self.ocr_end, desc='Get the key point') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             slow, fast = 0, 1
-            while fast + batch_size < self.ocr_end:
+            while fast + batch_size <= self.ocr_end:
                 pbar.update(batch_size)
 
                 slow_frame = self.vr[slow].asnumpy()[self.height-40:, :, :]
@@ -50,12 +48,16 @@ class Video(object):
                     else:
                         self.key_point_dict[slow] = batch_list
 
-                    # slow += fast + batch_size
                     fast += batch_size
                 else:
                     # Exist the non similar frame.
                     slow = not_similar_index[0]
                     fast = slow + 1
+
+                # Fix the left frame.
+                if fast != self.ocr_end and fast + batch_size >= self.ocr_end:
+                    batch_size = self.ocr_end - fast
+                    pass
 
     def run_ocr(self, time_start, time_end, use_fullframe):
         self.ocr_start = get_frame_from_time(time_start, self.fps)
