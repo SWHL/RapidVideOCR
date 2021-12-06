@@ -12,35 +12,47 @@ from .utils import (get_frame_from_time, get_srt_timestamp, is_similar,
 
 
 class Video(object):
-    def __init__(self, path, ocr_system):
-        self.path = path
+    def __init__(self,
+                 video_path,
+                 ocr_system,
+                 batch_size=None,
+                 subtitle_height=45):
+        self.video_path = video_path
         self.ocr_system = ocr_system
 
-        print('Init Video instance')
-        self.vr = VideoReader(path, ctx=cpu(0))
+        print(f'Loading {self.video_path}')
+        self.vr = VideoReader(self.video_path, ctx=cpu(0))
         self.num_frames = len(self.vr)
-        self.fps = self.vr.get_avg_fps()
+        self.fps = int(self.vr.get_avg_fps())
+
         self.height = int(self.vr[0].shape[0])
+        self.subtitle_height = subtitle_height
+        self.crop_h = self.height - self.subtitle_height
+
+        if batch_size is None:
+            self.batch_size = self.fps * 2
+        else:
+            self.batch_size = batch_size
 
     def get_key_point(self):
         self.key_point_dict = {}
-        batch_size = int(self.fps) * 2
+        self.key_frames = {}
         with tqdm(total=self.ocr_end, desc='Get the key point') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             slow, fast = 0, 1
-            while fast + batch_size <= self.ocr_end:
-                pbar.update(batch_size)
+            while fast + self.batch_size <= self.ocr_end:
+                slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
-                slow_frame = self.vr[slow].asnumpy()[self.height-40:, :, :]
-
-                batch_list = list(range(fast, fast+batch_size))
+                batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
-                fast_frames = fast_frames[:, self.height-40:, :, :]
+                fast_frames = fast_frames[:, self.crop_h:, :, :]
 
-                compare_result = is_similar_batch(slow_frame, fast_frames,
+                compare_result = is_similar_batch(slow_frame,
+                                                  fast_frames,
                                                   threshold=0.95)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
+                # TODO: This is needed to optimize.
                 if not_similar_index.size == 0:
                     # All are similar with the slow frame.
                     if slow in self.key_point_dict:
@@ -48,18 +60,34 @@ class Video(object):
                     else:
                         self.key_point_dict[slow] = batch_list
 
-                    fast += batch_size
+                    if slow not in self.key_frames.keys():
+                        self.key_frames[slow] = slow_frame
+
+                    pbar.update(self.batch_size)
+                    fast += self.batch_size
                 else:
                     # Exist the non similar frame.
+                    len_index = not_similar_index[0] - slow
+                    if slow in self.key_point_dict:
+                        self.key_point_dict[slow].extend(batch_list[:len_index])
+                    else:
+                        self.key_point_dict[slow] = batch_list[:len_index]
+
+                    if slow not in self.key_frames.keys():
+                        self.key_frames[slow] = slow_frame
+
                     slow = not_similar_index[0]
+
                     fast = slow + 1
+                    pbar.update(slow - pbar.n + 1)
 
                 # Fix the left frame.
-                if fast != self.ocr_end and fast + batch_size >= self.ocr_end:
-                    batch_size = self.ocr_end - fast
-                    pass
+                if fast != self.ocr_end \
+                        and fast + self.batch_size > self.ocr_end:
+                    self.batch_size = self.ocr_end - fast
+                    pbar.update(self.batch_size)
 
-    def run_ocr(self, time_start, time_end, use_fullframe):
+    def run_ocr(self, time_start, time_end):
         self.ocr_start = get_frame_from_time(time_start, self.fps)
 
         if time_end == '0':
@@ -75,14 +103,20 @@ class Video(object):
         # Extract the filtered frames content.
         self.pred_frames = []
         key_index_frames = list(self.key_point_dict.keys())
-        frames = self.vr.get_batch(key_index_frames).asnumpy()
+        frames = np.stack(list(self.key_frames.values()), axis=0)
 
+        i = 0
+        import cv2
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
-            if not use_fullframe:
-                frame = frame[self.height * 4 // 5:, :, :]
-
-            _, rec_res = self.ocr_system(frame)
+            frame = cv2.copyMakeBorder(frame,
+                                       self.subtitle_height * 2,
+                                       self.subtitle_height * 2,
+                                       0, 0,
+                                       cv2.BORDER_CONSTANT,
+                                       value=(0, 0, 0))
+            cv2.imwrite(f'temp/{i}.jpg', frame)
+            _, rec_res = self.ocr_system(frame, i)
 
             if rec_res is None or len(rec_res) <= 0:
                 del self.key_point_dict[key]
@@ -91,6 +125,7 @@ class Video(object):
                 text = '\n'.join(text)
                 confidence = sum(confidence) / len(confidence)
                 self.pred_frames.append((text, confidence))
+            i += 1
 
     def get_subtitles(self):
         result = []

@@ -17,10 +17,13 @@ ocr_system = TextSystem(det_model_path,
 
 
 if __name__ == '__main__':
-    result = get_subtitles('assets/long.mp4',
+    batch_size = 48
+    subtitle_height = 45
+    result = get_subtitles('assets/1.mp4',
                            ocr_system,
+                           batch_size,
+                           subtitle_height,
                            time_start='00:00:00',
-                           time_end='0',
-                           use_fullframe=False)
+                           time_end='0')
     write_txt('result.txt', result)
     print(result)

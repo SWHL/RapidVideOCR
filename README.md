@@ -1,4 +1,4 @@
-# VideoOCR
+# RapidVideoOCR
 - The `main` branch is the Decord version, it's faster than the OpenCV version. The OpenCV version is in the branch `opencv_version`.
 - Modified from [videocr](https://github.com/apm1467/videocr)
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
@@ -9,7 +9,8 @@
 
 #### TODO
 - [ ] Adapt to the situation where subtitles appear on the video.
-- [ ] Organize the relevant parameters of the API.
+- [ ] Fix the show problem of the tqdm package.
+- [x] Organize the relevant parameters of the API.
 - [x] (2021-12-06)The number of video frames cannot be divisible by batch_size.
 - [x] (2021-12-05)Refactor the project code.
 - [x] (2021-12-05)Less time to process the video.
