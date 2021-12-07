@@ -1,0 +1,8 @@
+onnxruntime==1.7.0
+six==1.15.0
+numpy==1.19.5
+tqdm==4.52.0
+pyclipper==1.2.1
+decord==0.6.0
+Shapely==1.7.1
+opencv_python==4.5.1.48

@@ -326,13 +326,18 @@ class TextSystem(object):
             raise ValueError(f"error in loading image:{image_path}")
         return img
 
-    def __call__(self, img):
+    def __call__(self, img, index):
         if not isinstance(img, np.ndarray):
             raise ValueError("The format of the img is not ndarray")
 
+        import copy
+        ori_img = copy.deepcopy(img)
         dt_boxes, elapse = self.text_detector(img)
         if dt_boxes is None or len(dt_boxes) < 1:
             return None, None
+
+        # det_im = draw_text_det_res(dt_boxes, ori_img)
+        # cv2.imwrite(f'temp/{index}.jpg', det_im)
         img_crop_list = []
 
         # 检测框排序
