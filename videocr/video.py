@@ -49,7 +49,7 @@ class Video(object):
 
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
-                                                  threshold=0.95)
+                                                  threshold=0.98)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
                 # TODO: This is needed to optimize.
@@ -67,17 +67,16 @@ class Video(object):
                     fast += self.batch_size
                 else:
                     # Exist the non similar frame.
-                    len_index = not_similar_index[0] - slow
+                    index = not_similar_index[0] - slow
                     if slow in self.key_point_dict:
-                        self.key_point_dict[slow].extend(batch_list[:len_index])
+                        self.key_point_dict[slow].extend(batch_list[:index])
                     else:
-                        self.key_point_dict[slow] = batch_list[:len_index]
+                        self.key_point_dict[slow] = batch_list[:index]
 
                     if slow not in self.key_frames.keys():
                         self.key_frames[slow] = slow_frame
 
                     slow = not_similar_index[0]
-
                     fast = slow + 1
                     pbar.update(slow - pbar.n + 1)
 
@@ -85,7 +84,6 @@ class Video(object):
                 if fast != self.ocr_end \
                         and fast + self.batch_size > self.ocr_end:
                     self.batch_size = self.ocr_end - fast
-                    pbar.update(self.batch_size)
 
     def run_ocr(self, time_start, time_end):
         self.ocr_start = get_frame_from_time(time_start, self.fps)
@@ -115,7 +113,7 @@ class Video(object):
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0, 0))
-            cv2.imwrite(f'temp/{i}.jpg', frame)
+            # cv2.imwrite(f'temp/{i}.jpg', frame)
             _, rec_res = self.ocr_system(frame, i)
 
             if rec_res is None or len(rec_res) <= 0:

@@ -3,10 +3,10 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import datetime
-from decord import VideoReader
-from decord import cpu
+
 import cv2
 import numpy as np
+from decord import VideoReader, cpu
 from numpy.lib.function_base import diff
 
 

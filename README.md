@@ -9,7 +9,7 @@
 
 #### TODO
 - [ ] Adapt to the situation where subtitles appear on the video.
-- [ ] Fix the show problem of the tqdm package.
+- [x] Fix the show problem of the tqdm package.
 - [x] Organize the relevant parameters of the API.
 - [x] (2021-12-06)The number of video frames cannot be divisible by batch_size.
 - [x] (2021-12-05)Refactor the project code.
