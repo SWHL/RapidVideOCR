@@ -30,6 +30,6 @@
     Loading assets/1.mp4
     Get the key point: 100%|███████████████████| 303/303 [00:01<00:00, 282.91it/s]
     Extract content: 100%|████████████████████| 4/4 [00:01<00:00,  2.69it/s]
-    ['0  00:00:04,458 -> 00:00:08,583 : 我要去杂货店买点东西\n要我帮你买点牛奶吗？\nIm going grocery shopping You want some\nmilk？', "1  00:00:05,083 -> 00:00:12,583 : 一个还是两个？\n是两个\n对吧？\nOne\nquartortwo？It'stwo，right
-    ？"]
+    ['0  00:00:04,458 -> 00:00:08,583 : 我要去杂货店买点东西\n要我帮你买点牛奶吗？\nIm going grocery shopping You want some\nmilk？',
+     "1  00:00:05,083 -> 00:00:12,583 : 一个还是两个？\n是两个\n对吧？\nOne\nquartortwo？It'stwo，right？"]
    ```
