@@ -55,22 +55,6 @@ def get_srt_timestamp(frame_index: int, fps: float):
     return '{:02d}:{:02d}:{:02d},{:03d}'.format(h, m, s, ms)
 
 
-def is_similar(img_a, img_b, size=(256, 40), threshold=0.9):
-    if img_a.ndim == 3:
-        img_a = cv2.cvtColor(img_a, cv2.COLOR_RGB2GRAY)
-        img_a = cv2.resize(img_a, size)
-
-    if img_b.ndim == 3:
-        img_b = cv2.cvtColor(img_b, cv2.COLOR_RGB2GRAY)
-        img_b = cv2.resize(img_b, size)
-
-    img_a = img_a / 255
-    img_b = img_b / 255
-
-    error = np.sum((img_a - img_b) ** 2) / img_a.size
-    return (1 - error) > threshold
-
-
 def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.9):
     img_a = rgb_to_grey(img_a) / 255
     img_batch = rgb_to_grey(img_batch) / 255

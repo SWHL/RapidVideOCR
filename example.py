@@ -19,7 +19,7 @@ ocr_system = TextSystem(det_model_path,
 if __name__ == '__main__':
     batch_size = 100
     subtitle_height = 45
-    result = get_subtitles('assets/long.mp4',
+    result = get_subtitles('assets/1.mp4',
                            ocr_system,
                            batch_size,
                            subtitle_height,
