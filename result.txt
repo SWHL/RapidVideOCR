@@ -1,0 +1,9 @@
+0  00:00:04,458 -> 00:00:08,583 : 我要去杂货店买点东西
+要我帮你买点牛奶吗？
+Im going grocery shopping You want some
+milk？
+1  00:00:05,083 -> 00:00:12,583 : 一个还是两个？
+是两个
+对吧？
+One
+quartortwo？It'stwo，right？

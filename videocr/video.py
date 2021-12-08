@@ -7,8 +7,7 @@ import numpy as np
 from decord import VideoReader, cpu
 from tqdm import tqdm
 
-from .utils import (get_frame_from_time, get_srt_timestamp, is_similar,
-                    is_similar_batch)
+from .utils import get_frame_from_time, get_srt_timestamp, is_similar_batch
 
 
 class Video(object):
@@ -52,35 +51,33 @@ class Video(object):
                                                   threshold=0.98)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
-                # TODO: This is needed to optimize.
+
+                duplicate_frame = []
                 if not_similar_index.size == 0:
                     # All are similar with the slow frame.
-                    if slow in self.key_point_dict:
-                        self.key_point_dict[slow].extend(batch_list)
-                    else:
-                        self.key_point_dict[slow] = batch_list
-
-                    if slow not in self.key_frames.keys():
-                        self.key_frames[slow] = slow_frame
+                    duplicate_frame = batch_list
 
                     pbar.update(self.batch_size)
                     fast += self.batch_size
                 else:
                     # Exist the non similar frame.
                     index = not_similar_index[0] - slow
-                    if slow in self.key_point_dict:
-                        self.key_point_dict[slow].extend(batch_list[:index])
-                    else:
-                        self.key_point_dict[slow] = batch_list[:index]
-
-                    if slow not in self.key_frames.keys():
-                        self.key_frames[slow] = slow_frame
+                    duplicate_frame = batch_list[:index]
 
                     slow = not_similar_index[0]
                     fast = slow + 1
                     pbar.update(slow - pbar.n + 1)
 
-                # Fix the left frame.
+                # Record
+                if slow in self.key_point_dict:
+                    self.key_point_dict[slow].extend(duplicate_frame)
+                else:
+                    self.key_point_dict[slow] = duplicate_frame
+
+                if slow not in self.key_frames.keys():
+                    self.key_frames[slow] = slow_frame
+
+                # Take care the left frames, which can't up to the batch_size.
                 if fast != self.ocr_end \
                         and fast + self.batch_size > self.ocr_end:
                     self.batch_size = self.ocr_end - fast
