@@ -39,6 +39,8 @@ class Video(object):
         with tqdm(total=self.ocr_end, desc='Get the key point') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             slow, fast = 0, 1
+            if self.batch_size > self.ocr_end:
+                self.batch_size = self.ocr_end - 1
             while fast + self.batch_size <= self.ocr_end:
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
@@ -48,7 +50,7 @@ class Video(object):
 
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
-                                                  threshold=0.98)
+                                                  threshold=0.05)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
 
