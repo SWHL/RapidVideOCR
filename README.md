@@ -1,4 +1,5 @@
 # RapidVideOCR
+<a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
 - Modified from [videocr](https://github.com/apm1467/videocr)
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
 - Currently, the project only supports subtitles appearing separately under the video. Like the following example:
