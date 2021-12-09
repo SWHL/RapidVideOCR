@@ -15,9 +15,11 @@ class Video(object):
                  video_path,
                  ocr_system,
                  batch_size=None,
-                 subtitle_height=45):
+                 subtitle_height=45,
+                 error_num=0.1):
         self.video_path = video_path
         self.ocr_system = ocr_system
+        self.error_num = error_num
 
         print(f'Loading {self.video_path}')
         self.vr = VideoReader(self.video_path, ctx=cpu(0))
@@ -39,6 +41,9 @@ class Video(object):
         with tqdm(total=self.ocr_end, desc='Get the key point') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             slow, fast = 0, 1
+            if self.batch_size > self.ocr_end:
+                self.batch_size = self.ocr_end - 1
+
             while fast + self.batch_size <= self.ocr_end:
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
@@ -48,7 +53,7 @@ class Video(object):
 
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
-                                                  threshold=0.98)
+                                                  threshold=self.error_num)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
 
@@ -110,7 +115,7 @@ class Video(object):
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0, 0))
-            # cv2.imwrite(f'temp/{i}.jpg', frame)
+            cv2.imwrite(f'temp/{i}.jpg', frame)
             _, rec_res = self.ocr_system(frame, i)
 
             if rec_res is None or len(rec_res) <= 0:

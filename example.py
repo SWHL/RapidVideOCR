@@ -18,12 +18,16 @@ ocr_system = TextSystem(det_model_path,
 
 if __name__ == '__main__':
     batch_size = 100
-    subtitle_height = 45
-    result = get_subtitles('assets/1.mp4',
+    subtitle_height = 100
+
+    # 两帧之间MSE < error_num
+    error_num = 0.02
+    result = get_subtitles('assets/3.mp4',
                            ocr_system,
                            batch_size,
                            subtitle_height,
                            time_start='00:00:00',
-                           time_end='0')
+                           time_end='0',
+                           error_num=error_num)
     write_txt('result.txt', result)
     print(result)

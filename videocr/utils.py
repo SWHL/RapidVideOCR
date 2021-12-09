@@ -55,14 +55,14 @@ def get_srt_timestamp(frame_index: int, fps: float):
     return '{:02d}:{:02d}:{:02d},{:03d}'.format(h, m, s, ms)
 
 
-def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.9):
+def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.1):
     img_a = rgb_to_grey(img_a) / 255
     img_batch = rgb_to_grey(img_batch) / 255
 
     difference = (img_a - img_batch) ** 2
     difference = difference.reshape(img_batch.shape[0], -1)
     error = np.sum(difference, axis=1) / img_a.size
-    return (1 - error) > threshold
+    return error < threshold
 
 
 def rgb_to_grey(img):
