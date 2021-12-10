@@ -43,7 +43,6 @@ class Video(object):
             slow, fast = 0, 1
             if self.batch_size > self.ocr_end:
                 self.batch_size = self.ocr_end - 1
-
             while fast + self.batch_size <= self.ocr_end:
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
