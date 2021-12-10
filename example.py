@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # 两帧之间MSE < error_num
     error_num = 0.02
-    result = get_subtitles('assets/3.mp4',
+    result = get_subtitles('assets/2.mp4',
                            ocr_system,
                            batch_size,
                            subtitle_height,

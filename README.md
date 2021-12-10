@@ -8,7 +8,9 @@
   </div>
 
 #### TODO
+- [ ] Always be black background when removing the bg.
 - [ ] Adapt to the situation where subtitles appear on the video.
+- [ ]
 - [x] (2021-12-07) Fix the show problem of the tqdm package.
 - [x] (2021-12-07) Organize the relevant parameters of the API.
 - [x] (2021-12-06) The number of video frames cannot be divisible by batch_size.

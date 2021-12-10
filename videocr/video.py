@@ -7,7 +7,8 @@ import numpy as np
 from decord import VideoReader, cpu
 from tqdm import tqdm
 
-from .utils import get_frame_from_time, get_srt_timestamp, is_similar_batch
+from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
+                    remove_batch_bg, remove_bg)
 
 
 class Video(object):
@@ -50,6 +51,11 @@ class Video(object):
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
                 fast_frames = fast_frames[:, self.crop_h:, :, :]
 
+                # Remove the background of the frame.
+                slow_frame = remove_bg(slow_frame)
+                fast_frames = remove_batch_bg(fast_frames)
+
+                # Compare the similarity between the frames.
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
                                                   threshold=self.error_num)
@@ -108,13 +114,15 @@ class Video(object):
         import cv2
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
-            frame = cv2.copyMakeBorder(frame,
+            frame = cv2.copyMakeBorder(frame.squeeze(),
                                        self.subtitle_height * 2,
                                        self.subtitle_height * 2,
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
-                                       value=(0, 0, 0))
+                                       value=(0, 0))
             cv2.imwrite(f'temp/{i}.jpg', frame)
+            frame = np.expand_dims(frame, axis=2)
+            frame = np.concatenate([frame, frame, frame], axis=-1)
             _, rec_res = self.ocr_system(frame, i)
 
             if rec_res is None or len(rec_res) <= 0:

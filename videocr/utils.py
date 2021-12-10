@@ -55,20 +55,9 @@ def get_srt_timestamp(frame_index: int, fps: float):
     return '{:02d}:{:02d}:{:02d},{:03d}'.format(h, m, s, ms)
 
 
-def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.2):
-    img_a = rgb_to_grey(img_a)
-    img_a = threshold_img(img_a.squeeze())
-    img_a = img_a[np.newaxis, ...]
+def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.000):
     img_a /= 255
-
-    img_batch = rgb_to_grey(img_batch)
-    new_img_batch = []
-    for i, img_one in enumerate(img_batch):
-        temp_img = threshold_img(img_one)
-        new_img_batch.append(temp_img)
-        cv2.imwrite(f'temp/{i}.jpg', temp_img)
-    img_batch = np.array(new_img_batch) / 255
-
+    img_batch /= 255
     difference = (img_a - img_batch) ** 2
     difference = difference.reshape(img_batch.shape[0], -1)
     error = np.sum(difference, axis=1) / img_a.size
@@ -78,13 +67,27 @@ def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.2):
 def rgb_to_grey(img):
     if img.ndim == 3:
         img = img[np.newaxis, :, :, :]
-
     return img[..., 0] * 0.114 + img[..., 1] * 0.587 + img[..., 2] * 0.299
 
 
-def threshold_img(img):
+def remove_bg(img):
+    img = rgb_to_grey(img)
+    img = img.squeeze()
     _, img = cv2.threshold(img, 238, 255, cv2.THRESH_BINARY)
+    img = cv2.dilate(img, None, iterations=1)
+    img = img[np.newaxis, :, :]
     return img
+
+
+def remove_batch_bg(img_batch):
+    img_batch = rgb_to_grey(img_batch)
+    new_img_batch = []
+    for i, img_one in enumerate(img_batch):
+        _, temp_img = cv2.threshold(img_one, 238, 255, cv2.THRESH_BINARY)
+        temp_img = cv2.dilate(temp_img, None, iterations=1)
+        new_img_batch.append(temp_img)
+    img_batch = np.array(new_img_batch)
+    return img_batch
 
 
 def write_txt(save_path: str, content: list, mode='w'):
