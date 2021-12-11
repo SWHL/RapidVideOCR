@@ -10,8 +10,8 @@
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
 
 #### TODO
-- [x] Always be black background when removing the bg.
-- [x] Adapt to the situation where subtitles appear on the video.
+- [x] (2021-12-11)Always be black background when removing the bg.
+- [x] (2021-12-11)Adapt to the situation where subtitles appear on the video.
 - [x] (2021-12-07) Fix the show problem of the tqdm package.
 - [x] (2021-12-07) Organize the relevant parameters of the API.
 - [x] (2021-12-06) The number of video frames cannot be divisible by batch_size.
