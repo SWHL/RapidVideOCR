@@ -2,13 +2,10 @@
 <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
 - Modified from [videocr](https://github.com/apm1467/videocr)
 - The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
-- Currently, the project only supports subtitles appearing separately under the video. Like the following example:
-  <div align="center">
-    <img src="./assets/demo.jpg" width="50%" height="50%"/>
-  </div>
 
 #### TODO
-- [ ] Adapt to the situation where subtitles appear on the video.
+- [x] Always be black background when removing the bg.
+- [x] Adapt to the situation where subtitles appear on the video.
 - [x] (2021-12-07) Fix the show problem of the tqdm package.
 - [x] (2021-12-07) Organize the relevant parameters of the API.
 - [x] (2021-12-06) The number of video frames cannot be divisible by batch_size.

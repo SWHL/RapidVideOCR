@@ -3,11 +3,13 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import cv2
 import numpy as np
 from decord import VideoReader, cpu
 from tqdm import tqdm
 
-from .utils import get_frame_from_time, get_srt_timestamp, is_similar_batch
+from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
+                    remove_batch_bg, remove_bg, string_similar)
 
 
 class Video(object):
@@ -15,9 +17,11 @@ class Video(object):
                  video_path,
                  ocr_system,
                  batch_size=None,
-                 subtitle_height=45):
+                 subtitle_height=45,
+                 error_num=0.1):
         self.video_path = video_path
         self.ocr_system = ocr_system
+        self.error_num = error_num
 
         print(f'Loading {self.video_path}')
         self.vr = VideoReader(self.video_path, ctx=cpu(0))
@@ -38,6 +42,9 @@ class Video(object):
         self.key_frames = {}
         with tqdm(total=self.ocr_end, desc='Get the key point') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
+            if self.batch_size > self.ocr_end:
+                self.batch_size = self.ocr_end - 1
+
             slow, fast = 0, 1
             while fast + self.batch_size <= self.ocr_end:
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
@@ -46,9 +53,14 @@ class Video(object):
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
                 fast_frames = fast_frames[:, self.crop_h:, :, :]
 
+                # Remove the background of the frame.
+                slow_frame = remove_bg(slow_frame)
+                fast_frames = remove_batch_bg(fast_frames)
+
+                # Compare the similarity between the frames.
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
-                                                  threshold=0.98)
+                                                  threshold=self.error_num)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
 
@@ -100,18 +112,18 @@ class Video(object):
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
 
-        i = 0
-        import cv2
+        # Debug
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
-            frame = cv2.copyMakeBorder(frame,
+            frame = cv2.copyMakeBorder(frame.squeeze(),
                                        self.subtitle_height * 2,
                                        self.subtitle_height * 2,
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
-                                       value=(0, 0, 0))
-            # cv2.imwrite(f'temp/{i}.jpg', frame)
-            _, rec_res = self.ocr_system(frame, i)
+                                       value=(0, 0))
+            frame = np.expand_dims(frame, axis=2)
+            frame = np.concatenate([frame, frame, frame], axis=-1)
+            _, rec_res = self.ocr_system(frame)
 
             if rec_res is None or len(rec_res) <= 0:
                 del self.key_point_dict[key]
@@ -120,10 +132,28 @@ class Video(object):
                 text = '\n'.join(text)
                 confidence = sum(confidence) / len(confidence)
                 self.pred_frames.append((text, confidence))
-            i += 1
 
     def get_subtitles(self):
         result = []
+        slow, fast = 0, 1
+        n = len(self.pred_frames)
+        key_list = list(self.key_point_dict.keys())
+        invalid_keys = []
+        while fast < n:
+            if string_similar(self.pred_frames[slow][0],
+                              self.pred_frames[fast][0]) > 0.6:
+                # 相似→合并两个list
+                self.key_point_dict[key_list[slow]].extend(self.key_point_dict[key_list[fast]])
+                self.key_point_dict[key_list[slow]].sort()
+                invalid_keys.append(fast)
+                fast += 1
+            else:
+                # 不相似
+                slow = fast
+                fast += 1
+        [self.key_point_dict.pop(key_list[i]) for i in invalid_keys]
+        self.pred_frames = [v for i, v in enumerate(self.pred_frames) if i not in invalid_keys]
+
         for i, v in enumerate(self.key_point_dict.values()):
             start_index = get_srt_timestamp(v[0], self.fps)
             end_index = get_srt_timestamp(v[-1], self.fps)
