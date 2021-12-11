@@ -21,8 +21,8 @@ if __name__ == '__main__':
     subtitle_height = 100
 
     # 两帧之间MSE < error_num
-    error_num = 0.02
-    result = get_subtitles('assets/2.mp4',
+    error_num = 0.01
+    result = get_subtitles('assets/3.mp4',
                            ocr_system,
                            batch_size,
                            subtitle_height,

@@ -7,7 +7,12 @@ import datetime
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
-from numpy.lib.function_base import diff
+import copy
+import difflib
+
+
+def string_similar(s1, s2):
+    return difflib.SequenceMatcher(None, s1, s2).ratio()
 
 
 class Capture(object):
@@ -31,8 +36,8 @@ def get_frame_from_time(time_str, fps):
     return frame_index
 
 
-# convert time string to frame index
 def get_frame_index(time_str: str, fps: float):
+    # convert time string to frame index
     t = time_str.split(':')
     t = list(map(float, t))
     if len(t) == 3:
@@ -46,17 +51,20 @@ def get_frame_index(time_str: str, fps: float):
     return index
 
 
-# convert frame index into SRT timestamp
 def get_srt_timestamp(frame_index: int, fps: float):
+    # convert frame index into SRT timestamp
     td = datetime.timedelta(seconds=frame_index / fps)
     ms = td.microseconds // 1000
     m, s = divmod(td.seconds, 60)
     h, m = divmod(m, 60)
-    return '{:02d}:{:02d}:{:02d},{:03d}'.format(h, m, s, ms)
+    return f'{h:02d}:{m:02d}:{s:02d},{ms:03d}'
 
 
-def is_similar_batch(img_a, img_batch, size=(256, 40), threshold=0.000):
+def is_similar_batch(img_a, img_batch, threshold=0.000):
+    img_a = copy.deepcopy(img_a)
     img_a /= 255
+
+    img_batch = copy.deepcopy(img_batch)
     img_batch /= 255
     difference = (img_a - img_batch) ** 2
     difference = difference.reshape(img_batch.shape[0], -1)
@@ -70,11 +78,19 @@ def rgb_to_grey(img):
     return img[..., 0] * 0.114 + img[..., 1] * 0.587 + img[..., 2] * 0.299
 
 
-def remove_bg(img):
-    img = rgb_to_grey(img)
-    img = img.squeeze()
-    _, img = cv2.threshold(img, 238, 255, cv2.THRESH_BINARY)
+def binary_img(img):
+    _, img = cv2.threshold(img, 243, 255, cv2.THRESH_BINARY)
+    return img
+
+
+def dilate_img(img):
     img = cv2.dilate(img, None, iterations=1)
+    return img
+
+
+def remove_bg(img):
+    img = rgb_to_grey(img).squeeze()
+    img = dilate_img(binary_img(img))
     img = img[np.newaxis, :, :]
     return img
 
@@ -82,9 +98,8 @@ def remove_bg(img):
 def remove_batch_bg(img_batch):
     img_batch = rgb_to_grey(img_batch)
     new_img_batch = []
-    for i, img_one in enumerate(img_batch):
-        _, temp_img = cv2.threshold(img_one, 238, 255, cv2.THRESH_BINARY)
-        temp_img = cv2.dilate(temp_img, None, iterations=1)
+    for img_one in img_batch:
+        temp_img = dilate_img(binary_img(img_one))
         new_img_batch.append(temp_img)
     img_batch = np.array(new_img_batch)
     return img_batch
