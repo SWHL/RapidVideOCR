@@ -2,4 +2,3 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 from .api import get_subtitles
-from .utils import write_txt

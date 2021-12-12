@@ -84,7 +84,8 @@ def binary_img(img):
 
 
 def dilate_img(img):
-    img = cv2.dilate(img, None, iterations=1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+    img = cv2.dilate(img, kernel, iterations=1)
     return img
 
 
@@ -105,14 +106,3 @@ def remove_batch_bg(img_batch):
     return img_batch
 
 
-def write_txt(save_path: str, content: list, mode='w'):
-    """
-    将list内容写入txt中
-    @param
-    content: list格式内容
-    save_path: 绝对路径str
-    @return:None
-    """
-    with open(save_path, mode, encoding='utf-8') as f:
-        for value in content:
-            f.write(value + '\n')
