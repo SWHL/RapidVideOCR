@@ -1,4 +1,6 @@
 # RapidVideOCR
+简体中文 | [English](./README_en.md)
+
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
@@ -6,34 +8,52 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
-- Modified from [videocr](https://github.com/apm1467/videocr)
-- The part of OCR is accepted the [RapidOCR](https://github.com/RapidAI/RapidOCR).
+- 想法源自[videocr](https://github.com/apm1467/videocr)
+- 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
+  - **更快**：
+    - 采用[Decord](https://github.com/dmlc/decord)作为读取视频的库，更快;对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
+    - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
+  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR),依托于百度的PaddleOCR
 
-#### TODO
-- [x] (2021-12-11)Always be black background when removing the bg.
-- [x] (2021-12-11)Adapt to the situation where subtitles appear on the video.
-- [x] (2021-12-07) Fix the show problem of the tqdm package.
-- [x] (2021-12-07) Organize the relevant parameters of the API.
-- [x] (2021-12-06) The number of video frames cannot be divisible by batch_size.
-- [x] (2021-12-05) Refactor the project code.
-- [x] (2021-12-05) Less time to process the video.
-  - Accept the Decord package to load frame of the video. The following table is a comparison of the time taken by OpenCV and Decord to extract all the frames in the same video.
-      |Method|Cost time(s)|Total Frames|
-      |:---: |:---:|:---:|
-      |Decord|9.4021|5987|
-      |OpenCV|721.5981|5987|
-  - Use batch processing to compare the similarity between frames, which greatly speeds up video processing.
 
-- [x] (2021-12-01) Refer the repo [**ClipVideo**](https://github.com/SWHL/ClipVideo). ~~Combined with video editing, given a text field, the program can automatically clip the correspoding video segment.~~
+#### 使用步骤
+1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
 
-#### Use
-1. Download the models and character dict of the [RapidOCR](https://github.com/RapidAI/RapidOCR) by the link [Extract code: drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) or [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing).
-2. Put the models in the `resources/models`.
-3. Run the `python example.py`, and the extracted results will be saved the `results.txt`. The following is the running process display:
+2. 将下载好的models目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
    ```text
-    Loading assets/1.mp4
-    Get the key point: 100%|███████████████████| 303/303 [00:01<00:00, 282.91it/s]
-    Extract content: 100%|████████████████████| 4/4 [00:01<00:00,  2.69it/s]
-    ['0  00:00:04,458 -> 00:00:08,583 : 我要去杂货店买点东西\n要我帮你买点牛奶吗？\nIm going grocery shopping You want some\nmilk？',
-     "1  00:00:05,083 -> 00:00:12,583 : 一个还是两个？\n是两个\n对吧？\nOne\nquartortwo？It'stwo，right？"]
+   resources
+      - models
+        - ch_mobile_v2.0_rec_infer.onnx
+        - ch_PP-OCRv2_det_infer.onnx
+        - ch_ppocr_mobile_v2.0_cls_infer.onnx
+      - ppocr_keys_v1.txt
    ```
+
+3. 搭建运行环境
+   - 推荐Windows,整个项目目前只在Windows下测试过
+   - 安装相应的包
+      ```bash
+      cd RapidVideOCR
+
+      pip install -r requirements.txt -i https://pypi.douban.com/simple/
+      ```
+   - 也可以在[Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb)下快速查看运行Demo。
+
+4. 运行
+   - 代码
+      ```bash
+      cd RapidVideOCR
+
+      python main.py
+      ```
+   - 输入日志如下：
+     ```text
+     Loading assets/test_video/2.mp4
+     Get the key point: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
+     Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
+     The srt has been saved in the assets\test_video\2.srt.
+     The txt has been saved in the assets\test_video\2.txt.
+     The docx has been saved in the assets\test_video\2.docx.
+     ```
+
+5. 可以去**video所在目录**查看输出的文件
