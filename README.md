@@ -15,6 +15,11 @@
     - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
   - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR),依托于百度的PaddleOCR
 
+#### TODO
+- [ ] 完善对应的英文文档
+- [ ] 添加具体参数说明
+- [ ] 制作项目Logo
+- [ ] 更多的测试
 
 #### 使用步骤
 1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
