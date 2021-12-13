@@ -20,6 +20,13 @@
 - [ ] 添加具体参数说明
 - [ ] 制作项目Logo
 - [ ] 更多的测试
+- [x] 添加运行耗时基准
+
+#### 耗时基准
+|配置|测试MP4|耗时(s)|
+|:---:|:---:|:---:|
+|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|4.681s|
+
 
 #### 使用步骤
 1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
