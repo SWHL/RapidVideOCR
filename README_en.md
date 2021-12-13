@@ -22,7 +22,7 @@
 - [ ] Make the project logo.
 - [x] Add sample vidoe to run time-consuming benchmark.
 
-#### 耗时基准
+#### The benchmark of costing time
 |Env|Test MP4| Cost(s)|
 |:---:|:---:|:---:|
 |`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|4.681s|
