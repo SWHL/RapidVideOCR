@@ -3,7 +3,8 @@
 </div>
 <br/>
 
-# RapidVideOCR
+---
+
 简体中文 | [English](./README_en.md)
 
 <p align="left">
