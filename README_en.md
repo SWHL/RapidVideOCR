@@ -14,25 +14,24 @@
     - Adapted the [Decord](https://github.com/dmlc/decord), which is dedicated to processing videos.
     - Only extract the key frames of the whole video.
   - **More accurately**:
-    - 整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR),依托于百度的PaddleOCR
+    - The entire project is completely offline CPU running.
+    - The OCR part is from [RapidOCR](https://github.com/RapidAI/RapidOCR), relying on the [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/).
 
 #### TODO
-- [ ] 完善对应的英文文档
-- [ ] 添加具体参数说明
-- [ ] 制作项目Logo
-- [ ] 更多的测试
-- [x] 添加运行耗时基准
+- [ ] Add specific parameter descrition.
+- [ ] Make the project logo.
+- [x] Add sample vidoe to run time-consuming benchmark.
 
 #### 耗时基准
-|配置|测试MP4|耗时(s)|
+|Env|Test MP4| Cost(s)|
 |:---:|:---:|:---:|
 |`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|4.681s|
 
 
-#### 使用步骤
-1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
+#### Use
+1. Download the OCR models and dictionary keys used by RapidOCR. ([Baidu:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
 
-2. 将下载好的models目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
+2. Put the downloaded models and `ppocr_keys_v1.txt` under the `resources`, the specific directories are as follows:
    ```text
    resources
       - models
@@ -42,31 +41,31 @@
       - ppocr_keys_v1.txt
    ```
 
-3. 搭建运行环境
-   - 推荐Windows,整个项目目前只在Windows下测试过
-   - 安装相应的包
+4. Install the run envirement.
+   - Recommend the Window OS, because the entire project has only been tested under Windows now.
+   - Install the relative packages as follows.
       ```bash
       cd RapidVideOCR
 
       pip install -r requirements.txt -i https://pypi.douban.com/simple/
       ```
-   - 也可以在[Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb)下快速查看运行Demo。
 
-4. 运行
-   - 代码
+5. Run
+   - The code:
       ```bash
       cd RapidVideOCR
 
       python main.py
       ```
-   - 输入日志如下：
-     ```text
-     Loading assets/test_video/2.mp4
-     Get the key point: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
-     Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
-     The srt has been saved in the assets\test_video\2.srt.
-     The txt has been saved in the assets\test_video\2.txt.
-     The docx has been saved in the assets\test_video\2.docx.
-     ```
+    - The output log is as follows：
+        ```text
+        Loading assets/test_video/2.mp4
+        Get the key point: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
+        Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
+        The srt has been saved in the assets\test_video\2.srt.
+        The txt has been saved in the assets\test_video\2.txt.
+        The docx has been saved in the assets\test_video\2.docx.
+        ```
+   - Also run on the [Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb).
 
-5. 可以去**video所在目录**查看输出的文件
+6. Look the output files where the video is located.
