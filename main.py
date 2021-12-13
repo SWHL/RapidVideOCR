@@ -2,6 +2,8 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import time
+
 from rapid_videocr import get_subtitles
 from rapidocr import TextSystem
 
@@ -12,8 +14,8 @@ dict_path = "resources/ppocr_keys_v1.txt"
 
 
 if __name__ == '__main__':
-    import time
     s = time.time()
+
     ocr_system = TextSystem(det_model_path,
                             rec_model_path,
                             cls_model_path,
@@ -23,14 +25,17 @@ if __name__ == '__main__':
     subtitle_height = 100
     error_num = 0.01
     mp4_path = 'assets/test_video/2.mp4'
-    output_format = 'all'  # txt, srt, all
+    output_format = 'all'  # txt, srt, docx, all
+
+    time_start = '00:00:00'
+    time_end = '-1'
 
     result = get_subtitles(mp4_path,
                            ocr_system,
                            batch_size,
                            subtitle_height,
-                           time_start='00:00:00',
-                           time_end='0',
+                           time_start=time_start,
+                           time_end=time_end,
                            error_num=error_num,
                            output_format=output_format)
     print(f'elapse: {time.time() - s}s')

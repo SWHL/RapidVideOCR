@@ -1,3 +1,8 @@
+<div align="center">
+   <img src="assets/logo.png"  width="90%" height="90%">
+</div>
+<br/>
+
 # RapidVideOCR
 简体中文 | [English](./README_en.md)
 
@@ -15,21 +20,23 @@
     - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
   - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR),依托于百度的PaddleOCR
 
-#### TODO
+### TODO
 - [x] (2021-12-08)完善对应的英文文档
 - [x] (2021-12-08)添加运行耗时基准
-- [ ] 添加具体参数说明
+- [x] 添加具体参数说明
 - [ ] 制作项目Logo
 - [ ] 更多的测试
 - [ ] 尝试接入语音转文本模型
+- [ ] 引入智能合并文本为段落功能
 
-#### 耗时基准
-|配置|测试MP4|耗时(s)|
-|:---:|:---:|:---:|
-|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|4.681s|
+### 耗时基准
+|配置|测试MP4|总帧数|每帧大小|耗时(s)|
+|:---:|:---:|:---:|:---:|:---:|
+|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
+|`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
 
 
-#### 使用步骤
+### 使用步骤
 1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
 
 2. 将下载好的models目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
@@ -62,7 +69,7 @@
    - 输入日志如下：
      ```text
      Loading assets/test_video/2.mp4
-     Get the key point: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
+     Get the key frame: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
      Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
      The srt has been saved in the assets\test_video\2.srt.
      The txt has been saved in the assets\test_video\2.txt.
@@ -70,3 +77,14 @@
      ```
 
 5. 可以去**video所在目录**查看输出的文件
+
+
+### `main.py`中相关参数
+|参数名称|取值范围|含义|
+|:---:|:---:|:---:|
+|batch_size|[1, all_frames]|获取关键帧时，批量比较的batch大小，理论上，越大越快|
+|subtitle_height|default:100|字幕文本的高度|
+|error_num|[0, 1]|值越小，两张图之间差异点会更敏感
+|output_format|['txt', 'srt', 'docx', 'all']|输出最终字幕文件，all前面三个格式都输出|
+|time_start|整个视频所有的时间点|开始提取字幕的起始时间点|
+|time_end|整个视频所有的时间点,大于time_start, -1表示到最后|结束提取字幕的终止时间点|

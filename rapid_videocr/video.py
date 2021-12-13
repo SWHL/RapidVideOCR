@@ -56,10 +56,10 @@ class Video(object):
         if slow not in self.key_frames.keys():
             self.key_frames[slow] = slow_frame
 
-    def get_key_point(self):
+    def get_key_frame(self):
         self.key_point_dict = {}
         self.key_frames = {}
-        with tqdm(total=self.ocr_end, desc='Get the key point') as pbar:
+        with tqdm(total=self.ocr_end, desc='Get the key frame') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             if self.batch_size > self.ocr_end:
                 self.batch_size = self.ocr_end - 1
@@ -112,7 +112,7 @@ class Video(object):
     def run_ocr(self, time_start, time_end):
         self.ocr_start = get_frame_from_time(time_start, self.fps)
 
-        if time_end == '0':
+        if time_end == '-1':
             self.ocr_end = self.num_frames - 1
         else:
             self.ocr_end = get_frame_from_time(time_end, self.fps)
@@ -120,7 +120,7 @@ class Video(object):
         if self.ocr_end < self.ocr_start:
             raise ValueError('time_start is later than time_end')
 
-        self.get_key_point()
+        self.get_key_frame()
 
         # Extract the filtered frames content.
         self.pred_frames = []
