@@ -3,6 +3,8 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+from functools import singledispatch
+from io import BytesIO
 from pathlib import Path
 
 import cv2
@@ -12,7 +14,6 @@ from docx import Document
 from docx.api import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Cm
-from io import BytesIO
 from tqdm import tqdm
 
 from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
@@ -34,6 +35,7 @@ class Video(object):
 
         print(f'Loading {self.video_path}')
         self.vr = VideoReader(self.video_path, ctx=cpu(0))
+        # [cv2.imwrite(f'temp/raw/{i}.jpg', frame.asnumpy()) for i, frame in enumerate(self.vr)]
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
 
@@ -68,14 +70,25 @@ class Video(object):
             while fast + self.batch_size <= self.ocr_end:
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
+                # Remove the background of the frame.
+                slow_frame = remove_bg(slow_frame)
+
+                black_frame = np.zeros(slow_frame.shape)
+                single_match = is_similar_batch(slow_frame,
+                                                black_frame,
+                                                self.error_num)[0]
+                if single_match:
+                    slow += 1
+                    fast += 1
+                    pbar.update(1)
+
+                    continue
+
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
                 fast_frames = fast_frames[:, self.crop_h:, :, :]
 
-                # Remove the background of the frame.
-                slow_frame = remove_bg(slow_frame)
                 fast_frames = remove_batch_bg(fast_frames)
-
                 # Compare the similarity between the frames.
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
@@ -127,6 +140,7 @@ class Video(object):
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
 
+        i = 0
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
@@ -136,6 +150,8 @@ class Video(object):
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
             frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_GRAY2BGR)
+            cv2.imwrite(f'temp/{i}.jpg', frame)
+            i += 1
 
             _, rec_res = self.ocr_system(frame)
 

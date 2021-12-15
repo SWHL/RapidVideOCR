@@ -2,13 +2,13 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import copy
 import datetime
+import difflib
 
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
-import copy
-import difflib
 
 
 def string_similar(s1, s2):
@@ -104,5 +104,3 @@ def remove_batch_bg(img_batch):
         new_img_batch.append(temp_img)
     img_batch = np.array(new_img_batch)
     return img_batch
-
-

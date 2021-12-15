@@ -22,7 +22,7 @@ if __name__ == '__main__':
                             dict_path)
 
     batch_size = 100
-    subtitle_height = 100
+    subtitle_height = 152
     error_num = 0.01
     mp4_path = 'test_files/test_1.mp4'
     output_format = 'all'  # txt, srt, docx, all
