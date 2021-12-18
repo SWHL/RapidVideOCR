@@ -23,8 +23,8 @@ if __name__ == '__main__':
 
     batch_size = 100
     subtitle_height = 152
-    error_num = 0.01
-    mp4_path = 'test_files/test_1.mp4'
+    error_num = 0.005
+    mp4_path = 'assets/test_video/3.mp4'
     output_format = 'all'  # txt, srt, docx, all
 
     time_start = '00:00:00'

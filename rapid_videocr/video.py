@@ -3,7 +3,6 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-from functools import singledispatch
 from io import BytesIO
 from pathlib import Path
 
@@ -72,17 +71,6 @@ class Video(object):
 
                 # Remove the background of the frame.
                 slow_frame = remove_bg(slow_frame)
-
-                black_frame = np.zeros(slow_frame.shape)
-                single_match = is_similar_batch(slow_frame,
-                                                black_frame,
-                                                self.error_num)[0]
-                if single_match:
-                    slow += 1
-                    fast += 1
-                    pbar.update(1)
-
-                    continue
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
