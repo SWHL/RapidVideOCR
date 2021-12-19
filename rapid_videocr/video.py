@@ -4,6 +4,7 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 from io import BytesIO
+import random
 from pathlib import Path
 
 import cv2
@@ -24,13 +25,17 @@ class Video(object):
                  video_path,
                  ocr_system,
                  batch_size=None,
-                 subtitle_height=45,
+                 subtitle_height=None,
                  error_num=0.1,
-                 output_format='srt'):
+                 output_format='srt',
+                 text_det=None,
+                 is_dilate=True):
         self.video_path = video_path
         self.ocr_system = ocr_system
+        self.text_det = text_det
         self.error_num = error_num
         self.output_format = output_format
+        self.is_dilate = is_dilate
 
         print(f'Loading {self.video_path}')
         self.vr = VideoReader(self.video_path, ctx=cpu(0))
@@ -39,13 +44,51 @@ class Video(object):
         self.fps = int(self.vr.get_avg_fps())
 
         self.height = int(self.vr[0].shape[0])
-        self.subtitle_height = subtitle_height
+        if subtitle_height is None:
+            self.get_subtitle_height()
+        else:
+            self.subtitle_height = subtitle_height
+            print(f'Manual setting subtitle height: {self.subtitle_height}')
         self.crop_h = self.height - self.subtitle_height
 
         if batch_size is None:
             self.batch_size = self.fps * 2
         else:
             self.batch_size = batch_size
+
+    def get_subtitle_height(self):
+        # 随机挑选几帧做文本检测，确定文本高度
+        print('Auto set the subtitle height....')
+        if self.text_det is not None:
+            random_index = random.choices(range(len(self.vr)), k=5)
+            frames = self.vr.get_batch(random_index).asnumpy()
+            subtitle_h_list = []
+            for i, one_frame in enumerate(frames):
+                dt_boxes, _ = self.text_det(one_frame)
+
+                # Debug
+                # for box in dt_boxes:
+                #     box = np.array(box).astype(np.int32).reshape(-1, 2)
+                #     cv2.polylines(one_frame, [box], True,
+                #                 color=(255, 255, 0), thickness=2)
+                # cv2.imwrite(f'temp/{i}.jpg', one_frame)
+
+                if dt_boxes.size > 0 and dt_boxes is not None:
+                    middle_h = int(self.height / 2)
+                    mask = np.where(dt_boxes[:, 0, 1] > middle_h, True, False)
+                    dt_boxes = dt_boxes[mask]
+
+                    if dt_boxes.size > 0:
+                        max_h = np.max(np.max(dt_boxes[:, :, 1], axis=1)
+                                    - np.min(dt_boxes[:, :, 1], axis=1))
+                        bottom_margin = self.height - np.max(dt_boxes[:, :, 1])
+                        subtitle_h_list.append(int(max_h + 2 * bottom_margin))
+
+            if len(subtitle_h_list) > 0 and not self.is_dilate:
+                self.subtitle_height = int(np.max(subtitle_h_list)) * 2
+        else:
+            self.subtitle_height = 152
+        print(f'The subtitle value: {self.subtitle_height}')
 
     def record_info(self, slow, duplicate_frame, slow_frame):
         # Record
@@ -70,13 +113,14 @@ class Video(object):
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
                 # Remove the background of the frame.
-                slow_frame = remove_bg(slow_frame)
+                slow_frame = remove_bg(slow_frame, is_dilate=self.is_dilate)
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
                 fast_frames = fast_frames[:, self.crop_h:, :, :]
 
-                fast_frames = remove_batch_bg(fast_frames)
+                fast_frames = remove_batch_bg(fast_frames,
+                                              is_dilate=self.is_dilate)
                 # Compare the similarity between the frames.
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
@@ -128,7 +172,7 @@ class Video(object):
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
 
-        i = 0
+        # i = 0
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
@@ -138,8 +182,9 @@ class Video(object):
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
             frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_GRAY2BGR)
-            cv2.imwrite(f'temp/{i}.jpg', frame)
-            i += 1
+            # Debug
+            # cv2.imwrite(f'temp/key_frame/{i}.jpg', frame)
+            # i += 1
 
             _, rec_res = self.ocr_system(frame)
 

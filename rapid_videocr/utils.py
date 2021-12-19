@@ -9,6 +9,7 @@ import difflib
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
+from numpy.lib.type_check import _is_type_dispatcher
 
 
 def string_similar(s1, s2):
@@ -89,18 +90,21 @@ def dilate_img(img):
     return img
 
 
-def remove_bg(img):
+def remove_bg(img, is_dilate=True):
     img = rgb_to_grey(img).squeeze()
-    img = dilate_img(binary_img(img))
+    if is_dilate:
+        img = dilate_img(binary_img(img))
     img = img[np.newaxis, :, :]
     return img
 
 
-def remove_batch_bg(img_batch):
+def remove_batch_bg(img_batch, is_dilate=True):
     img_batch = rgb_to_grey(img_batch)
     new_img_batch = []
     for img_one in img_batch:
-        temp_img = dilate_img(binary_img(img_one))
-        new_img_batch.append(temp_img)
+        if is_dilate:
+            img_one = dilate_img(binary_img(img_one))
+
+        new_img_batch.append(img_one)
     img_batch = np.array(new_img_batch)
     return img_batch

@@ -22,7 +22,7 @@
   - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR),依托于百度的PaddleOCR
 
 ### TODO
-- [ ] 背景去除效果不好，导致丢失某些帧
+- [x] 背景去除效果不好，导致丢失某些帧
   - 尝试采用图像分割的方法，经过测试，CPU下推理速度太慢，暂时放弃
   - 目前采用的固定的二值化阈值
 - [x] (2021-12-14)完善对应的英文文档
@@ -86,8 +86,9 @@
 |参数名称|取值范围|含义|
 |:---:|:---:|:---:|
 |batch_size|[1, all_frames]|获取关键帧时，批量比较的batch大小，理论上，越大越快|
-|subtitle_height|default:100|字幕文本的高度|
-|error_num|[0, 1]|值越小，两张图之间差异点会更敏感
-|output_format|['txt', 'srt', 'docx', 'all']|输出最终字幕文件，all前面三个格式都输出|
+|is_dilate|bool|是否腐蚀字幕所在背景图像|
+|subtitle_height|default:None|字幕文本的高度,默认自动获取|
+|error_num|[0, 1]， default:0.005|值越小，两张图之间差异点会更敏感|
+|output_format|['txt', 'srt', 'docx', 'all']|输出最终字幕文件，`all`前面三个格式都输出|
 |time_start|整个视频所有的时间点|开始提取字幕的起始时间点|
 |time_end|整个视频所有的时间点,大于time_start, -1表示到最后|结束提取字幕的终止时间点|
