@@ -3,8 +3,8 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-from io import BytesIO
 import random
+from io import BytesIO
 from pathlib import Path
 
 import cv2
@@ -80,12 +80,14 @@ class Video(object):
 
                     if dt_boxes.size > 0:
                         max_h = np.max(np.max(dt_boxes[:, :, 1], axis=1)
-                                    - np.min(dt_boxes[:, :, 1], axis=1))
+                                       - np.min(dt_boxes[:, :, 1], axis=1))
                         bottom_margin = self.height - np.max(dt_boxes[:, :, 1])
                         subtitle_h_list.append(int(max_h + 2 * bottom_margin))
 
             if len(subtitle_h_list) > 0 and not self.is_dilate:
                 self.subtitle_height = int(np.max(subtitle_h_list)) * 2
+            else:
+                self.subtitle_height = 152
         else:
             self.subtitle_height = 152
         print(f'The subtitle value: {self.subtitle_height}')
