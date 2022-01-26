@@ -19,7 +19,14 @@
   - **更快**：
     - 采用[Decord](https://github.com/dmlc/decord)作为读取视频的库，更快;对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
     - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
-  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR),依托于百度的PaddleOCR
+  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，依托于百度的PaddleOCR
+- 🐱如果识别的字幕为纯英文字幕，可以在`main.py`中更改只识别英文和数字的模型，来达到更好的效果。
+  ```python
+  det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
+  cls_model_path = "resources/models/ch_ppocr_mobile_v2.0_cls_infer.onnx"
+  rec_model_path = "resources/models/en_number_mobile_v2.0_rec_infer.onnx"
+  dict_path = "resources/en_dict.txt"
+  ```
 
 ### TODO
 - [x] 背景去除效果不好，导致丢失某些帧
@@ -42,14 +49,16 @@
 ### 使用步骤
 1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
 
-2. 将下载好的models目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
+2. 将下载好的`models`目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
    ```text
    resources
       - models
         - ch_mobile_v2.0_rec_infer.onnx
         - ch_PP-OCRv2_det_infer.onnx
         - ch_ppocr_mobile_v2.0_cls_infer.onnx
+        - en_number_mobile_v2.0_rec_infer.onnx
       - ppocr_keys_v1.txt
+      - en_dict.txt
    ```
 
 3. 搭建运行环境
