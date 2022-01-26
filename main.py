@@ -3,10 +3,9 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import time
-from typing import Text
 
 from rapid_videocr import get_subtitles
-from rapidocr import TextSystem, TextDetector
+from rapidocr import TextDetector, TextSystem
 
 det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
 cls_model_path = "resources/models/ch_ppocr_mobile_v2.0_cls_infer.onnx"
