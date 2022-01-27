@@ -28,7 +28,11 @@
   dict_path = "resources/en_dict.txt"
   ```
 
-### TODO
+### 视频OCR学术动态
+- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888)
+- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
+
+### 更新日志
 - [x] 背景去除效果不好，导致丢失某些帧
   - 尝试采用图像分割的方法，经过测试，CPU下推理速度太慢，暂时放弃
   - 目前采用的固定的二值化阈值
