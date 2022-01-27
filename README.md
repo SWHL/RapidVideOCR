@@ -32,6 +32,11 @@
 - [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888)
 - [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
 
+### 未来的应用场景探索
+- 基于视频文本OCR的视频内容理解，结合图像特征+图像中文本特征
+- 视频字幕自动翻译
+- 基于视频文本特征的视频检索
+
 ### 更新日志
 - [x] 背景去除效果不好，导致丢失某些帧
   - 尝试采用图像分割的方法，经过测试，CPU下推理速度太慢，暂时放弃
