@@ -14,6 +14,7 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
+- 支持字幕语言：中文|英文
 - 想法源自[videocr](https://github.com/apm1467/videocr)
 - 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
   - **更快**：

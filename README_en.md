@@ -8,6 +8,7 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
+- Support subtitle language: Chinese | English
 - Drive from [videocr](https://github.com/apm1467/videocr)
 - Extract subtitles embedded in the video faster and more accurately, and provide three formats of `txt|SRT|docx`
   - **Faster**:
