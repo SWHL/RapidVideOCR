@@ -1,4 +1,10 @@
-# RapidVideOCR
+<div align="center">
+   <img src="assets/logo.png"  width="80%" height="80%">
+</div>
+<br/>
+
+---
+
 [简体中文](./README.md) | English
 
 <p align="left">
