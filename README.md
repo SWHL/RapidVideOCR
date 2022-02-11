@@ -14,6 +14,7 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
+- 支持字幕语言：中文|英文
 - 想法源自[videocr](https://github.com/apm1467/videocr)
 - 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
   - **更快**：
@@ -28,7 +29,16 @@
   dict_path = "resources/en_dict.txt"
   ```
 
-### TODO
+### 视频OCR学术动态
+- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888)
+- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
+
+### 未来的应用场景探索
+- 基于视频文本OCR的视频内容理解，结合图像特征+图像中文本特征
+- 视频字幕自动翻译
+- 基于视频文本特征的视频检索
+
+### 更新日志
 - [x] 背景去除效果不好，导致丢失某些帧
   - 尝试采用图像分割的方法，经过测试，CPU下推理速度太慢，暂时放弃
   - 目前采用的固定的二值化阈值
