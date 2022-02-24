@@ -65,13 +65,13 @@
 2. 将下载好的`models`目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
    ```text
    resources
-      - models
-        - ch_mobile_v2.0_rec_infer.onnx
-        - ch_PP-OCRv2_det_infer.onnx
-        - ch_ppocr_mobile_v2.0_cls_infer.onnx
-        - en_number_mobile_v2.0_rec_infer.onnx
-      - ppocr_keys_v1.txt
-      - en_dict.txt
+      |-- models
+      |-- ch_mobile_v2.0_rec_infer.onnx
+      |-- ch_PP-OCRv2_det_infer.onnx
+      |-- ch_ppocr_mobile_v2.0_cls_infer.onnx
+      |-- en_number_mobile_v2.0_rec_infer.onnx
+      |-- ppocr_keys_v1.txt
+      `-- en_dict.txt
    ```
 
 3. 搭建运行环境
