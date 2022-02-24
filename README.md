@@ -91,7 +91,7 @@
 
       python main.py
       ```
-   - 输入日志如下：
+   - 输出日志如下：
      ```text
      Loading assets/test_video/2.mp4
      Get the key frame: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
