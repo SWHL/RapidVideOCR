@@ -7,3 +7,4 @@ decord==0.6.0
 Shapely==1.7.1
 opencv_python==4.5.1.48
 python-docx==0.8.10
+Pillow
