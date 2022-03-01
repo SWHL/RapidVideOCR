@@ -1,4 +1,4 @@
-onnxruntime==1.7.0
+onnxruntime==1.7.2
 six==1.15.0
 numpy==1.19.5
 tqdm==4.52.0
