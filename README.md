@@ -20,7 +20,8 @@
   - **更快**：
     - 采用[Decord](https://github.com/dmlc/decord)作为读取视频的库，更快;对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
     - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
-  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，依托于百度的PaddleOCR
+  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，模型均来自PaddleOCR
+  - **更方便**：采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
 - 🐱如果识别的字幕为纯英文字幕，可以在`main.py`中更改只识别英文和数字的模型，来达到更好的效果。
   ```python
   det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
