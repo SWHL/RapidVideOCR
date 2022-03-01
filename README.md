@@ -16,6 +16,7 @@
 
 - 支持字幕语言：中文|英文
 - 想法源自[videocr](https://github.com/apm1467/videocr)
+- 可加入QQ群：**706807542**
 - 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
   - **更快**：
     - 采用[Decord](https://github.com/dmlc/decord)作为读取视频的库，更快;对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
