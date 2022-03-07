@@ -10,7 +10,7 @@
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
-    <a href=""><img src="https://img.shields.io/badge/Python-3.6,7,8,9-aff.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/Python-3.6-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
