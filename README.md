@@ -10,7 +10,7 @@
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
-    <a href=""><img src="https://img.shields.io/badge/Python-3.6-aff.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
@@ -31,18 +31,13 @@
   dict_path = "resources/en_dict.txt"
   ```
 
-### 视频OCR学术动态
-- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
-- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
-
-### 未来的应用场景探索
-- 基于视频文本OCR的视频内容理解，结合图像特征+图像中文本特征
-- 视频字幕自动翻译
-- 基于视频文本特征的视频检索
-
 ### 更新日志
-<details>
-   
+<details open>
+
+#### 2022-03-09 update:
+- 添加[常见问题模块](./FAQ.md)，可以帮助大家跳过常见的小问题
+
+#### 2021-12-14 update:
 - [x] 背景去除效果不好，导致丢失某些帧
   - 尝试采用图像分割的方法，经过测试，CPU下推理速度太慢，暂时放弃
   - 目前采用的固定的二值化阈值
@@ -53,6 +48,16 @@
 - [ ] 更多的测试
 </details>
 
+### 常见问题 [FAQ](./FAQ.md)
+
+### 视频OCR学术动态
+- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
+- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
+
+### 未来的应用场景探索
+- 基于视频文本OCR的视频内容理解，结合图像特征+图像中文本特征
+- 视频字幕自动翻译
+- 基于视频文本特征的视频检索
 
 ### 耗时基准
 |配置|测试MP4|总帧数|每帧大小|耗时(s)|

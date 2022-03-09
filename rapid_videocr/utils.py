@@ -62,14 +62,16 @@ def get_srt_timestamp(frame_index: int, fps: float):
 
 
 def is_similar_batch(img_a, img_batch, threshold=0.000):
-    img_a = copy.deepcopy(img_a)
-    img_a /= 255
+    img_a_tmp = copy.deepcopy(img_a)
+    img_batch_tmp = copy.deepcopy(img_batch)
 
-    img_batch = copy.deepcopy(img_batch)
-    img_batch /= 255
-    difference = (img_a - img_batch) ** 2
-    difference = difference.reshape(img_batch.shape[0], -1)
-    error = np.sum(difference, axis=1) / img_a.size
+    img_a_tmp /= 255
+    img_batch_tmp /= 255
+
+    difference = (img_a_tmp - img_batch_tmp) ** 2
+    difference = difference.reshape(img_batch_tmp.shape[0], -1)
+
+    error = np.sum(difference, axis=1) / img_a_tmp.size
     return error < threshold
 
 

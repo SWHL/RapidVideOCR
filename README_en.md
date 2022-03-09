@@ -32,16 +32,24 @@
    dict_path = "resources/en_dict.txt"
    ```
 
+### Change log
+
+#### 2022-03-09 update:
+- Add [FAQ]((./FAQ.md)) module.
+
+#### 2021-12-14 update:
+  - [x] Add specific parameter descrition.
+  - [x] Make the project logo.
+  - [x] Add sample vidoe to run time-consuming benchmark.
+
+
+### [FAQ](./FAQ.md)
+
 
 ### Video OCR Research
 - [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888)
 - [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
 
-
-### Change log
-- [x] Add specific parameter descrition.
-- [x] Make the project logo.
-- [x] Add sample vidoe to run time-consuming benchmark.
 
 ### The benchmark of costing time
 
