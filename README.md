@@ -50,7 +50,11 @@
 
 ### 常见问题 [FAQ](./FAQ.md)
 
-### 视频OCR学术动态
+### 视频OCR
+#### 比赛动态
+- [【2022-03-13 update】ICPR 2022 | 多模态字幕识别竞赛正式启动！](https://mp.weixin.qq.com/s/HxcrgXOQmaqDpPsGN1PFjw)
+
+#### 学术动态
 - [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
 - [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
 
