@@ -31,6 +31,9 @@
   dict_path = "resources/en_dict.txt"
   ```
 
+### TODO
+- [ ] 结合视频的音频信息，借助ASR技术(语音转文本)，多模态同时识别和提取字幕
+
 ### 更新日志
 <details open>
 
