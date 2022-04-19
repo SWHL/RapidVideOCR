@@ -39,7 +39,10 @@ class Video(object):
 
         print(f'Loading {self.video_path}')
         self.vr = VideoReader(self.video_path, ctx=cpu(0))
+
+        # Debug
         # [cv2.imwrite(f'temp/raw/{i}.jpg', frame.asnumpy()) for i, frame in enumerate(self.vr)]
+
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
 
@@ -105,6 +108,7 @@ class Video(object):
     def get_key_frame(self):
         self.key_point_dict = {}
         self.key_frames = {}
+
         with tqdm(total=self.ocr_end, desc='Get the key frame') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             if self.batch_size > self.ocr_end:
