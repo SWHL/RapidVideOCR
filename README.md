@@ -75,7 +75,7 @@
 
 
 ### 使用步骤
-1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
+1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1ttDQKp8-MhF1ZqyYZR5LJRBaqu8nhp2C?usp=sharing))
 
 2. 将下载好的`models`目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
    ```text
@@ -90,7 +90,7 @@
    ```
 
 3. 搭建运行环境
-   - 推荐Windows,整个项目目前只在Windows下测试过
+   - 推荐Windows，整个项目目前只在Windows下测试过
    - 安装相应的包
       ```bash
       cd RapidVideOCR
