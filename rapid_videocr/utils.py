@@ -50,7 +50,7 @@ def get_srt_timestamp(frame_index: int, fps: float):
     ms = td.microseconds // 1000
     m, s = divmod(td.seconds, 60)
     h, m = divmod(m, 60)
-    return f'{h:02d}:{m:02d}:{s:02d},{ms:03d}'
+    return f'{h:02d}:{m:02d}:{s:02d},{ms:03d}', td.seconds * 1000 + ms
 
 
 def is_similar_batch(img_a, img_batch, threshold=0.000):

@@ -3,12 +3,14 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+from pathlib import Path
 import random
+import tempfile
 
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
-
+from pydub import AudioSegment
 from tqdm import tqdm
 
 from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
@@ -17,10 +19,14 @@ from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
 
 
 class ExtractSubtitle(object):
-    def __init__(self, ocr_system, subtitle_height=None, error_num=0.1,
-                 output_format='srt', text_det=None, is_dilate=True):
+    def __init__(self, ocr_system, subtitle_height=None,
+                 error_num=0.1, output_format='srt', text_det=None,
+                 asr_executor=None, is_dilate=True):
         self.ocr_system = ocr_system
         self.text_det = text_det
+
+        self.asr_executor = asr_executor
+
         self.error_num = error_num
         self.output_format = output_format
         self.is_dilate = is_dilate
@@ -28,8 +34,15 @@ class ExtractSubtitle(object):
 
     def __call__(self, video_path, time_start, time_end, batch_size):
         self.video_path = video_path
+
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path, ctx=cpu(0))
+
+        if self.asr_executor is not None:
+            self.audio = AudioSegment.from_file(
+                video_path, 'mp4').set_frame_rate(16000)
+        else:
+            self.audio = None
 
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
@@ -216,13 +229,29 @@ class ExtractSubtitle(object):
                             if i not in invalid_keys]
 
         self.extract_result = []
+        asr_result = []
         for i, (k, v) in enumerate(self.key_point_dict.items()):
-            start_index = get_srt_timestamp(v[0], self.fps)
-            end_index = get_srt_timestamp(v[-1], self.fps)
+            start_index, start_seconds = get_srt_timestamp(v[0], self.fps)
+            end_index, end_seconds = get_srt_timestamp(v[-1], self.fps)
+
+            # asr识别
+            if self.asr_executor is not None:
+                print('asr rec...')
+
+                clip_audio = self.audio[start_seconds:end_seconds]
+                with tempfile.TemporaryDirectory() as tmp_dir_name:
+                    wav_tmp_path = str(Path(tmp_dir_name) / f'{i}.wav')
+
+                    clip_audio.export(wav_tmp_path, format='wav')
+
+                    text = self.asr_executor(audio_file=wav_tmp_path)
+
+                    asr_result.append(text)
+
             self.extract_result.append([k, start_index,
                                         end_index, self.pred_frames[i][0]])
         self.save_output()
-        return self.extract_result
+        return self.extract_result, asr_result
 
     def save_output(self):
         if self.output_format == 'srt':

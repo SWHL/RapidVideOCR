@@ -32,11 +32,16 @@
   ```
 
 ### TODO
-- [ ] 结合视频的音频信息，借助ASR技术(语音转文本)，多模态同时识别和提取字幕
+- [x] 结合视频的音频信息，借助ASR技术(语音转文本)，多模态同时识别和提取字幕
 - [ ] 进一步提高字幕识别准确率
 
 ### 更新日志
 <details open>
+
+#### 💡2022-05-01 update:
+- 添加语音识别模块，由于该模块中解码部分只能在Linux和Mac上运行，因此如果想要使用该模块，请在Linux和Mac上。
+- 目前语音识别代码来自[RapidASR/python](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech)部分。模型来自[PaddleSpeech](https://github.com/PaddlePaddle/PaddleSpeech/tree/develop/examples/aishell/asr0)
+- 经过简单测试，语音识别模块不是太准。-_-!
 
 #### 2022-03-09 update:
 - 添加[常见问题模块](./FAQ.md)，可以帮助大家跳过常见的小问题
@@ -77,16 +82,22 @@
 ### 使用步骤
 1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1ttDQKp8-MhF1ZqyYZR5LJRBaqu8nhp2C?usp=sharing))
 
-2. 将下载好的`models`目录和`ppocr_keys_v1.txt`放到`resources`下，具体目录如下：
+2. 将下载好的`models`目录和`ppocr_keys_v1.txt`放到`resources/rapid_ocr`下，具体目录如下：
    ```text
-   resources
-      |-- models
-      |  |-- ch_mobile_v2.0_rec_infer.onnx
-      |  |-- ch_PP-OCRv2_det_infer.onnx
-      |  |-- ch_ppocr_mobile_v2.0_cls_infer.onnx
-      |  `-- en_number_mobile_v2.0_rec_infer.onnx
-      |-- ppocr_keys_v1.txt
-      `-- en_dict.txt
+   resources/
+   ├── rapid_asr
+   │   ├── models
+   │   │   ├── asr0_deepspeech2_online_aishell_ckpt_0.2.0.onnx
+   │   │   └── language_model
+   │   │       └── zh_giga.no_cna_cmn.prune01244.klm
+   │   └── model.yaml
+   └── rapid_ocr
+      ├── en_dict.txt
+      ├── models
+      │   ├── ch_mobile_v2.0_rec_infer.onnx
+      │   ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
+      │   └── ch_PP-OCRv2_det_infer.onnx
+      └── ppocr_keys_v1.txt
    ```
 
 3. 搭建运行环境
@@ -118,6 +129,9 @@
 
 5. 可以去**video所在目录**查看输出的文件
 
+6. 想要使用asr模块,怎么做？
+   - 首先去参考[RapidASR](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech)的README部分。将其中对应模型放到`resources/rapid_asr`目录下，具体目录结构参考上面给出的。
+   - 在`main.py`中给出了`asr`模块类实例的用法。如果不想使用，直接将`ExtractSubtitle`中参数`asr_executor=None`即可。
 
 ### `main.py`中相关参数
 |参数名称|取值范围|含义|

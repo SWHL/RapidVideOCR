@@ -34,6 +34,11 @@
 
 ### Change log
 
+#### 💡2022-05-01 update:
+- Add the speech recognition module. Since the decoding part of this module can only run on Linux and Mac, if you want to use this module, please use Linux and Mac.
+- The current speech recognition code comes from the [RapidASR/python](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech) section. Model from [PaddleSpeech](https://github.com/PaddlePaddle/PaddleSpeech/tree/develop/examples/aishell/asr0).
+- After a simple test, the voice recognition module is not too accurate. -_-!
+
 #### 2022-03-09 update:
 - Add [FAQ]((./FAQ.md)) module.
 
