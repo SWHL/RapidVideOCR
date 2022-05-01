@@ -4,7 +4,7 @@
 # @Contact: liekkaskono@163.com
 import time
 
-from rapid_videocr import get_subtitles
+from rapid_videocr import ExtractSubtitle
 from rapidocr import TextDetector, TextSystem
 
 det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
@@ -32,14 +32,9 @@ if __name__ == '__main__':
     time_start = '00:00:00'
     time_end = '-1'
 
-    result = get_subtitles(mp4_path,
-                           ocr_system,
-                           batch_size,
-                           subtitle_height,
-                           time_start=time_start,
-                           time_end=time_end,
-                           error_num=error_num,
-                           output_format=output_format,
-                           text_det=text_det,
-                           is_dilate=is_dilate)
+    videor = ExtractSubtitle(ocr_system, subtitle_height,
+                             error_num=error_num, output_format=output_format,
+                             text_det=text_det, is_dilate=is_dilate)
+    result = videor(mp4_path, time_start, time_end, batch_size)
+    print(result)
     print(f'elapse: {time.time() - s}s')

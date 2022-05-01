@@ -5,28 +5,20 @@
 import copy
 import datetime
 import difflib
+from pathlib import Path
 
 import cv2
 import numpy as np
-from decord import VideoReader, cpu
-from numpy.lib.type_check import _is_type_dispatcher
+from docx import Document
+from docx.api import Document
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.shared import Cm
+from io import BytesIO
+from pathlib import Path
 
 
 def string_similar(s1, s2):
     return difflib.SequenceMatcher(None, s1, s2).ratio()
-
-
-class Capture(object):
-    def __init__(self, video_path):
-        self.path = video_path
-
-    def __enter__(self):
-        with open(self.path, 'rb') as f:
-            self.vr = VideoReader(f, ctx=cpu(0))
-        return self.vr
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.vr.__del__()
 
 
 def get_frame_from_time(time_str, fps):
@@ -110,3 +102,60 @@ def remove_batch_bg(img_batch, is_dilate=True):
         new_img_batch.append(img_one)
     img_batch = np.array(new_img_batch)
     return img_batch
+
+
+def save_srt(video_path, extract_result):
+    final_result = []
+    for i, start_index, end_index, text in extract_result:
+        final_result.append(
+            f'{i}\n{start_index} --> {end_index}\n{text}\n')
+
+    save_output_dir = Path(video_path).parent
+    video_path_stem = Path(video_path).stem
+    save_full_path = save_output_dir / f'{video_path_stem}.srt'
+
+    with open(save_full_path, 'w', encoding='utf-8') as f:
+        for value in final_result:
+            f.write(value + '\n')
+    print(f'The srt has been saved in the {save_full_path}.')
+
+def save_txt(video_path, extract_result):
+    final_result = []
+    for _, _, _, text in extract_result:
+        final_result.append(f'{text}\n')
+
+    save_output_dir = Path(video_path).parent
+    video_path_stem = Path(video_path).stem
+    save_full_path = save_output_dir / f'{video_path_stem}.txt'
+
+    with open(save_full_path, 'w', encoding='utf-8') as f:
+        for value in final_result:
+            f.write(value + '\n')
+    print(f'The txt has been saved in the {save_full_path}.')
+
+def save_docx(video_path, extract_result, vr):
+    """
+        将带有图像和对应的文本保存到word中
+        图像在上，文字在下，居中排列
+    """
+    doc = Document()
+    for k, _, _, text in extract_result:
+        raw_im = cv2.cvtColor(vr[k].asnumpy(), cv2.COLOR_BGR2RGB)
+        im = cv2.imencode('.jpg', raw_im)[1]
+        im_bytes = BytesIO(im.tobytes())
+
+        img_para = doc.add_paragraph()
+        img_para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        img_run = img_para.add_run('')
+        img_run.add_picture(im_bytes, width=Cm(13.93))
+
+        text_para = doc.add_paragraph()
+        text_para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        text_para.add_run(text)
+
+    save_output_dir = Path(video_path).parent
+    video_path_stem = Path(video_path).stem
+    save_full_path = save_output_dir / f'{video_path_stem}.docx'
+
+    doc.save(str(save_full_path))
+    print(f'The docx has been saved in the {save_full_path}.')
