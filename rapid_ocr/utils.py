@@ -4,6 +4,7 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import onnxruntime as ort
+ort.set_default_logger_severity(3)
 
 
 class PickableInferenceSession:

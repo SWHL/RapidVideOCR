@@ -17,6 +17,29 @@ from io import BytesIO
 from pathlib import Path
 
 
+def compute_centroid(dt_box):
+    x = (np.max(dt_box[:, 0]) + np.min(dt_box[:, 0])) / 2
+    y = (np.max(dt_box[:, 1]) + np.min(dt_box[:, 1])) / 2
+    return (x, y)
+
+
+def compute_height(dt_box):
+    return np.max(dt_box[:, 1]) - np.min(dt_box[:, 1])
+
+
+def is_two_lines(dt_boxes):
+    threshold = max([compute_height(dt_box) for dt_box in dt_boxes])
+    centroid_list = [compute_centroid(dt_box) for dt_box in dt_boxes]
+    first_point = centroid_list[0]
+    second_point = centroid_list[-1]
+    distance = np.sqrt(np.abs(first_point[0] - second_point[0]) ** 2 \
+        + np.abs(first_point[1] - second_point[1]) ** 2)
+    if distance > threshold:
+        return False
+    else:
+        return True
+
+
 def string_similar(s1, s2):
     return difflib.SequenceMatcher(None, s1, s2).ratio()
 

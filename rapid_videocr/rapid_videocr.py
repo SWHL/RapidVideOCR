@@ -10,10 +10,9 @@ import tempfile
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
-from pydub import AudioSegment
 from tqdm import tqdm
 
-from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
+from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch, is_two_lines,
                     remove_batch_bg, remove_bg, string_similar,
                     save_docx, save_srt, save_txt)
 
@@ -24,8 +23,6 @@ class ExtractSubtitle(object):
                  asr_executor=None, is_dilate=True):
         self.ocr_system = ocr_system
         self.text_det = text_det
-
-        self.asr_executor = asr_executor
 
         self.error_num = error_num
         self.output_format = output_format
@@ -38,21 +35,18 @@ class ExtractSubtitle(object):
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path, ctx=cpu(0))
 
-        if self.asr_executor is not None:
-            self.audio = AudioSegment.from_file(
-                video_path, 'mp4').set_frame_rate(16000)
-        else:
-            self.audio = None
+        self.audio = None
 
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
 
         self.height = int(self.vr[0].shape[0])
+
         if self.subtitle_height is None:
             self.get_subtitle_height()
         else:
-            self.subtitle_height = self.subtitle_height
             print(f'Manual setting subtitle height: {self.subtitle_height}')
+
         self.crop_h = self.height - self.subtitle_height
 
         if batch_size is None:
@@ -61,6 +55,7 @@ class ExtractSubtitle(object):
             self.batch_size = batch_size
 
         self.run_ocr(time_start, time_end)
+
         return self.get_subtitles()
 
     def get_subtitle_height(self):
@@ -74,25 +69,36 @@ class ExtractSubtitle(object):
                 dt_boxes, _ = self.text_det(one_frame)
 
                 # Debug
-                # for box in dt_boxes:
-                #     box = np.array(box).astype(np.int32).reshape(-1, 2)
-                #     cv2.polylines(one_frame, [box], True,
-                #                 color=(255, 255, 0), thickness=2)
-                # cv2.imwrite(f'temp/{i}.jpg', one_frame)
+                for box in dt_boxes:
+                    box = np.array(box).astype(np.int32).reshape(-1, 2)
+                    cv2.polylines(one_frame, [box], True,
+                                color=(255, 255, 0), thickness=2)
+                cv2.imwrite(f'temp/{i}.jpg', one_frame)
 
-                if dt_boxes.size > 0 and dt_boxes is not None:
-                    middle_h = int(self.height / 2)
+                if dt_boxes is not None and dt_boxes.size > 0:
+                    middle_h = int(self.height / 4)
                     mask = np.where(dt_boxes[:, 0, 1] > middle_h, True, False)
                     dt_boxes = dt_boxes[mask]
 
-                    if dt_boxes.size > 0:
-                        max_h = np.max(np.max(dt_boxes[:, :, 1], axis=1)
-                                       - np.min(dt_boxes[:, :, 1], axis=1))
-                        bottom_margin = self.height - np.max(dt_boxes[:, :, 1])
+                    # 字幕中最高的距离
+                    max_h = np.max(np.max(dt_boxes[:, :, 1], axis=1)
+                                   - np.min(dt_boxes[:, :, 1], axis=1))
+
+                    # 最下面字幕距离图像最底部的距离
+                    bottom_margin = self.height - np.max(dt_boxes[:, :, 1])
+
+                    # max_h + bottom_margin: 字幕+字幕距图像最下面的距离
+                    if dt_boxes.shape[0] > 1 and is_two_lines(dt_boxes):
+                        # 说明可能是两行字幕
+                        subtitle_h_list.append(int(2 * max_h + 2 * bottom_margin))
+                    else:
+                        # 单行字幕
                         subtitle_h_list.append(int(max_h + 2 * bottom_margin))
 
-            if len(subtitle_h_list) > 0 and not self.is_dilate:
-                self.subtitle_height = int(np.max(subtitle_h_list)) * 2
+            # if len(subtitle_h_list) > 0 and not self.is_dilate:
+            if len(subtitle_h_list) > 0:
+                # self.subtitle_height = int(np.max(subtitle_h_list)) * 2
+                self.subtitle_height = int(np.min(subtitle_h_list))
             else:
                 self.subtitle_height = 152
         else:
@@ -113,6 +119,13 @@ class ExtractSubtitle(object):
         self.key_point_dict = {}
         self.key_frames = {}
 
+        # # Debug
+        # self.save_dir = Path('/da1/SWHL/_exp/RapidVideOCR/tmp') / Path(self.video_path).stem
+        # raw_dir = self.save_dir / 'raw'
+        # remove_bg_dir = self.save_dir / 'remove_bg'
+        # raw_dir.mkdir(parents=True, exist_ok=True)
+        # remove_bg_dir.mkdir(parents=True, exist_ok=True)
+
         with tqdm(total=self.ocr_end, desc='Get the key frame') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             if self.batch_size > self.ocr_end:
@@ -122,8 +135,14 @@ class ExtractSubtitle(object):
             while fast + self.batch_size <= self.ocr_end:
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
+                # Debug
+                # cv2.imwrite(f'{str(raw_dir)}/{slow}.jpg', slow_frame)
+
                 # Remove the background of the frame.
                 slow_frame = remove_bg(slow_frame, is_dilate=self.is_dilate)
+
+                # Debug
+                # cv2.imwrite(f'{str(remove_bg_dir)}/{slow}.jpg', slow_frame[0, :])
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
@@ -131,6 +150,7 @@ class ExtractSubtitle(object):
 
                 fast_frames = remove_batch_bg(fast_frames,
                                               is_dilate=self.is_dilate)
+
                 # Compare the similarity between the frames.
                 compare_result = is_similar_batch(slow_frame,
                                                   fast_frames,
@@ -229,29 +249,14 @@ class ExtractSubtitle(object):
                             if i not in invalid_keys]
 
         self.extract_result = []
-        asr_result = []
         for i, (k, v) in enumerate(self.key_point_dict.items()):
-            start_index, start_seconds = get_srt_timestamp(v[0], self.fps)
-            end_index, end_seconds = get_srt_timestamp(v[-1], self.fps)
-
-            # asr识别
-            if self.asr_executor is not None:
-                print('asr rec...')
-
-                clip_audio = self.audio[start_seconds:end_seconds]
-                with tempfile.TemporaryDirectory() as tmp_dir_name:
-                    wav_tmp_path = str(Path(tmp_dir_name) / f'{i}.wav')
-
-                    clip_audio.export(wav_tmp_path, format='wav')
-
-                    text = self.asr_executor(audio_file=wav_tmp_path)
-
-                    asr_result.append(text)
+            start_index, _ = get_srt_timestamp(v[0], self.fps)
+            end_index, _ = get_srt_timestamp(v[-1], self.fps)
 
             self.extract_result.append([k, start_index,
                                         end_index, self.pred_frames[i][0]])
         self.save_output()
-        return self.extract_result, asr_result
+        return self.extract_result
 
     def save_output(self):
         if self.output_format == 'srt':
