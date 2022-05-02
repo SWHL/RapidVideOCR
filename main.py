@@ -14,13 +14,13 @@ rec_model_path = "resources/rapid_ocr/models/ch_mobile_v2.0_rec_infer.onnx"
 dict_path = "resources/rapid_ocr/ppocr_keys_v1.txt"
 
 
-if __name__ == '__main__':
-    ocr_system = TextSystem(det_model_path,
-                            rec_model_path,
-                            cls_model_path,
-                            dict_path)
-    text_det = TextDetector(det_model_path)
+ocr_system = TextSystem(det_model_path, rec_model_path,
+                        cls_model_path, dict_path)
 
+text_det = TextDetector(det_model_path)
+
+
+if __name__ == '__main__':
     batch_size = 100
     subtitle_height = None
     is_dilate = True
@@ -39,6 +39,5 @@ if __name__ == '__main__':
 
     start_time = time.time()
     ocr_result = extractor(mp4_path, time_start, time_end, batch_size)
-
     print(ocr_result)
     print(f'elapse: {time.time() - start_time}s')

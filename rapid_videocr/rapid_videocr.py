@@ -3,24 +3,22 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-from pathlib import Path
 import random
-import tempfile
 
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
 from tqdm import tqdm
 
-from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch, is_two_lines,
-                    remove_batch_bg, remove_bg, string_similar,
+from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
+                    is_two_lines, remove_batch_bg, remove_bg, string_similar,
                     save_docx, save_srt, save_txt)
 
 
 class ExtractSubtitle(object):
     def __init__(self, ocr_system, subtitle_height=None,
                  error_num=0.1, output_format='srt', text_det=None,
-                 asr_executor=None, is_dilate=True):
+                 is_dilate=True):
         self.ocr_system = ocr_system
         self.text_det = text_det
 
@@ -95,9 +93,7 @@ class ExtractSubtitle(object):
                         # 单行字幕
                         subtitle_h_list.append(int(max_h + 2 * bottom_margin))
 
-            # if len(subtitle_h_list) > 0 and not self.is_dilate:
             if len(subtitle_h_list) > 0:
-                # self.subtitle_height = int(np.max(subtitle_h_list)) * 2
                 self.subtitle_height = int(np.min(subtitle_h_list))
             else:
                 self.subtitle_height = 152
@@ -119,13 +115,6 @@ class ExtractSubtitle(object):
         self.key_point_dict = {}
         self.key_frames = {}
 
-        # # Debug
-        # self.save_dir = Path('/da1/SWHL/_exp/RapidVideOCR/tmp') / Path(self.video_path).stem
-        # raw_dir = self.save_dir / 'raw'
-        # remove_bg_dir = self.save_dir / 'remove_bg'
-        # raw_dir.mkdir(parents=True, exist_ok=True)
-        # remove_bg_dir.mkdir(parents=True, exist_ok=True)
-
         with tqdm(total=self.ocr_end, desc='Get the key frame') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             if self.batch_size > self.ocr_end:
@@ -135,14 +124,8 @@ class ExtractSubtitle(object):
             while fast + self.batch_size <= self.ocr_end:
                 slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
-                # Debug
-                # cv2.imwrite(f'{str(raw_dir)}/{slow}.jpg', slow_frame)
-
                 # Remove the background of the frame.
                 slow_frame = remove_bg(slow_frame, is_dilate=self.is_dilate)
-
-                # Debug
-                # cv2.imwrite(f'{str(remove_bg_dir)}/{slow}.jpg', slow_frame[0, :])
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
@@ -202,7 +185,6 @@ class ExtractSubtitle(object):
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
 
-        # i = 0
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
@@ -212,9 +194,6 @@ class ExtractSubtitle(object):
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
             frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_GRAY2BGR)
-            # Debug
-            # cv2.imwrite(f'temp/key_frame/{i}.jpg', frame)
-            # i += 1
 
             _, rec_res = self.ocr_system(frame)
 

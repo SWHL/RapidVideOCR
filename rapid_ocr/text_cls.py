@@ -18,7 +18,6 @@ import time
 
 import cv2
 import numpy as np
-import onnxruntime as ort
 
 try:
     from .utils_cls import (ClsPostProcess, check_and_read_gif,

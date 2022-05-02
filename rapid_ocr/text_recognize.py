@@ -18,7 +18,6 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-import onnxruntime
 
 try:
     from .utils_rec import (CTCLabelDecode, check_and_read_gif,

@@ -1,5 +1,8 @@
 # !/usr/bin/env python
 # -*- encoding: utf-8 -*-
+# @File: rapidocr.py
+# @Author: SWHL
+# @Contact: liekkaskono@163.com
 import argparse
 import copy
 import imghdr
