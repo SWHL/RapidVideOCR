@@ -39,7 +39,7 @@
 <details open>
 
 #### 💡2022-05-01 update:
-- 添加语音模块部分位于分支``
+- 添加语音模块部分位于分支`asr_module`
 - 添加语音识别模块，由于该模块中解码部分只能在Linux和Mac上运行，因此如果想要使用该模块，请在Linux和Mac上。
 - 目前语音识别代码来自[RapidASR/python](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech)部分。模型来自[PaddleSpeech](https://github.com/PaddlePaddle/PaddleSpeech/tree/develop/examples/aishell/asr0)
 - 经过简单测试，语音识别模块不是太准。-_-!
