@@ -45,7 +45,8 @@ if __name__ == '__main__':
     extractor = ExtractSubtitle(ocr_system, subtitle_height,
                                 error_num=error_num,
                                 output_format=output_format,
-                                text_det=text_det, asr_executor=asr_executor,
+                                text_det=text_det,
+                                asr_executor=asr_executor,
                                 is_dilate=is_dilate)
 
     start_time = time.time()
