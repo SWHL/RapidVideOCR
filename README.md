@@ -60,7 +60,7 @@
 
 ### 整体框架
 <div align="center">
-   <img src="assets/RapidVideOCR-Framework.png"  width="65%" height="65%">
+   <img src="assets/RapidVideOCR-Framework.png"  width="75%" height="75%">
 </div>
 
 ### 常见问题 [FAQ](./FAQ.md)
