@@ -14,29 +14,34 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
-- 支持字幕语言：中文|英文
-- 想法源自[videocr](https://github.com/apm1467/videocr)
+- 支持字幕语言：中文 | 英文 | 日文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
+
+- 想法源自 [videocr](https://github.com/apm1467/videocr)
 - 可加入QQ群：**706807542**
 - 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
   - **更快**：
     - 采用[Decord](https://github.com/dmlc/decord)作为读取视频的库，更快;对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
     - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
-  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，模型均来自[PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.4/README_ch.md#pp-ocr%E7%B3%BB%E5%88%97%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8%E6%9B%B4%E6%96%B0%E4%B8%AD)
+  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，模型均来自[PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.4/README_ch.md#pp-ocr%E7%B3%BB%E5%88%97%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8%E6%9B%B4%E6%96%B0%E4%B8%AD)。
+    - 当然也可以在GPU运行，只要根据机器配置，安装对应版本的`onnxruntime-gpu`，即可自动在英伟达显卡上运行。具体教程参见：[onnxruntime-gpu版推理配置](https://github.com/RapidAI/RapidOCR/blob/main/python/onnxruntime_infer/README.md#onnxruntime-gpu%E7%89%88%E6%8E%A8%E7%90%86%E9%85%8D%E7%BD%AE)
   - **更方便**：采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
-- 🐱如果识别的字幕为纯英文字幕，可以在`main.py`中更改只识别英文和数字的模型，来达到更好的效果。
+
+- 🐱如果想要识别**纯英文、日文**的字幕，可以在`main.py`中更改对应模型和字典文件即可。
   ```python
   det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
   cls_model_path = "resources/models/ch_ppocr_mobile_v2.0_cls_infer.onnx"
+
+  # 纯英文模型
   rec_model_path = "resources/models/en_number_mobile_v2.0_rec_infer.onnx"
   dict_path = "resources/en_dict.txt"
+
+  # 日文
+  rec_model_path = "resources/rapid_ocr/models/japan_rec_crnn.onnx"
+  dict_path = "resources/rapid_ocr/japan_dict.txt"
   ```
 
-### TODO
-- [x] 结合视频的音频信息，借助ASR技术(语音转文本)，多模态同时识别和提取字幕
-- [ ] 进一步提高字幕识别准确率
 
 ### 更新日志
-<details open>
 
 #### 💡2022-05-01 update:
 - 添加语音模块部分位于分支`asr_module`
@@ -56,7 +61,7 @@
 - [x] 添加具体参数说明
 - [x] 制作项目Logo
 - [ ] 更多的测试
-</details>
+
 
 ### 整体框架
 <div align="center">

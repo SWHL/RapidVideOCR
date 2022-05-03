@@ -29,6 +29,6 @@ class PickableInferenceSession:
         return self.sess.get_outputs(*args)
 
     def init_session(self, model_path):
-        EP_list = ['CPUExecutionProvider']
+        EP_list = ['CUDAExecutionProvider', 'CPUExecutionProvider']
         sess = ort.InferenceSession(model_path, providers=EP_list)
         return sess
