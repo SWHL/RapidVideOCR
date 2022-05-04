@@ -94,17 +94,11 @@
 
 
 ### 使用步骤
-1. 下载RapidOCR使用的识别模型和字典文件([百度网盘:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1ttDQKp8-MhF1ZqyYZR5LJRBaqu8nhp2C?usp=sharing))
+1. 下载**RapidOCR**使用的识别模型和字典文件([百度网盘](https://pan.baidu.com/s/1SFVxSS2rDtmjZfP_9iTHIw?pwd=trqi) | [Google Drive](https://drive.google.com/drive/folders/1cX8fbVe4_pCNI98QBIYOp09hU6aGWSZL?usp=sharing))
 
-2. 将下载好的`models`目录和`ppocr_keys_v1.txt`放到`resources/rapid_ocr`下，具体目录如下：
+2. 将下载好的`rapid_ocr`下文件放到`resources/rapid_ocr`下，具体目录如下：
    ```text
    resources/
-   ├── rapid_asr
-   │   ├── models
-   │   │   ├── asr0_deepspeech2_online_aishell_ckpt_0.2.0.onnx
-   │   │   └── language_model
-   │   │       └── zh_giga.no_cna_cmn.prune01244.klm
-   │   └── model.yaml
    └── rapid_ocr
       ├── en_dict.txt
       ├── models
@@ -143,9 +137,6 @@
 
 5. 可以去**video所在目录**查看输出的文件
 
-6. 想要使用asr模块,怎么做？
-   - 首先去参考[RapidASR](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech)的README部分。将其中对应模型放到`resources/rapid_asr`目录下，具体目录结构参考上面给出的。
-   - 在`main.py`中给出了`asr`模块类实例的用法。如果不想使用，直接将`ExtractSubtitle`中参数`asr_executor=None`即可。
 
 ### `main.py`中相关参数
 |参数名称|取值范围|含义|

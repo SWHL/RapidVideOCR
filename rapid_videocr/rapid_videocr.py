@@ -33,8 +33,6 @@ class ExtractSubtitle(object):
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path, ctx=cpu(0))
 
-        self.audio = None
-
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
 
@@ -66,12 +64,12 @@ class ExtractSubtitle(object):
             for i, one_frame in enumerate(frames):
                 dt_boxes, _ = self.text_det(one_frame)
 
-                # Debug
-                for box in dt_boxes:
-                    box = np.array(box).astype(np.int32).reshape(-1, 2)
-                    cv2.polylines(one_frame, [box], True,
-                                color=(255, 255, 0), thickness=2)
-                cv2.imwrite(f'temp/{i}.jpg', one_frame)
+                # # Debug
+                # for box in dt_boxes:
+                #     box = np.array(box).astype(np.int32).reshape(-1, 2)
+                #     cv2.polylines(one_frame, [box], True,
+                #                 color=(255, 255, 0), thickness=2)
+                # cv2.imwrite(f'temp/{i}.jpg', one_frame)
 
                 if dt_boxes is not None and dt_boxes.size > 0:
                     middle_h = int(self.height / 4)
@@ -121,11 +119,15 @@ class ExtractSubtitle(object):
                 self.batch_size = self.ocr_end - 1
 
             slow, fast = 0, 1
+            slow_change = True
             while fast + self.batch_size <= self.ocr_end:
-                slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
+                if slow_change:
+                    slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
-                # Remove the background of the frame.
-                slow_frame = remove_bg(slow_frame, is_dilate=self.is_dilate)
+                    # Remove the background of the frame.
+                    slow_frame = remove_bg(slow_frame, is_dilate=self.is_dilate)
+
+                    slow_change = False
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
@@ -161,6 +163,8 @@ class ExtractSubtitle(object):
                     slow = not_similar_index[0]
                     fast = slow + 1
                     pbar.update(slow - pbar.n + 1)
+
+                    slow_change = True
 
                 # Take care the left frames, which can't up to the batch_size.
                 if fast != self.ocr_end \

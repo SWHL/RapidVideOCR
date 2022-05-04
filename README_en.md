@@ -14,7 +14,7 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
 </p>
 
-- Support subtitle language: Chinese | English
+- Support subtitle language: Chinese | English | Japanese
 - Drive from [videocr](https://github.com/apm1467/videocr)
 - Extract subtitles embedded in the video faster and more accurately, and provide three formats of `txt|SRT|docx`
   - **Faster**:
@@ -65,21 +65,21 @@
 
 
 ### Use
-1. Download the OCR models and dictionary keys used by RapidOCR. ([Baidu:drf1](https://pan.baidu.com/s/103kx0ABtU7Lif57cv397oQ) | [Google Drive](https://drive.google.com/drive/folders/1cjfawIhIP0Yq7_HjX4wtr_obcz7VTFtg?usp=sharing))
+1. Download the OCR models and dictionary keys used by RapidOCR. ([Baidu](https://pan.baidu.com/s/1SFVxSS2rDtmjZfP_9iTHIw?pwd=trqi) | [Google Drive](https://drive.google.com/drive/folders/1cX8fbVe4_pCNI98QBIYOp09hU6aGWSZL?usp=sharing))
 
-2. Put the downloaded models and `ppocr_keys_v1.txt` under the `resources`, the specific directories are as follows:
+2. Put the downloaded `rapid_ocr` under the `resources`, the specific directories are as follows:
    ```text
-   resources
-      |-- models
-      |-- ch_mobile_v2.0_rec_infer.onnx
-      |-- ch_PP-OCRv2_det_infer.onnx
-      |-- ch_ppocr_mobile_v2.0_cls_infer.onnx
-      |-- en_number_mobile_v2.0_rec_infer.onnx
-      |-- ppocr_keys_v1.txt
-      `-- en_dict.txt
+   resources/
+   └── rapid_ocr
+      ├── en_dict.txt
+      ├── models
+      │   ├── ch_mobile_v2.0_rec_infer.onnx
+      │   ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
+      │   └── ch_PP-OCRv2_det_infer.onnx
+      └── ppocr_keys_v1.txt
    ```
 
-4. Install the run envirement.
+3. Install the run envirement.
    - Recommend the Window OS, because the entire project has only been tested under Windows now.
    - Install the relative packages as follows.
       ```bash
@@ -88,7 +88,7 @@
       pip install -r requirements.txt -i https://pypi.douban.com/simple/
       ```
 
-5. Run
+4. Run
    - The code:
       ```bash
       cd RapidVideOCR
@@ -106,4 +106,4 @@
         ```
    - Also run on the [Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb).
 
-6. Look the output files where the video is located.
+5. Look the output files where the video is located.
