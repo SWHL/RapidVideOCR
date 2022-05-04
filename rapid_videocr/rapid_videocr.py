@@ -18,9 +18,10 @@ from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
 class ExtractSubtitle(object):
     def __init__(self, ocr_system, subtitle_height=None,
                  error_num=0.1, output_format='srt', text_det=None,
-                 is_dilate=True):
+                 is_dilate=True, remove_bg=None):
         self.ocr_system = ocr_system
         self.text_det = text_det
+        self.remove_bg = remove_bg
 
         self.error_num = error_num
         self.output_format = output_format
@@ -66,12 +67,12 @@ class ExtractSubtitle(object):
             for i, one_frame in enumerate(frames):
                 dt_boxes, _ = self.text_det(one_frame)
 
-                # Debug
-                for box in dt_boxes:
-                    box = np.array(box).astype(np.int32).reshape(-1, 2)
-                    cv2.polylines(one_frame, [box], True,
-                                color=(255, 255, 0), thickness=2)
-                cv2.imwrite(f'temp/{i}.jpg', one_frame)
+                # # Debug
+                # for box in dt_boxes:
+                #     box = np.array(box).astype(np.int32).reshape(-1, 2)
+                #     cv2.polylines(one_frame, [box], True,
+                #                 color=(255, 255, 0), thickness=2)
+                # cv2.imwrite(f'temp/{i}.jpg', one_frame)
 
                 if dt_boxes is not None and dt_boxes.size > 0:
                     middle_h = int(self.height / 4)
@@ -120,24 +121,38 @@ class ExtractSubtitle(object):
             if self.batch_size > self.ocr_end:
                 self.batch_size = self.ocr_end - 1
 
+            slow_change = True
             slow, fast = 0, 1
             while fast + self.batch_size <= self.ocr_end:
-                slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
+                if slow_change:
+                    slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
-                # Remove the background of the frame.
-                slow_frame = remove_bg(slow_frame, is_dilate=self.is_dilate)
+                    # Remove the background of the frame.
+                    slow_frame_new = self.remove_bg(slow_frame)
+                    slow_frame_new = slow_frame_new.squeeze().astype(np.float64)
+                    slow_frame_new = slow_frame_new[np.newaxis, ...]
+
+                    slow_change = False
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
                 fast_frames = fast_frames[:, self.crop_h:, :, :]
 
-                fast_frames = remove_batch_bg(fast_frames,
-                                              is_dilate=self.is_dilate)
+                fast_frames_new = self.remove_bg(fast_frames).astype(np.float64)
+                fast_frames_new = fast_frames_new.squeeze()
 
-                # Compare the similarity between the frames.
-                compare_result = is_similar_batch(slow_frame,
-                                                  fast_frames,
+                # cv2.imwrite(f'temp/slow/slow.jpg', slow_frame_new.squeeze())
+                # for i, img in enumerate(fast_frames_new):
+                #     cv2.imwrite(f'temp/fast/{i}.jpg', img.squeeze())
+
+                if fast_frames_new.ndim == 2:
+                    fast_frames_new = fast_frames_new[np.newaxis, ...]
+
+                compare_result = is_similar_batch(slow_frame_new,
+                                                  fast_frames_new,
                                                   threshold=self.error_num)
+
+
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
 
@@ -162,6 +177,8 @@ class ExtractSubtitle(object):
                     fast = slow + 1
                     pbar.update(slow - pbar.n + 1)
 
+                    slow_change = True
+
                 # Take care the left frames, which can't up to the batch_size.
                 if fast != self.ocr_end \
                         and fast + self.batch_size > self.ocr_end:
@@ -185,6 +202,7 @@ class ExtractSubtitle(object):
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
 
+        i = 0
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
@@ -193,7 +211,9 @@ class ExtractSubtitle(object):
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
-            frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_GRAY2BGR)
+            frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_BGR2RGB)
+
+            cv2.imwrite(f'temp/key_frame/{i}.jpg', frame)
 
             _, rec_res = self.ocr_system(frame)
 
