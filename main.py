@@ -24,8 +24,9 @@ if __name__ == '__main__':
     batch_size = 100
     subtitle_height = None
     is_dilate = True
+    is_select_threshold = True  # 是否交互式选择二值化值
     error_num = 0.005
-    mp4_path = 'assets/test_video/2.mp4'
+    mp4_path = 'assets/test_video/a.mp4'
     output_format = 'all'  # txt, srt, docx, all
 
     time_start = '00:00:00'
@@ -35,7 +36,8 @@ if __name__ == '__main__':
                                 error_num=error_num,
                                 output_format=output_format,
                                 text_det=text_det,
-                                is_dilate=is_dilate)
+                                is_dilate=is_dilate,
+                                is_select_threshold=is_select_threshold)
 
     start_time = time.time()
     ocr_result = extractor(mp4_path, time_start, time_end, batch_size)

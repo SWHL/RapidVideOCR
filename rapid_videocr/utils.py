@@ -96,9 +96,35 @@ def rgb_to_grey(img):
     return img[..., 0] * 0.114 + img[..., 1] * 0.587 + img[..., 2] * 0.299
 
 
-def binary_img(img):
-    _, img = cv2.threshold(img, 243, 255, cv2.THRESH_BINARY)
+def binary_img(img, binary_threshold=243):
+    _, img = cv2.threshold(img, binary_threshold, 255, cv2.THRESH_BINARY)
     return img
+
+
+def vis_binary(img):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img2 = copy.deepcopy(img)
+
+    def update_theta(x): pass
+
+    window_name = 'image'
+    tracker_name = 'threshold'
+    cv2.namedWindow(window_name)
+    cv2.createTrackbar(tracker_name, window_name, 0, 255, update_theta)
+    cv2.setTrackbarPos(trackbarname=tracker_name,
+                       winname=window_name,
+                       pos=127)
+
+    while (True):
+        cv2.imshow(window_name, img)
+
+        threshold = cv2.getTrackbarPos(tracker_name, window_name)
+        _, img = cv2.threshold(img2, threshold, 255, cv2.THRESH_BINARY)
+
+        if cv2.waitKey(1) == ord('q'):
+            break
+    cv2.destroyAllWindows()
+    return threshold
 
 
 def dilate_img(img):
@@ -107,20 +133,20 @@ def dilate_img(img):
     return img
 
 
-def remove_bg(img, is_dilate=True):
+def remove_bg(img, is_dilate=True, binary_threshold=243):
     img = rgb_to_grey(img).squeeze()
     if is_dilate:
-        img = dilate_img(binary_img(img))
+        img = dilate_img(binary_img(img, binary_threshold))
     img = img[np.newaxis, :, :]
     return img
 
 
-def remove_batch_bg(img_batch, is_dilate=True):
+def remove_batch_bg(img_batch, is_dilate=True, binary_threshold=243):
     img_batch = rgb_to_grey(img_batch)
     new_img_batch = []
     for img_one in img_batch:
         if is_dilate:
-            img_one = dilate_img(binary_img(img_one))
+            img_one = dilate_img(binary_img(img_one, binary_threshold))
 
         new_img_batch.append(img_one)
     img_batch = np.array(new_img_batch)

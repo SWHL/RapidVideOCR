@@ -4,6 +4,7 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import random
+import platform
 
 import cv2
 import numpy as np
@@ -12,13 +13,13 @@ from tqdm import tqdm
 
 from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
                     is_two_lines, remove_batch_bg, remove_bg, string_similar,
-                    save_docx, save_srt, save_txt)
+                    save_docx, save_srt, save_txt, vis_binary)
 
 
 class ExtractSubtitle(object):
     def __init__(self, ocr_system, subtitle_height=None,
                  error_num=0.1, output_format='srt', text_det=None,
-                 is_dilate=True):
+                 is_dilate=True, is_select_threshold=False):
         self.ocr_system = ocr_system
         self.text_det = text_det
 
@@ -26,6 +27,7 @@ class ExtractSubtitle(object):
         self.output_format = output_format
         self.is_dilate = is_dilate
         self.subtitle_height = subtitle_height
+        self.is_select_threshold = is_select_threshold
 
     def __call__(self, video_path, time_start, time_end, batch_size):
         self.video_path = video_path
@@ -44,6 +46,14 @@ class ExtractSubtitle(object):
             print(f'Manual setting subtitle height: {self.subtitle_height}')
 
         self.crop_h = self.height - self.subtitle_height
+
+        # 交互式确定threshold最佳值，仅仅限于Windows系统
+        if platform.system() == 'Windows' and self.is_select_threshold:
+            self.binary_threshold = self.select_threshold()
+            print(f'The binary threshold: {self.binary_threshold}')
+        else:
+            print('Using the default value: 243')
+            self.binary_threshold = 243
 
         if batch_size is None:
             self.batch_size = self.fps * 2
@@ -72,19 +82,22 @@ class ExtractSubtitle(object):
                 # cv2.imwrite(f'temp/{i}.jpg', one_frame)
 
                 if dt_boxes is not None and dt_boxes.size > 0:
-                    middle_h = int(self.height / 4)
+                    middle_h = int(self.height / 2)
                     mask = np.where(dt_boxes[:, 0, 1] > middle_h, True, False)
-                    dt_boxes = dt_boxes[mask]
+                    filter_dt_boxes = dt_boxes[mask]
+                    if filter_dt_boxes.size <= 0:
+                        continue
 
                     # 字幕中最高的距离
-                    max_h = np.max(np.max(dt_boxes[:, :, 1], axis=1)
-                                   - np.min(dt_boxes[:, :, 1], axis=1))
+                    max_h = np.max(np.max(filter_dt_boxes[:, :, 1], axis=1)
+                                   - np.min(filter_dt_boxes[:, :, 1], axis=1))
 
                     # 最下面字幕距离图像最底部的距离
-                    bottom_margin = self.height - np.max(dt_boxes[:, :, 1])
+                    bottom_margin = self.height - np.max(filter_dt_boxes[:, :, 1])
 
                     # max_h + bottom_margin: 字幕+字幕距图像最下面的距离
-                    if dt_boxes.shape[0] > 1 and is_two_lines(dt_boxes):
+                    if filter_dt_boxes.shape[0] > 1 \
+                            and is_two_lines(filter_dt_boxes):
                         # 说明可能是两行字幕
                         subtitle_h_list.append(int(2 * max_h + 2 * bottom_margin))
                     else:
@@ -113,7 +126,7 @@ class ExtractSubtitle(object):
         self.key_point_dict = {}
         self.key_frames = {}
 
-        with tqdm(total=self.ocr_end, desc='Get the key frame') as pbar:
+        with tqdm(total=self.ocr_end, desc='Obtain key frame', unit='frame') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             if self.batch_size > self.ocr_end:
                 self.batch_size = self.ocr_end - 1
@@ -125,7 +138,9 @@ class ExtractSubtitle(object):
                     slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
                     # Remove the background of the frame.
-                    slow_frame = remove_bg(slow_frame, is_dilate=self.is_dilate)
+                    slow_frame = remove_bg(slow_frame,
+                                           is_dilate=self.is_dilate,
+                                           binary_threshold=self.binary_threshold)
 
                     slow_change = False
 
@@ -134,7 +149,8 @@ class ExtractSubtitle(object):
                 fast_frames = fast_frames[:, self.crop_h:, :, :]
 
                 fast_frames = remove_batch_bg(fast_frames,
-                                              is_dilate=self.is_dilate)
+                                              is_dilate=self.is_dilate,
+                                              binary_threshold=self.binary_threshold)
 
                 # Compare the similarity between the frames.
                 compare_result = is_similar_batch(slow_frame,
@@ -189,6 +205,7 @@ class ExtractSubtitle(object):
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
 
+        i = 0
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='Extract content'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
@@ -197,6 +214,10 @@ class ExtractSubtitle(object):
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
+
+            cv2.imwrite(f'temp/key_frame/{i}.jpg',frame)
+            i += 1
+
             frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_GRAY2BGR)
 
             _, rec_res = self.ocr_system(frame)
@@ -254,3 +275,12 @@ class ExtractSubtitle(object):
             save_docx(self.video_path, self.extract_result, self.vr)
         else:
             raise ValueError(f'The {self.output_format} is not supported!')
+
+    def select_threshold(self):
+        random_index = random.choices(range(len(self.vr)), k=3)
+        frames = self.vr.get_batch(random_index).asnumpy()
+        threshold_list = []
+        for frame in frames:
+            crop_img = frame[self.crop_h:, :, :]
+            threshold_list.append(vis_binary(crop_img))
+        return np.max(threshold_list)
