@@ -6,15 +6,12 @@ import copy
 import datetime
 import difflib
 from pathlib import Path
+from io import BytesIO
 
 import cv2
 import numpy as np
 from docx import Document
-from docx.api import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.shared import Cm
-from io import BytesIO
-from pathlib import Path
 
 
 def compute_centroid(dt_box):
@@ -32,8 +29,8 @@ def is_two_lines(dt_boxes):
     centroid_list = [compute_centroid(dt_box) for dt_box in dt_boxes]
     first_point = centroid_list[0]
     second_point = centroid_list[-1]
-    distance = np.sqrt(np.abs(first_point[0] - second_point[0]) ** 2 \
-        + np.abs(first_point[1] - second_point[1]) ** 2)
+    distance = np.sqrt(np.abs(first_point[0] - second_point[0]) ** 2
+                       + np.abs(first_point[1] - second_point[1]) ** 2)
     if distance > threshold:
         return False
     else:
@@ -109,6 +106,7 @@ def vis_binary(img):
 
     window_name = 'image'
     tracker_name = 'threshold'
+
     cv2.namedWindow(window_name)
     cv2.createTrackbar(tracker_name, window_name, 0, 255, update_theta)
     cv2.setTrackbarPos(trackbarname=tracker_name,
@@ -133,20 +131,20 @@ def dilate_img(img):
     return img
 
 
-def remove_bg(img, is_dilate=True, binary_threshold=243):
+def remove_bg(img, is_dilate=True, binary_thr=243):
     img = rgb_to_grey(img).squeeze()
     if is_dilate:
-        img = dilate_img(binary_img(img, binary_threshold))
+        img = dilate_img(binary_img(img, binary_thr))
     img = img[np.newaxis, :, :]
     return img
 
 
-def remove_batch_bg(img_batch, is_dilate=True, binary_threshold=243):
+def remove_batch_bg(img_batch, is_dilate=True, binary_thr=243):
     img_batch = rgb_to_grey(img_batch)
     new_img_batch = []
     for img_one in img_batch:
         if is_dilate:
-            img_one = dilate_img(binary_img(img_one, binary_threshold))
+            img_one = dilate_img(binary_img(img_one, binary_thr))
 
         new_img_batch.append(img_one)
     img_batch = np.array(new_img_batch)
@@ -168,6 +166,7 @@ def save_srt(video_path, extract_result):
             f.write(value + '\n')
     print(f'The srt has been saved in the {save_full_path}.')
 
+
 def save_txt(video_path, extract_result):
     final_result = []
     for _, _, _, text in extract_result:
@@ -181,6 +180,7 @@ def save_txt(video_path, extract_result):
         for value in final_result:
             f.write(value + '\n')
     print(f'The txt has been saved in the {save_full_path}.')
+
 
 def save_docx(video_path, extract_result, vr):
     """
@@ -208,3 +208,11 @@ def save_docx(video_path, extract_result, vr):
 
     doc.save(str(save_full_path))
     print(f'The docx has been saved in the {save_full_path}.')
+
+
+def debug_vis_box(i, dt_boxes, one_frame):
+    for box in dt_boxes:
+        box = np.array(box).astype(np.int32).reshape(-1, 2)
+        cv2.polylines(one_frame, [box], True,
+                      color=(255, 255, 0), thickness=2)
+    cv2.imwrite(f'temp/{i}.jpg', one_frame)

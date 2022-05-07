@@ -333,8 +333,6 @@ class TextSystem(object):
         if not isinstance(img, np.ndarray):
             raise ValueError("The format of the img is not ndarray")
 
-        import copy
-        ori_img = copy.deepcopy(img)
         dt_boxes, elapse = self.text_detector(img)
         if dt_boxes is None or len(dt_boxes) < 1:
             return None, None
@@ -342,10 +340,12 @@ class TextSystem(object):
         img_crop_list = []
         # 检测框排序
         dt_boxes = self.sorted_boxes(dt_boxes)
-        for bno in range(len(dt_boxes)):
+        for i, bno in enumerate(range(len(dt_boxes))):
             tmp_box = copy.deepcopy(dt_boxes[bno])
             img_crop = self.get_rotate_crop_image(img, tmp_box)
             img_crop_list.append(img_crop)
+
+            cv2.imwrite(f'temp/{i}.jpg', img_crop)
 
         rec_res, elapse = self.text_recognizer(img_crop_list)
 

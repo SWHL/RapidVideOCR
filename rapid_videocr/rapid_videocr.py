@@ -11,13 +11,13 @@ import numpy as np
 from decord import VideoReader, cpu
 from tqdm import tqdm
 
-from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
-                    is_two_lines, remove_batch_bg, remove_bg, string_similar,
-                    save_docx, save_srt, save_txt, vis_binary)
+from .utils import (debug_vis_box, get_frame_from_time, get_srt_timestamp,
+                    is_similar_batch, remove_batch_bg, remove_bg,
+                    string_similar, save_docx, save_srt, save_txt, vis_binary)
 
 
 class ExtractSubtitle(object):
-    def __init__(self, ocr_system, subtitle_height=None,
+    def __init__(self, ocr_system, subtitle_height=152,
                  error_num=0.1, output_format='srt', text_det=None,
                  is_dilate=True, is_select_threshold=False):
         self.ocr_system = ocr_system
@@ -65,7 +65,8 @@ class ExtractSubtitle(object):
         return self.get_subtitles()
 
     def get_subtitle_height(self):
-        # 随机挑选几帧做文本检测，确定文本高度
+        """随机挑选几帧做文本检测，确定字幕高度"""
+
         print('Auto set the subtitle height....')
         if self.text_det is not None:
             random_index = random.choices(range(len(self.vr)), k=5)
@@ -74,32 +75,28 @@ class ExtractSubtitle(object):
             for i, one_frame in enumerate(frames):
                 dt_boxes, _ = self.text_det(one_frame)
 
-                # # Debug
-                # for box in dt_boxes:
-                #     box = np.array(box).astype(np.int32).reshape(-1, 2)
-                #     cv2.polylines(one_frame, [box], True,
-                #                 color=(255, 255, 0), thickness=2)
-                # cv2.imwrite(f'temp/{i}.jpg', one_frame)
-
                 if dt_boxes is not None and dt_boxes.size > 0:
-                    middle_h = int(self.height / 2)
+                    middle_h = int(self.height / 4)
                     mask = np.where(dt_boxes[:, 0, 1] > middle_h, True, False)
                     filter_dt_boxes = dt_boxes[mask]
                     if filter_dt_boxes.size <= 0:
                         continue
 
+                    # Debug
+                    # debug_vis_box(i, filter_dt_boxes, one_frame)
+
                     # 字幕中最高的距离
-                    max_h = np.max(np.max(filter_dt_boxes[:, :, 1], axis=1)
-                                   - np.min(filter_dt_boxes[:, :, 1], axis=1))
+                    all_y = filter_dt_boxes[:, :, 1]
+                    max_h = np.max(np.max(all_y, axis=1) - np.min(all_y, axis=1))
 
                     # 最下面字幕距离图像最底部的距离
-                    bottom_margin = self.height - np.max(filter_dt_boxes[:, :, 1])
+                    bottom_margin = self.height - np.max(all_y)
 
                     # max_h + bottom_margin: 字幕+字幕距图像最下面的距离
-                    if filter_dt_boxes.shape[0] > 1 \
-                            and is_two_lines(filter_dt_boxes):
+                    if filter_dt_boxes.shape[0] > 1:
                         # 说明可能是两行字幕
-                        subtitle_h_list.append(int(2 * max_h + 2 * bottom_margin))
+                        subtitle_h_list.append(int(2 * max_h
+                                                   + 2 * bottom_margin))
                     else:
                         # 单行字幕
                         subtitle_h_list.append(int(max_h + 2 * bottom_margin))
@@ -110,6 +107,7 @@ class ExtractSubtitle(object):
                 self.subtitle_height = 152
         else:
             self.subtitle_height = 152
+
         print(f'The subtitle value: {self.subtitle_height}')
 
     def record_info(self, slow, duplicate_frame, slow_frame):
@@ -126,7 +124,8 @@ class ExtractSubtitle(object):
         self.key_point_dict = {}
         self.key_frames = {}
 
-        with tqdm(total=self.ocr_end, desc='Obtain key frame', unit='frame') as pbar:
+        with tqdm(total=self.ocr_end,
+                  desc='Obtain key frame', unit='frame') as pbar:
             # Use two fast and slow pointers to filter duplicate frame.
             if self.batch_size > self.ocr_end:
                 self.batch_size = self.ocr_end - 1
@@ -135,12 +134,12 @@ class ExtractSubtitle(object):
             slow_change = True
             while fast + self.batch_size <= self.ocr_end:
                 if slow_change:
-                    slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
+                    ori_slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
 
                     # Remove the background of the frame.
-                    slow_frame = remove_bg(slow_frame,
+                    slow_frame = remove_bg(ori_slow_frame,
                                            is_dilate=self.is_dilate,
-                                           binary_threshold=self.binary_threshold)
+                                           binary_thr=self.binary_threshold)
 
                     slow_change = False
 
@@ -150,7 +149,7 @@ class ExtractSubtitle(object):
 
                 fast_frames = remove_batch_bg(fast_frames,
                                               is_dilate=self.is_dilate,
-                                              binary_threshold=self.binary_threshold)
+                                              binary_thr=self.binary_threshold)
 
                 # Compare the similarity between the frames.
                 compare_result = is_similar_batch(slow_frame,
@@ -167,14 +166,14 @@ class ExtractSubtitle(object):
                     pbar.update(self.batch_size)
                     fast += self.batch_size
 
-                    self.record_info(slow, duplicate_frame, slow_frame)
+                    self.record_info(slow, duplicate_frame, ori_slow_frame)
                 else:
                     # Exist the non similar frame.
                     index = not_similar_index[0] - slow
                     duplicate_frame = batch_list[:index]
 
                     # record
-                    self.record_info(slow, duplicate_frame, slow_frame)
+                    self.record_info(slow, duplicate_frame, ori_slow_frame)
 
                     slow = not_similar_index[0]
                     fast = slow + 1
@@ -205,20 +204,14 @@ class ExtractSubtitle(object):
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
 
-        i = 0
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
-                               desc='Extract content'):
+                               desc='OCR Key Frame', unit='frame'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
                                        self.subtitle_height * 2,
                                        self.subtitle_height * 2,
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
-
-            cv2.imwrite(f'temp/key_frame/{i}.jpg',frame)
-            i += 1
-
-            frame = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_GRAY2BGR)
 
             _, rec_res = self.ocr_system(frame)
 
