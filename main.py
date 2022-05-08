@@ -26,7 +26,7 @@ if __name__ == '__main__':
     is_dilate = True
     is_select_threshold = True  # 是否交互式选择二值化值
     error_num = 0.005
-    mp4_path = 'assets/test_video/test_a.mp4'
+    mp4_path = 'assets/test_video/2.mp4'
     output_format = 'srt'  # txt, srt, docx, all
 
     time_start = '00:00:00'

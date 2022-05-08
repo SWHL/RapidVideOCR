@@ -110,8 +110,7 @@ class ExtractSubtitle(object):
 
         print(f'The subtitle value: {self.subtitle_height}')
 
-    def record_info(self, slow, duplicate_frame, slow_frame):
-        # Record
+    def _record_key_info(self, slow, duplicate_frame, slow_frame):
         if slow in self.key_point_dict:
             self.key_point_dict[slow].extend(duplicate_frame)
         else:
@@ -121,6 +120,8 @@ class ExtractSubtitle(object):
             self.key_frames[slow] = slow_frame
 
     def get_key_frame(self):
+        """获得视频的字幕关键帧"""
+
         self.key_point_dict = {}
         self.key_frames = {}
 
@@ -166,14 +167,14 @@ class ExtractSubtitle(object):
                     pbar.update(self.batch_size)
                     fast += self.batch_size
 
-                    self.record_info(slow, duplicate_frame, ori_slow_frame)
+                    self._record_key_info(slow, duplicate_frame, ori_slow_frame)
                 else:
                     # Exist the non similar frame.
                     index = not_similar_index[0] - slow
                     duplicate_frame = batch_list[:index]
 
                     # record
-                    self.record_info(slow, duplicate_frame, ori_slow_frame)
+                    self._record_key_info(slow, duplicate_frame, ori_slow_frame)
 
                     slow = not_similar_index[0]
                     fast = slow + 1
@@ -187,6 +188,12 @@ class ExtractSubtitle(object):
                     self.batch_size = self.ocr_end - fast
 
     def run_ocr(self, time_start, time_end):
+        """对所给字幕图像进行OCR识别
+
+        :param time_start: 起始时间点
+        :param time_end: 结束时间点，-1表示到最后
+        """
+
         self.ocr_start = get_frame_from_time(time_start, self.fps)
 
         if time_end == '-1':
@@ -224,6 +231,9 @@ class ExtractSubtitle(object):
                 self.pred_frames.append((text, confidence))
 
     def get_subtitles(self):
+        """合并最终OCR提取字幕文件，并输出
+        """
+
         slow, fast = 0, 1
         n = len(self.pred_frames)
         key_list = list(self.key_point_dict.keys())
@@ -251,11 +261,12 @@ class ExtractSubtitle(object):
             end_index, _ = get_srt_timestamp(v[-1], self.fps)
 
             self.extract_result.append([k, start_index,
-                                        end_index, self.pred_frames[i][0]])
-        self.save_output()
+                                        end_index,
+                                        self.pred_frames[i][0]])
+        self._save_output()
         return self.extract_result
 
-    def save_output(self):
+    def _save_output(self):
         if self.output_format == 'srt':
             save_srt(self.video_path, self.extract_result)
         elif self.output_format == 'txt':
@@ -270,10 +281,19 @@ class ExtractSubtitle(object):
             raise ValueError(f'The {self.output_format} is not supported!')
 
     def select_threshold(self):
+        """交互式选择二值化字幕阈值"""
         random_index = random.choices(range(len(self.vr)), k=3)
         frames = self.vr.get_batch(random_index).asnumpy()
+
         threshold_list = []
-        for frame in frames:
+        for i, frame in enumerate(frames):
             crop_img = frame[self.crop_h:, :, :]
-            threshold_list.append(vis_binary(crop_img))
+
+            if i == 0:
+                threshold = vis_binary(i + 1, crop_img)
+            else:
+                threshold = vis_binary(i + 1, crop_img,
+                                              threshold_list[-1])
+
+            threshold_list.append(threshold)
         return np.max(threshold_list)

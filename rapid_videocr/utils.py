@@ -98,20 +98,21 @@ def binary_img(img, binary_threshold=243):
     return img
 
 
-def vis_binary(img):
+def vis_binary(i, img, default_pos=127):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img2 = copy.deepcopy(img)
 
     def update_theta(x): pass
 
-    window_name = 'image'
+    window_name = f'[{i}/3] Select the best threshold of binary,'\
+                    'press Enter to quit'
     tracker_name = 'threshold'
 
     cv2.namedWindow(window_name)
     cv2.createTrackbar(tracker_name, window_name, 0, 255, update_theta)
     cv2.setTrackbarPos(trackbarname=tracker_name,
                        winname=window_name,
-                       pos=127)
+                       pos=default_pos)
 
     while (True):
         cv2.imshow(window_name, img)
@@ -119,7 +120,7 @@ def vis_binary(img):
         threshold = cv2.getTrackbarPos(tracker_name, window_name)
         _, img = cv2.threshold(img2, threshold, 255, cv2.THRESH_BINARY)
 
-        if cv2.waitKey(1) == ord('q'):
+        if cv2.waitKeyEx(1) == 13:
             break
     cv2.destroyAllWindows()
     return threshold
