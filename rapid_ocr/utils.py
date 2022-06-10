@@ -30,5 +30,9 @@ class PickableInferenceSession:
 
     def init_session(self, model_path):
         EP_list = ['CUDAExecutionProvider', 'CPUExecutionProvider']
-        sess = ort.InferenceSession(model_path, providers=EP_list)
+        sess_opt = ort.SessionOptions()
+        sess_opt.log_severity_level = 4
+        sess_opt.enable_cpu_mem_arena = False
+        sess = ort.InferenceSession(model_path, providers=EP_list,
+                                    sess_options=sess_opt)
         return sess
