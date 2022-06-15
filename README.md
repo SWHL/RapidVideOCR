@@ -40,6 +40,8 @@
   dict_path = "resources/rapid_ocr/japan_dict.txt"
   ```
 
+### 分支说明
+- `add_remove_bg_module`: 基于图像分割UNet算法来去除字母图像背景图，只剩下文字内容，训练对应代码为[pytorch-unet](https://github.com/SWHL/pytorch-unet)
 
 ### 更新日志
 #### 🎉2022-05-03 update
