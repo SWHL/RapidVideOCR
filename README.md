@@ -12,7 +12,9 @@
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
+    <a href="https://www.oscs1024.com/project/oscs/SWHL/RapidVideOCR?ref=badge_small" alt="OSCS Status"><img src="https://www.oscs1024.com/platform/badge/SWHL/RapidVideOCR.svg?size=small"/></a>
 </p>
+
 
 - 支持字幕语言：中文 | 英文 | 日文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
 
