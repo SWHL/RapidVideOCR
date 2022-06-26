@@ -17,11 +17,11 @@ from .utils import (debug_vis_box, get_frame_from_time, get_srt_timestamp,
 
 
 class ExtractSubtitle(object):
-    def __init__(self, ocr_system, subtitle_height=152,
-                 error_num=0.1, output_format='srt', text_det=None,
-                 is_dilate=True, is_select_threshold=False):
+    def __init__(self, ocr_system, subtitle_height=152, error_num=0.1,
+                 output_format='srt', is_dilate=True,
+                 is_select_threshold=False):
         self.ocr_system = ocr_system
-        self.text_det = text_det
+        self.text_det = ocr_system.text_detector
 
         self.error_num = error_num
         self.output_format = output_format
@@ -29,7 +29,7 @@ class ExtractSubtitle(object):
         self.subtitle_height = subtitle_height
         self.is_select_threshold = is_select_threshold
 
-    def __call__(self, video_path, time_start, time_end, batch_size):
+    def __call__(self, video_path, time_start, time_end, batch_size=100):
         self.video_path = video_path
 
         print(f'Loading {video_path}')

@@ -11,52 +11,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# !/usr/bin/env python
 # -*- encoding: utf-8 -*-
 import argparse
 import time
 
 import cv2
 import numpy as np
+import onnxruntime
 
 try:
-    from .utils_det import (DBPostProcess, check_and_read_gif,
-                            create_operators, draw_text_det_res, transform)
-    from .utils import PickableInferenceSession
+    from .utils import (DBPostProcess, create_operators,
+                        draw_text_det_res, transform, read_yaml)
 except:
-    from utils_det import (DBPostProcess, check_and_read_gif, create_operators,
-                           draw_text_det_res, transform)
+    from utils import (DBPostProcess, create_operators,
+                       draw_text_det_res, transform, read_yaml)
 
 
 class TextDetector(object):
-    def __init__(self, det_model_path):
-        pre_process_list = [{
-            'DetResizeForTest': {
-                'limit_side_len': 736,
-                'limit_type': 'min'
-            }
-        }, {
-            'NormalizeImage': {
-                'std': [0.229, 0.224, 0.225],
-                'mean': [0.485, 0.456, 0.406],
-                'scale': '1./255.',
-                'order': 'hwc'
-            }
-        }, {
-            'ToCHWImage': None
-        }, {
-            'KeepKeys': {
-                'keep_keys': ['image', 'shape']
-            }
-        }]
+    def __init__(self, config):
+        self.preprocess_op = create_operators(config['pre_process'])
+        self.postprocess_op = DBPostProcess(**config['post_process'])
 
-        self.preprocess_op = create_operators(pre_process_list)
-        self.postprocess_op = DBPostProcess(thresh=0.3,
-                                            box_thresh=0.4,
-                                            max_candidates=1000,
-                                            unclip_ratio=1.8,
-                                            use_dilation=True)
-        self.session = PickableInferenceSession(det_model_path)
+        sess_opt = onnxruntime.SessionOptions()
+        sess_opt.log_severity_level = 4
+        sess_opt.enable_cpu_mem_arena = False
+        self.session = onnxruntime.InferenceSession(config['model_path'],
+                                                    sess_opt)
         self.input_name = self.session.get_inputs()[0].name
         self.output_name = self.session.get_outputs()[0].name
 
@@ -91,7 +71,7 @@ class TextDetector(object):
         return points
 
     def filter_tag_det_res(self, dt_boxes, image_shape):
-        img_height, img_width = image_shape[0:2]
+        img_height, img_width = image_shape[:2]
         dt_boxes_new = []
         for box in dt_boxes:
             box = self.order_points_clockwise(box)
@@ -104,15 +84,6 @@ class TextDetector(object):
         dt_boxes = np.array(dt_boxes_new)
         return dt_boxes
 
-    def filter_tag_det_res_only_clip(self, dt_boxes, image_shape):
-        img_height, img_width = image_shape[0:2]
-        dt_boxes_new = []
-        for box in dt_boxes:
-            box = self.clip_det_res(box, img_height, img_width)
-            dt_boxes_new.append(box)
-        dt_boxes = np.array(dt_boxes_new)
-        return dt_boxes
-
     def __call__(self, img):
         ori_im = img.copy()
         data = {'image': img}
@@ -120,8 +91,8 @@ class TextDetector(object):
         img, shape_list = data
         if img is None:
             return None, 0
-        img = np.expand_dims(img, axis=0)
-        img = img.astype(np.float32)
+
+        img = np.expand_dims(img, axis=0).astype(np.float32)
         shape_list = np.expand_dims(shape_list, axis=0)
 
         starttime = time.time()
@@ -129,6 +100,7 @@ class TextDetector(object):
                                  {self.input_name: img})
 
         post_result = self.postprocess_op(preds[0], shape_list)
+
         dt_boxes = post_result[0]['points']
         dt_boxes = self.filter_tag_det_res(dt_boxes, ori_im.shape)
         elapse = time.time() - starttime
@@ -137,22 +109,16 @@ class TextDetector(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--image_path', type=str, default=None,
-                        help='image_path|image_dir')
-    parser.add_argument('--model_path', type=str, default=None,
-                        help='model_path')
+    parser.add_argument('--config_path', type=str, default='config.yaml')
+    parser.add_argument('--image_path', type=str, default=None)
     args = parser.parse_args()
 
-    text_detector = TextDetector(args.model_path)
+    config = read_yaml(args.config_path)
 
-    img, flag = check_and_read_gif(args.image_path)
-    if not flag:
-        img = cv2.imread(args.image_path)
-    if img is None:
-        raise ValueError(f"error in loading image:{args.image_path}")
+    text_detector = TextDetector(config)
 
+    img = cv2.imread(args.image_path)
     dt_boxes, elapse = text_detector(img)
-
     src_im = draw_text_det_res(dt_boxes, args.image_path)
     cv2.imwrite('det_results.jpg', src_im)
     print('图像已经保存为det_results.jpg了')

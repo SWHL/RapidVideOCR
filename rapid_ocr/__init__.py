@@ -1,6 +1,5 @@
-# !/usr/bin/env python
 # -*- encoding: utf-8 -*-
-# @File: __init__.py
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-from .rapidocr import TextSystem, TextDetector
+from .rapid_ocr_api import TextSystem
+from .ch_ppocr_v2_det import TextDetector

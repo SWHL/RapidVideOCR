@@ -5,10 +5,10 @@
 
 ---
 
-简体中文 | [English](./README_en.md)
+简体中文 | [English](./docs/README_en.md)
 
 <p align="left">
-    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
+    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/assets/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
@@ -26,19 +26,30 @@
     - 当然也可以在GPU运行，只要根据机器配置，安装对应版本的`onnxruntime-gpu`，即可自动在英伟达显卡上运行。具体教程参见：[onnxruntime-gpu版推理配置](https://github.com/RapidAI/RapidOCR/blob/main/python/onnxruntime_infer/README.md#onnxruntime-gpu%E7%89%88%E6%8E%A8%E7%90%86%E9%85%8D%E7%BD%AE)
   - **更方便**：采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
 
-- 🐱如果想要识别**纯英文、日文**的字幕，可以在`main.py`中更改对应模型和字典文件即可。
-  ```python
-  det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
-  cls_model_path = "resources/models/ch_ppocr_mobile_v2.0_cls_infer.onnx"
+- 🐱如果想要识别**纯英文、日文**的字幕，可以在[`config_ocr.yaml`](./config_ocr.yaml)中更改对应模型和字典文件即可。
+  - 纯英文模型
+    ```yaml
+     Rec:
+         module_name: ch_ppocr_v2_rec
+         class_name: TextRecognizer
+         model_path: resources/models/en_number_mobile_v2. 0_rec_infer.onnx
 
-  # 纯英文模型
-  rec_model_path = "resources/models/en_number_mobile_v2.0_rec_infer.onnx"
-  dict_path = "resources/en_dict.txt"
+         rec_img_shape: [3, 32, 320]
+         rec_batch_num: 6
+         keys_path: resources/rapid_ocr/en_dict.txt
+    ```
 
-  # 日文
-  rec_model_path = "resources/rapid_ocr/models/japan_rec_crnn.onnx"
-  dict_path = "resources/rapid_ocr/japan_dict.txt"
-  ```
+  - 日文模型
+    ```yaml
+    Rec:
+        module_name: ch_ppocr_v2_rec
+        class_name: TextRecognizer
+        model_path: resources/rapid_ocr/models/japan_rec_crnn.onnx
+
+        rec_img_shape: [3, 32, 320]
+        rec_batch_num: 6
+        keys_path: resources/rapid_ocr/japan_dict.txt
+    ```
 
 ### 仓库分支说明
 - `add_remove_bg_module`:
@@ -48,7 +59,10 @@
   - 推理代码来源：[RapidASR](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech)
   - 没有并入主仓库原因：处理速度较慢，配置环境复杂，效果较差，有提升空间，可自行探索。
 
-### 更新日志（[more](./assets/changelog.md)）
+### 更新日志（[more](./docs/changelog.md)）
+### ✨2022-06-26 update:
+- 参数化配置相关参数，包括`rapid_ocr`和`rapid_videocr`两部分，更加灵活
+
 #### 🌼2022-05-08 update
 - 添加交互式确定二值化字幕图像阈值操作，仅仅支持Windows系统，可以通过`is_select_threshold=True`来使用
 - 优化代码
@@ -58,7 +72,7 @@
    <img src="assets/RapidVideOCR-Framework.png"  width="75%" height="75%">
 </div>
 
-### 常见问题 [FAQ](./assets/FAQ.md)
+### 常见问题 [FAQ](./docs/FAQ.md)
 
 ### 视频OCR动态
 - [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
@@ -125,7 +139,7 @@
 5. 可以去**video所在目录**查看输出的文件
 
 
-### `main.py`中相关参数
+### [`config_videocr.yaml`](./config_videocr.yaml)中相关参数
 |参数名称|取值范围|含义|
 |:---|:---|:---|
 |`batch_size`|`[1, all_frames]`|获取关键帧时，批量比较的batch大小，理论上，越大越快|

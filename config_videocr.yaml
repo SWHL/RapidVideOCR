@@ -1,0 +1,5 @@
+subtitle_height:   # 空着是Non的意思
+is_dilate: true
+is_select_threshold: true
+error_num: 0.005
+output_format: srt   # txt, srt, docx, all

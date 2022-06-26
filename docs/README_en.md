@@ -5,7 +5,7 @@
 
 ---
 
-[简体中文](./README.md) | English
+[简体中文](../README.md) | English
 
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
@@ -24,15 +24,34 @@
     - The entire project is completely offline CPU running.
     - The OCR part is from [RapidOCR](https://github.com/RapidAI/RapidOCR), relying on the [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/).
 
-- 🐱If the recognized subtitles are pure English subtitles, you can change the model that only recognizes English and numbers in `main.py` to achieve better results.
-   ```python
-   det_model_path = "resources/models/ch_PP-OCRv2_det_infer.onnx"
-   cls_model_path = "resources/models/ch_ppocr_mobile_v2.0_cls_infer.onnx"
-   rec_model_path = "resources/models/en_number_mobile_v2.0_rec_infer.onnx"
-   dict_path = "resources/en_dict.txt"
-   ```
+- 🐱If you want to recognize **English, Japanese** subtitles, you can change the corresponding model and dictionary file in [`config_ocr.yaml`](./config_ocr.yaml) to change the corresponding model and dictionary files.
+  - English
+    ```yaml
+     Rec:
+         module_name: ch_ppocr_v2_rec
+         class_name: TextRecognizer
+         model_path: resources/models/en_number_mobile_v2. 0_rec_infer.onnx
+
+         rec_img_shape: [3, 32, 320]
+         rec_batch_num: 6
+         keys_path: resources/rapid_ocr/en_dict.txt
+    ```
+
+  - Japanese
+    ```yaml
+    Rec:
+        module_name: ch_ppocr_v2_rec
+        class_name: TextRecognizer
+        model_path: resources/rapid_ocr/models/japan_rec_crnn.onnx
+
+        rec_img_shape: [3, 32, 320]
+        rec_batch_num: 6
+        keys_path: resources/rapid_ocr/japan_dict.txt
+    ```
 
 ### Change log
+### ✨2022-06-26 update:
+- Parameterized configuration of relevant parameters, including `rapid_ocr` and `rapid_videocr` parts, more flexible
 
 #### 🌼2022-05-08 update
 - Add an interactive operation to determine the threshold value of the binarized subtitle image, only supports Windows system, can be used by `is_select_threshold = True`
@@ -48,7 +67,7 @@
 - After a simple test, the voice recognition module is not too accurate. -_-!
 
 #### 2022-03-09 update:
-- Add [FAQ]((./FAQ.md)) module.
+- Add [FAQ]((./docs/FAQ.md)) module.
 
 #### 2021-12-14 update:
   - [x] Add specific parameter descrition.
@@ -56,7 +75,7 @@
   - [x] Add sample vidoe to run time-consuming benchmark.
 
 
-### [FAQ](./FAQ.md)
+### [FAQ](./docs/FAQ.md)
 
 
 ### Video OCR Research
@@ -119,3 +138,15 @@
    - Also run on the [Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb).
 
 5. Look the output files where the video is located.
+
+### [`config_videocr.yaml`](./config_videocr.yaml) in the relevant parameters
+|parameter name|value range|meaning|
+|:---|:---|:---|
+|`batch_size`|`[1, all_frames]`|The size of the batch to compare when getting keyframes, in theory, the bigger the faster|
+|`is_dilate`|`bool`|Whether to erode the background image of the caption|
+|`is_select_threshold`|`bool`|whether to interactively select binary values|
+|`subtitle_height`|`default:None`|The height of the subtitle text, which is automatically obtained by default
+|`error_num`|`[0, 1]`, default:0.005|The smaller the value, the more sensitive the difference between the two graphs|
+|`output_format`|`['txt', 'srt', 'docx', 'all']`|output the final caption file, `all` the previous three formats are output|
+|`time_start`|start extracting the start time of the subtitle|start extracting the start time of the subtitle, example: '00:00:00'|
+|`time_end`|the start point of the subtitle extraction| needs to be greater than `time_start`, `-1` means to the end, example: '-1'|
