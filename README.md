@@ -92,18 +92,18 @@
 
 
 ### 使用步骤
-1. 下载**RapidOCR**使用的识别模型和字典文件([百度网盘](https://pan.baidu.com/s/1SFVxSS2rDtmjZfP_9iTHIw?pwd=trqi) | [Google Drive](https://drive.google.com/drive/folders/1cX8fbVe4_pCNI98QBIYOp09hU6aGWSZL?usp=sharing))
+1. 下载**RapidOCR**使用的模型和字典文件所在目录`rapidocr`([百度网盘](https://pan.baidu.com/s/1SFVxSS2rDtmjZfP_9iTHIw?pwd=trqi) | [Google Drive](https://drive.google.com/drive/folders/1cX8fbVe4_pCNI98QBIYOp09hU6aGWSZL?usp=sharing))
 
-2. 将下载好的`rapid_ocr`下文件放到`resources/rapid_ocr`下，具体目录如下：
+2. 将所下载的`rapid_ocr`目录放到当前`resources`下，具体目录结构如下：
    ```text
    resources/
    └── rapid_ocr
       ├── en_dict.txt
-      ├── models
-      │   ├── ch_mobile_v2.0_rec_infer.onnx
-      │   ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
-      │   └── ch_PP-OCRv2_det_infer.onnx
-      └── ppocr_keys_v1.txt
+      ├── ppocr_keys_v1.txt
+      └── models
+          ├── ch_mobile_v2.0_rec_infer.onnx
+          ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
+          └── ch_PP-OCRv2_det_infer.onnx
    ```
 
 3. 搭建运行环境
@@ -111,7 +111,6 @@
    - 安装相应的包
       ```bash
       cd RapidVideOCR
-
       pip install -r requirements.txt -i https://pypi.douban.com/simple/
       ```
    - 也可以在[Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb)下快速查看运行Demo。
@@ -120,7 +119,6 @@
    - 代码
       ```bash
       cd RapidVideOCR
-
       python main.py
       ```
    - 当操作系统是Windows和参数`is_select_threshold=True`时，可以交互式选择二值化阈值
