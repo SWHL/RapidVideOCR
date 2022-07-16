@@ -74,6 +74,13 @@
   - [x] Make the project logo.
   - [x] Add sample vidoe to run time-consuming benchmark.
 
+### Overall Framework
+```mermaid
+graph LR
+    A[/Video file/] --> B(1.Read each frame) & C(2.Obtain the key frame) & D(3.RapidOCR) & E(4.Merge duplicate frames) & F(5.Convert) --> M(Output) --> G{Which format}
+    G --> H(SRT) & I(Txt) & J(Word)
+
+```
 
 ### [FAQ](./docs/FAQ.md)
 

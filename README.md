@@ -69,9 +69,12 @@
 - 优化代码
 
 ### 整体框架
-<div align="center">
-   <img src="assets/RapidVideOCR-Framework.png"  width="75%" height="75%">
-</div>
+```mermaid
+graph LR
+    A[/Video file/] --> B(1.Read each frame) & C(2.Obtain the key frame) & D(3.RapidOCR) & E(4.Merge duplicate frames) & F(5.Convert) --> M(Output) --> G{Which format}
+    G --> H(SRT) & I(Txt) & J(Word)
+  
+```
 
 ### 常见问题 [FAQ](./docs/FAQ.md)
 
