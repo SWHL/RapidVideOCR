@@ -2,4 +2,3 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 from .rapid_ocr_api import TextSystem
-from .ch_ppocr_v2_det import TextDetector

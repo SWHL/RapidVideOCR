@@ -14,70 +14,32 @@
 import argparse
 import math
 import time
-from pathlib import Path
 from typing import List
 
 import cv2
 import numpy as np
-import onnxruntime
 
 try:
-    from .utils import CTCLabelDecode, read_yaml
+    from .utils import CTCLabelDecode, read_yaml, OrtInferSession
 except:
-    from utils import CTCLabelDecode, read_yaml
-
-root_path = Path(__file__).parent
+    from utils import CTCLabelDecode, read_yaml, OrtInferSession
 
 
 class TextRecognizer(object):
     def __init__(self, config):
-        self.rec_image_shape = config['rec_img_shape']
-        self.rec_batch_num = config['rec_batch_num']
-        self.character_dict_path = config['keys_path']
+        session_instance = OrtInferSession(config)
+        self.session = session_instance.session
+        self.input_name = session_instance.get_input_name()
+        meta_dict = session_instance.get_metadata()
+
+        if 'character' in meta_dict.keys():
+            self.character_dict_path = meta_dict['character'].splitlines()
+        else:
+            self.character_dict_path = config.get('keys_path', None)
         self.postprocess_op = CTCLabelDecode(self.character_dict_path)
 
-        sess_opt = onnxruntime.SessionOptions()
-        sess_opt.log_severity_level = 4
-        sess_opt.enable_cpu_mem_arena = False
-        self.session = onnxruntime.InferenceSession(config['model_path'],
-                                                    sess_opt)
-        self.input_name = self.session.get_inputs()[0].name
-
-    def resize_norm_img(self, img, max_wh_ratio):
-        img_channel, img_height, img_width = self.rec_image_shape
-        assert img_channel == img.shape[2]
-
-        img_width = int((32 * max_wh_ratio))
-        max_wh_ratio = 1
-
-        h, w = img.shape[:2]
-        ratio = w / float(h)
-        if math.ceil(img_height * ratio) > img_width:
-            resized_w = img_width
-        else:
-            resized_w = int(math.ceil(img_height * ratio))
-
-        resized_image = cv2.resize(img, (resized_w, img_height))
-        resized_image = resized_image.astype('float32')
-        resized_image = resized_image.transpose((2, 0, 1)) / 255
-        resized_image -= 0.5
-        resized_image /= 0.5
-
-        padding_im = np.zeros((img_channel, img_height, img_width),
-                              dtype=np.float32)
-        padding_im[:, :, 0:resized_w] = resized_image
-        return padding_im
-
-    def resize_norm_img_svtr(self, img, max_wh_ratio=None):
-        img_c, img_h, img_w = self.rec_image_shape
-        resized_image = cv2.resize(img, (img_w, img_h),
-                                   interpolation=cv2.INTER_LINEAR)
-
-        resized_image = resized_image.astype('float32')
-        resized_image = resized_image.transpose((2, 0, 1)) / 255
-        resized_image -= 0.5
-        resized_image /= 0.5
-        return resized_image
+        self.rec_batch_num = config['rec_batch_num']
+        self.rec_image_shape = config['rec_img_shape']
 
     def __call__(self, img_list: List[np.ndarray]):
         if isinstance(img_list, np.ndarray):
@@ -104,7 +66,8 @@ class TextRecognizer(object):
 
             norm_img_batch = []
             for ino in range(beg_img_no, end_img_no):
-                norm_img = self.resize_norm_img_svtr(img_list[indices[ino]])
+                norm_img = self.resize_norm_img(img_list[indices[ino]],
+                                                max_wh_ratio)
                 norm_img_batch.append(norm_img[np.newaxis, :])
             norm_img_batch = np.concatenate(norm_img_batch).astype(np.float32)
 
@@ -118,6 +81,31 @@ class TextRecognizer(object):
             elapse += time.time() - starttime
         return rec_res, elapse
 
+    def resize_norm_img(self, img, max_wh_ratio):
+        img_channel, img_height, img_width = self.rec_image_shape
+        assert img_channel == img.shape[2]
+
+        img_width = int((img_height * max_wh_ratio))
+        max_wh_ratio = 1
+
+        h, w = img.shape[:2]
+        ratio = w / float(h)
+        if math.ceil(img_height * ratio) > img_width:
+            resized_w = img_width
+        else:
+            resized_w = int(math.ceil(img_height * ratio))
+
+        resized_image = cv2.resize(img, (resized_w, img_height))
+        resized_image = resized_image.astype('float32')
+        resized_image = resized_image.transpose((2, 0, 1)) / 255
+        resized_image -= 0.5
+        resized_image /= 0.5
+
+        padding_im = np.zeros((img_channel, img_height, img_width),
+                              dtype=np.float32)
+        padding_im[:, :, 0:resized_w] = resized_image
+        return padding_im
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -130,4 +118,4 @@ if __name__ == "__main__":
 
     img = cv2.imread(args.image_path)
     rec_res, predict_time = text_recognizer(img)
-    print(f'识别结果: {rec_res}\t cost: {predict_time}s')
+    print(f'rec result: {rec_res}\t cost: {predict_time}s')

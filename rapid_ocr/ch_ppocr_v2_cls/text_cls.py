@@ -19,12 +19,11 @@ from typing import List
 
 import cv2
 import numpy as np
-import onnxruntime as ort
 
 try:
-    from .utils import ClsPostProcess, read_yaml
+    from .utils import ClsPostProcess, read_yaml, OrtInferSession
 except:
-    from utils import ClsPostProcess, read_yaml
+    from utils import ClsPostProcess, read_yaml, OrtInferSession
 
 
 class TextClassifier(object):
@@ -34,35 +33,9 @@ class TextClassifier(object):
         self.cls_thresh = config['cls_thresh']
         self.postprocess_op = ClsPostProcess(config['label_list'])
 
-        sess_opt = ort.SessionOptions()
-        sess_opt.log_severity_level = 4
-        sess_opt.enable_cpu_mem_arena = False
-        self.session = ort.InferenceSession(config['model_path'], sess_opt)
-        self.input_name = self.session.get_inputs()[0].name
-
-    def resize_norm_img(self, img):
-        img_c, img_h, img_w = self.cls_image_shape
-        h, w = img.shape[:2]
-        ratio = w / float(h)
-        if math.ceil(img_h * ratio) > img_w:
-            resized_w = img_w
-        else:
-            resized_w = int(math.ceil(img_h * ratio))
-
-        resized_image = cv2.resize(img, (resized_w, img_h))
-        resized_image = resized_image.astype('float32')
-        if img_c == 1:
-            resized_image = resized_image / 255
-            resized_image = resized_image[np.newaxis, :]
-        else:
-            resized_image = resized_image.transpose((2, 0, 1)) / 255
-
-        resized_image -= 0.5
-        resized_image /= 0.5
-        padding_im = np.zeros((img_c, img_h, img_w), dtype=np.float32)
-        padding_im[:, :, :resized_w] = resized_image
-        return padding_im
-
+        session_instance = OrtInferSession(config)
+        self.session = session_instance.session
+        self.input_name = session_instance.get_input_name()
 
     def __call__(self, img_list: List[np.ndarray]):
         if isinstance(img_list, np.ndarray):
@@ -109,6 +82,29 @@ class TextClassifier(object):
                         img_list[indices[beg_img_no + rno]], 1)
         return img_list, cls_res, elapse
 
+    def resize_norm_img(self, img):
+        img_c, img_h, img_w = self.cls_image_shape
+        h, w = img.shape[:2]
+        ratio = w / float(h)
+        if math.ceil(img_h * ratio) > img_w:
+            resized_w = img_w
+        else:
+            resized_w = int(math.ceil(img_h * ratio))
+
+        resized_image = cv2.resize(img, (resized_w, img_h))
+        resized_image = resized_image.astype('float32')
+        if img_c == 1:
+            resized_image = resized_image / 255
+            resized_image = resized_image[np.newaxis, :]
+        else:
+            resized_image = resized_image.transpose((2, 0, 1)) / 255
+
+        resized_image -= 0.5
+        resized_image /= 0.5
+        padding_im = np.zeros((img_c, img_h, img_w), dtype=np.float32)
+        padding_im[:, :, :resized_w] = resized_image
+        return padding_im
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -123,4 +119,4 @@ if __name__ == "__main__":
     img = cv2.imread(args.image_path)
     img_list, cls_res, predict_time = text_classifier(img)
     for ino in range(len(img_list)):
-        print(f"分类结果:{cls_res[ino]}")
+        print(f"cls result:{cls_res[ino]}")

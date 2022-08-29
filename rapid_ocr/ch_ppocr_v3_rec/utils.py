@@ -1,8 +1,52 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import warnings
+
 import numpy as np
 import yaml
+from onnxruntime import (get_available_providers, get_device,
+                         SessionOptions, InferenceSession)
+
+
+class OrtInferSession(object):
+    def __init__(self, config):
+        sess_opt = SessionOptions()
+        sess_opt.log_severity_level = 4
+        sess_opt.enable_cpu_mem_arena = False
+
+        cuda_ep = 'CUDAExecutionProvider'
+        cpu_ep = 'CPUExecutionProvider'
+        cpu_provider_options = {
+            "arena_extend_strategy": "kSameAsRequested",
+        }
+
+        EP_list = []
+        if config['use_cuda'] and get_device() == 'GPU' \
+                and cuda_ep in get_available_providers():
+            EP_list = [(cuda_ep, config[cuda_ep])]
+        EP_list.append((cpu_ep, cpu_provider_options))
+
+        self.session = InferenceSession(config['model_path'],
+                                        sess_options=sess_opt,
+                                        providers=EP_list)
+
+        if config['use_cuda'] and cuda_ep not in self.session.get_providers():
+            warnings.warn(f'{cuda_ep} is not avaiable for current env, the inference part is automatically shifted to be executed under {cpu_ep}.\n'
+                          'Please ensure the installed onnxruntime-gpu version matches your cuda and cudnn version, '
+                          'you can check their relations from the offical web site: '
+                          'https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html',
+                          RuntimeWarning)
+
+    def get_input_name(self, input_idx=0):
+        return self.session.get_inputs()[input_idx].name
+
+    def get_output_name(self, output_idx=0):
+        return self.session.get_outputs()[output_idx].name
+
+    def get_metadata(self):
+        meta_dict = self.session.get_modelmeta().custom_metadata_map
+        return meta_dict
 
 
 def read_yaml(yaml_path):
@@ -19,11 +63,15 @@ class CTCLabelDecode(object):
 
         self.character_str = []
         assert character_dict_path is not None, "character_dict_path should not be None"
-        with open(character_dict_path, "rb") as fin:
-            lines = fin.readlines()
-            for line in lines:
-                line = line.decode('utf-8').strip("\n").strip("\r\n")
-                self.character_str.append(line)
+
+        if isinstance(character_dict_path, str):
+            with open(character_dict_path, "rb") as fin:
+                lines = fin.readlines()
+                for line in lines:
+                    line = line.decode('utf-8').strip("\n").strip("\r\n")
+                    self.character_str.append(line)
+        else:
+            self.character_str = character_dict_path
         self.character_str.append(' ')
 
         dict_character = self.add_special_char(self.character_str)
@@ -74,6 +122,5 @@ class CTCLabelDecode(object):
                 else:
                     conf_list.append(1)
             text = ''.join(char_list)
-            result_list.append((text, np.mean(conf_list)))
+            result_list.append((text, np.mean(conf_list  + [1e-10] )))
         return result_list
-
