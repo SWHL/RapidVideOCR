@@ -1,4 +1,4 @@
-subtitle_height:   # 空着是Non的意思
+subtitle_height:   # 空着是None的意思
 is_dilate: true
 is_select_threshold: true
 error_num: 0.005

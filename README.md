@@ -8,7 +8,7 @@
 简体中文 | [English](./docs/README_en.md)
 
 <p align="left">
-    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/assets/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
+    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
@@ -23,33 +23,26 @@
   - **更快**：
     - 采用[Decord](https://github.com/dmlc/decord)作为读取视频的库，更快;对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
     - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
-  - **更准**：整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，模型均来自[PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.4/README_ch.md#pp-ocr%E7%B3%BB%E5%88%97%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8%E6%9B%B4%E6%96%B0%E4%B8%AD)。
+  - **更准**：
+    - 整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，模型均来自[PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.4/README_ch.md#pp-ocr%E7%B3%BB%E5%88%97%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8%E6%9B%B4%E6%96%B0%E4%B8%AD)。
     - 当然也可以在GPU运行，只要根据机器配置，安装对应版本的`onnxruntime-gpu`，即可自动在英伟达显卡上运行。具体教程参见：[onnxruntime-gpu版推理配置](https://github.com/RapidAI/RapidOCR/blob/main/python/onnxruntime_infer/README.md#onnxruntime-gpu%E7%89%88%E6%8E%A8%E7%90%86%E9%85%8D%E7%BD%AE)
-  - **更方便**：采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
+  - **更方便**：
+    - 采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
 
-- 🐱如果想要识别**纯英文、日文**的字幕，可以在[`config_ocr.yaml`](./config_ocr.yaml)中更改对应模型和字典文件即可。
+- 🐱如果想要识别**纯英文、日文、韩文**等字幕，可以在[`config_ocr.yaml`](./config_ocr.yaml)中更改对应模型文件即可。
   - 纯英文模型
     ```yaml
-     Rec:
-         module_name: ch_ppocr_v2_rec
-         class_name: TextRecognizer
-         model_path: resources/models/en_number_mobile_v2. 0_rec_infer.onnx
-
-         rec_img_shape: [3, 32, 320]
-         rec_batch_num: 6
-         keys_path: resources/rapid_ocr/en_dict.txt
+    Rec:
+        module_name: ch_ppocr_v3_rec
+        class_name: TextRecognizer
+        model_path: resources/rapid_ocr/models/en_number_mobile_v2.0_rec_infer.onnx
     ```
-
   - 日文模型
     ```yaml
     Rec:
         module_name: ch_ppocr_v2_rec
         class_name: TextRecognizer
         model_path: resources/rapid_ocr/models/japan_rec_crnn.onnx
-
-        rec_img_shape: [3, 32, 320]
-        rec_batch_num: 6
-        keys_path: resources/rapid_ocr/japan_dict.txt
     ```
 
 ### 仓库分支说明
@@ -73,7 +66,7 @@
 graph LR
     A[/Video file/] --> B(1.Read each frame) & C(2.Obtain the key frame) & D(3.RapidOCR) & E(4.Merge duplicate frames) & F(5.Convert) --> M(Output) --> G{Which format}
     G --> H(SRT) & I(Txt) & J(Word)
-  
+
 ```
 
 ### 常见问题 [FAQ](./docs/FAQ.md)
@@ -101,28 +94,26 @@ graph LR
    ```text
    resources/
    └── rapid_ocr
-      ├── en_dict.txt
-      ├── ppocr_keys_v1.txt
       └── models
-          ├── ch_mobile_v2.0_rec_infer.onnx
+          ├── ch_PP-OCRv3_rec_infer.onnx
           ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
-          └── ch_PP-OCRv2_det_infer.onnx
+          └── ch_PP-OCRv3_det_infer.onnx
    ```
 
 3. 搭建运行环境
    - 推荐Windows，整个项目目前只在Windows下测试过
    - 安装相应的包
       ```bash
-      cd RapidVideOCR
-      pip install -r requirements.txt -i https://pypi.douban.com/simple/
+      $ cd RapidVideOCR
+      $ pip install -r requirements.txt -i https://pypi.douban.com/simple/
       ```
-   - 也可以在[Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb)下快速查看运行Demo。
+   - 也可以在[Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/docs/RapidVideOCR.ipynb)下快速查看运行Demo。
 
 4. 运行
    - 代码
       ```bash
-      cd RapidVideOCR
-      python main.py
+      $ cd RapidVideOCR
+      $ python main.py
       ```
    - 当操作系统是Windows和参数`is_select_threshold=True`时，可以交互式选择二值化阈值
      - 左右滑动滑块，使得下面图中文字清晰显示，按`Enter`退出，需要选择三次

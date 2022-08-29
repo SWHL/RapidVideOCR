@@ -8,7 +8,7 @@
 [简体中文](../README.md) | English
 
 <p align="left">
-    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb" target="_blank"><img src="../assets/colab-badge.svg" alt="Open in Colab"></a>
+    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
@@ -24,17 +24,13 @@
     - The entire project is completely offline CPU running.
     - The OCR part is from [RapidOCR](https://github.com/RapidAI/RapidOCR), relying on the [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/).
 
-- 🐱If you want to recognize **English, Japanese** subtitles, you can change the corresponding model and dictionary file in [`config_ocr.yaml`](./config_ocr.yaml) to change the corresponding model and dictionary files.
+- 🐱If you want to recognize **English, Japanese, Korean** subtitles, you can change the corresponding model and dictionary file in [`config_ocr.yaml`](./config_ocr.yaml) to change the corresponding model files.
   - English
     ```yaml
      Rec:
          module_name: ch_ppocr_v2_rec
          class_name: TextRecognizer
-         model_path: resources/models/en_number_mobile_v2. 0_rec_infer.onnx
-
-         rec_img_shape: [3, 32, 320]
-         rec_batch_num: 6
-         keys_path: resources/rapid_ocr/en_dict.txt
+         model_path: resources/rapid_ocr/models/en_number_mobile_v2.0_rec_infer.onnx
     ```
 
   - Japanese
@@ -43,10 +39,6 @@
         module_name: ch_ppocr_v2_rec
         class_name: TextRecognizer
         model_path: resources/rapid_ocr/models/japan_rec_crnn.onnx
-
-        rec_img_shape: [3, 32, 320]
-        rec_batch_num: 6
-        keys_path: resources/rapid_ocr/japan_dict.txt
     ```
 
 ### Change log
@@ -105,29 +97,27 @@ graph LR
    ```text
    resources/
    └── rapid_ocr
-      ├── en_dict.txt
-      ├── models
-      │   ├── ch_mobile_v2.0_rec_infer.onnx
-      │   ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
-      │   └── ch_PP-OCRv2_det_infer.onnx
-      └── ppocr_keys_v1.txt
+      └── models
+          ├── ch_PP-OCRv3_rec_infer.onnx
+          ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
+          └── ch_PP-OCRv3_det_infer.onnx
    ```
 
 3. Install the run envirement.
    - Recommend the Window OS, because the entire project has only been tested under Windows now.
    - Install the relative packages as follows.
       ```bash
-      cd RapidVideOCR
+      $ cd RapidVideOCR
 
-      pip install -r requirements.txt -i https://pypi.douban.com/simple/
+      $ pip install -r requirements.txt -i https://pypi.douban.com/simple/
       ```
 
 4. Run
    - The code:
       ```bash
-      cd RapidVideOCR
+      $ cd RapidVideOCR
 
-      python main.py
+      $ python main.py
       ```
    - The binarization threshold can be interactively selected when the OS is Windows and the parameter `is_select_threshold=True`
      - Slide the slider left and right, so that the text in the following figure is clearly displayed, press `Enter` to exit, you need to select three times
@@ -142,7 +132,7 @@ graph LR
         The txt has been saved in the assets\test_video\2.txt.
         The docx has been saved in the assets\test_video\2.docx.
         ```
-   - Also run on the [Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/RapidVideOCR.ipynb).
+   - Also run on the [Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/docs/RapidVideOCR.ipynb).
 
 5. Look the output files where the video is located.
 
