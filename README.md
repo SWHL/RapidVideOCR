@@ -40,7 +40,7 @@
   - 日文模型
     ```yaml
     Rec:
-        module_name: ch_ppocr_v2_rec
+        module_name: ch_ppocr_v3_rec
         class_name: TextRecognizer
         model_path: resources/rapid_ocr/models/japan_rec_crnn.onnx
     ```
