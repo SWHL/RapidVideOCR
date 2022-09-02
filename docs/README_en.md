@@ -28,7 +28,7 @@
   - English
     ```yaml
      Rec:
-         module_name: ch_ppocr_v2_rec
+         module_name: ch_ppocr_v3_rec
          class_name: TextRecognizer
          model_path: resources/rapid_ocr/models/en_number_mobile_v2.0_rec_infer.onnx
     ```
@@ -36,7 +36,7 @@
   - Japanese
     ```yaml
     Rec:
-        module_name: ch_ppocr_v2_rec
+        module_name: ch_ppocr_v3_rec
         class_name: TextRecognizer
         model_path: resources/rapid_ocr/models/japan_rec_crnn.onnx
     ```
@@ -45,11 +45,11 @@
 ### ✨2022-06-26 update:
 - Parameterized configuration of relevant parameters, including `rapid_ocr` and `rapid_videocr` parts, more flexible
 
-#### 🌼2022-05-08 update
+#### 🌼2022-05-08 update:
 - Add an interactive operation to determine the threshold value of the binarized subtitle image, only supports Windows system, can be used by `is_select_threshold = True`
 - Optimized code
 
-#### 🎉2022-05-03 update
+#### 🎉2022-05-03 update:
 - Add GPU support, see the specific configuration tutorial: [onnxruntime-gpu version inference configuration](https://github.com/RapidAI/RapidOCR/blob/main/python/onnxruntime_infer/README.md#onnxruntime-gpu%E7%89%88%E6%8E%A8%E7%90%86%E9%85%8D%E7%BD%AE)
 - Added support for Japanese, more languages can be supported, see: [List of supported languages](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99)
 
