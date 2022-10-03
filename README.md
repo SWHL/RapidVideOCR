@@ -63,8 +63,13 @@
 
 ### 整体框架
 ```mermaid
-graph LR
-    A[/Video file/] --> B(1.Read each frame) & C(2.Obtain the key frame) & D(3.RapidOCR) & E(4.Merge duplicate frames) & F(5.Convert) --> M(Output) --> G{Which format}
+flowchart LR
+	subgraph Step
+	direction TB
+	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
+	end
+	
+	A[/Video file/] --> Step --> M(Output) --> G{Which format}
     G --> H(SRT) & I(Txt) & J(Word)
 
 ```
@@ -72,6 +77,10 @@ graph LR
 ### 常见问题 [FAQ](./docs/FAQ.md)
 
 ### 视频OCR动态
+- [(ICCV 2021) STRIVE: Scene Text Replacement In videos.](https://openaccess.thecvf.com/content/ICCV2021/papers/G_STRIVE_Scene_Text_Replacement_in_Videos_ICCV_2021_paper.pdf)
+	- 使用时空转换网络将所有帧中的文字矫正
+	- 使用图片中文字编辑的方法替换单一参考帧中的文字，并且使用时空转换网络还原矫正的文字
+	- 提供了一个视频文本编辑的数据集
 - [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
 - [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
 
