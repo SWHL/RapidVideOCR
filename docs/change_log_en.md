@@ -1,4 +1,10 @@
-### ✨2022-06-26 update:
+#### 🎄2022-12-04 update:
+- Add the function of interactively framing the subtitle position, which is enabled by default and is more useful. For details, please refer to the GIF image below. Thanks to @[Johndirr](https://github.com/Johndirr) for the suggestion.
+- Optimize the code structure, put RapidOCR related models and configuration files in the `rapidocr` directory
+- The configuration file of `rapidvideocr` is also placed in the corresponding directory.
+
+
+#### ✨2022-06-26 update:
 - Parameterized configuration of relevant parameters, including `rapid_ocr` and `rapid_videocr` parts, more flexible
 
 #### 🌼2022-05-08 update:

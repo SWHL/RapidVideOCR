@@ -42,6 +42,8 @@
   - **More accurately**:
     - The entire project is completely offline CPU running.
     - The OCR part is from [RapidOCR](https://github.com/RapidAI/RapidOCR), relying on the [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/).
+  - **More convenient**:
+    - Using the ONNXRuntime reasoning engine with a size of only about 2M, without installing the PaddlePaddle framework, the deployment is more convenient.
 
 - 🐱If you want to recognize **English, Japanese, Korean** subtitles, you can change the corresponding model and dictionary file in [`config_ocr.yaml`](./config_ocr.yaml) to change the corresponding model files.
   - English
@@ -72,8 +74,13 @@
 
 ### Overall Framework
 ```mermaid
-graph LR
-    A[/Video file/] --> B(1.Read each frame) & C(2.Obtain the key frame) & D(3.RapidOCR) & E(4.Merge duplicate frames) & F(5.Convert) --> M(Output) --> G{Which format}
+flowchart LR
+	subgraph Step
+	direction TB
+	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
+	end
+
+	A[/Video file/] --> Step --> M(Output) --> G{Which format}
     G --> H(SRT) & I(Txt) & J(Word)
 
 ```
