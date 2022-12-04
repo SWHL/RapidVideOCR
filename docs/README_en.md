@@ -102,7 +102,7 @@ flowchart LR
 
 
 ### Use
-1. Download the OCR models and dictionary keys used by RapidOCR. ([Baidu](https://pan.baidu.com/s/1SFVxSS2rDtmjZfP_9iTHIw?pwd=trqi) | [Google Drive](https://drive.google.com/drive/folders/1cX8fbVe4_pCNI98QBIYOp09hU6aGWSZL?usp=sharing))
+1. Download the project source code and the model used for OCR from the repo, the link is [Github Release](https://github.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip) | [Gitee Release](https://gitee.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip)
 
 2. Install the run envirement.
    - Recommend the Window OS, because the entire project has only been tested under Windows now.

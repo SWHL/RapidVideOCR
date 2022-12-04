@@ -109,8 +109,7 @@ flowchart LR
 
 
 ### 使用步骤
-<!-- 1. 下载**RapidOCR**使用的模型和字典文件所在目录`rapidocr`([百度网盘](https://pan.baidu.com/s/1SFVxSS2rDtmjZfP_9iTHIw?pwd=trqi) | [Google Drive](https://drive.google.com/drive/folders/1cX8fbVe4_pCNI98QBIYOp09hU6aGWSZL?usp=sharing)) -->
-1. 下载项目源码，地址为[]()
+1. 从仓库下载项目源码和OCR所用模型，地址为[Github Release](https://github.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip) | [Gitee Release](https://gitee.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip)
 
 2. 搭建运行环境
    - 推荐Windows，整个项目目前只在Windows下测试过
