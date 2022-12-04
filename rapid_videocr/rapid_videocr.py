@@ -3,33 +3,42 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-import random
 import platform
+import random
+from pathlib import Path
 
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
 from tqdm import tqdm
 
-from .utils import (debug_vis_box, get_frame_from_time, get_srt_timestamp,
-                    is_similar_batch, remove_batch_bg, remove_bg,
-                    string_similar, save_docx, save_srt, save_txt, vis_binary)
+from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
+                    read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
+                    save_txt, string_similar, vis_binary)
+
+CUR_DIR = Path(__file__).resolve().parent
 
 
 class ExtractSubtitle(object):
-    def __init__(self, ocr_system, subtitle_height=152, error_num=0.1,
-                 output_format='srt', is_dilate=True,
-                 is_select_threshold=False):
+    def __init__(self, ocr_system,
+                 config_path=str(CUR_DIR / 'config_videocr.yaml')):
         self.ocr_system = ocr_system
         self.text_det = ocr_system.text_detector
 
-        self.error_num = error_num
-        self.output_format = output_format
-        self.is_dilate = is_dilate
-        self.subtitle_height = subtitle_height
-        self.is_select_threshold = is_select_threshold
+        config = read_yaml(config_path)
+        self.error_num = config['error_num']
+        self.output_format = config['output_format']
+        self.is_dilate = config['is_dilate']
 
-    def __call__(self, video_path, time_start, time_end, batch_size=100):
+        self.select_nums = 3
+
+        if platform.system() != 'Windows':
+            raise ValueError('The code is only running under the Windows OS.')
+
+        self.time_start = config['time_start']
+        self.time_end = config['time_end']
+
+    def __call__(self, video_path, batch_size=100):
         self.video_path = video_path
 
         print(f'Loading {video_path}')
@@ -38,77 +47,28 @@ class ExtractSubtitle(object):
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
 
-        self.height = int(self.vr[0].shape[0])
+        self.random_index = random.choices(range(self.num_frames),
+                                           k=self.select_nums)
+        self.selected_frames = self.vr.get_batch(self.random_index).asnumpy()
 
-        if self.subtitle_height is None:
-            self.get_subtitle_height()
-        else:
-            print(f'Manual setting subtitle height: {self.subtitle_height}')
-
-        self.crop_h = self.height - self.subtitle_height
+        # 选择字幕区域, 仅限于Windows系统
+        roi_array = self._select_roi()
+        self.crop_start = np.min(roi_array[:, 1])
+        self.subtitle_height = np.max(roi_array[:, 3])
+        self.crop_end = self.crop_start + self.subtitle_height
 
         # 交互式确定threshold最佳值，仅仅限于Windows系统
-        if platform.system() == 'Windows' and self.is_select_threshold:
-            self.binary_threshold = self.select_threshold()
-            print(f'The binary threshold: {self.binary_threshold}')
-        else:
-            print('Using the default value: 243')
-            self.binary_threshold = 243
+        self.binary_threshold = self._select_threshold()
+        print(f'The binary threshold: {self.binary_threshold}')
 
         if batch_size is None:
             self.batch_size = self.fps * 2
         else:
             self.batch_size = batch_size
 
-        self.run_ocr(time_start, time_end)
+        self.run_ocr(self.time_start, self.time_end)
 
         return self.get_subtitles()
-
-    def get_subtitle_height(self):
-        """随机挑选几帧做文本检测，确定字幕高度"""
-
-        print('Auto set the subtitle height....')
-        if self.text_det is not None:
-            random_index = random.choices(range(len(self.vr)), k=5)
-            frames = self.vr.get_batch(random_index).asnumpy()
-            subtitle_h_list = []
-            for i, one_frame in enumerate(frames):
-                dt_boxes, _ = self.text_det(one_frame)
-
-                if dt_boxes is not None and dt_boxes.size > 0:
-                    middle_h = int(self.height / 4)
-                    mask = np.where(dt_boxes[:, 0, 1] > middle_h, True, False)
-                    filter_dt_boxes = dt_boxes[mask]
-                    if filter_dt_boxes.size <= 0:
-                        continue
-
-                    # Debug
-                    # debug_vis_box(i, filter_dt_boxes, one_frame)
-
-                    # 字幕中最高的距离
-                    all_y = filter_dt_boxes[:, :, 1]
-                    max_h = np.max(np.max(all_y, axis=1) - np.min(all_y, axis=1))
-
-                    # 最下面字幕距离图像最底部的距离
-                    bottom_margin = self.height - np.max(all_y)
-
-                    # max_h + bottom_margin: 字幕+字幕距图像最下面的距离
-                    if filter_dt_boxes.shape[0] > 1:
-                        # 说明可能是两行字幕
-                        subtitle_h_list.append(int(2 * max_h
-                                                   + 2 * bottom_margin))
-                    else:
-                        # 单行字幕
-                        subtitle_h_list.append(int(max_h + 2 * bottom_margin))
-
-            if len(subtitle_h_list) > 0:
-                self.subtitle_height = int(np.min(subtitle_h_list))
-            else:
-                self.subtitle_height = 152
-        else:
-            self.subtitle_height = 152
-
-        print(f'The subtitle value: {self.subtitle_height}')
 
     def _record_key_info(self, slow, duplicate_frame, slow_frame):
         if slow in self.key_point_dict:
@@ -116,7 +76,7 @@ class ExtractSubtitle(object):
         else:
             self.key_point_dict[slow] = duplicate_frame
 
-        if slow not in self.key_frames.keys():
+        if slow not in self.key_frames:
             self.key_frames[slow] = slow_frame
 
     def get_key_frame(self):
@@ -135,7 +95,8 @@ class ExtractSubtitle(object):
             slow_change = True
             while fast + self.batch_size <= self.ocr_end:
                 if slow_change:
-                    ori_slow_frame = self.vr[slow].asnumpy()[self.crop_h:, :, :]
+                    ori_slow_frame = self.vr[slow].asnumpy(
+                    )[self.crop_start: self.crop_end, :, :]
 
                     # Remove the background of the frame.
                     slow_frame = remove_bg(ori_slow_frame,
@@ -146,7 +107,7 @@ class ExtractSubtitle(object):
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
-                fast_frames = fast_frames[:, self.crop_h:, :, :]
+                fast_frames = fast_frames[:, self.crop_start: self.crop_end, :, :]
 
                 fast_frames = remove_batch_bg(fast_frames,
                                               is_dilate=self.is_dilate,
@@ -167,14 +128,16 @@ class ExtractSubtitle(object):
                     pbar.update(self.batch_size)
                     fast += self.batch_size
 
-                    self._record_key_info(slow, duplicate_frame, ori_slow_frame)
+                    self._record_key_info(
+                        slow, duplicate_frame, ori_slow_frame)
                 else:
                     # Exist the non similar frame.
                     index = not_similar_index[0] - slow
                     duplicate_frame = batch_list[:index]
 
                     # record
-                    self._record_key_info(slow, duplicate_frame, ori_slow_frame)
+                    self._record_key_info(
+                        slow, duplicate_frame, ori_slow_frame)
 
                     slow = not_similar_index[0]
                     fast = slow + 1
@@ -251,7 +214,7 @@ class ExtractSubtitle(object):
                 slow = fast
             fast += 1
 
-        [self.key_point_dict.pop(key_list[i]) for i in invalid_keys]
+        _ = [self.key_point_dict.pop(key_list[i]) for i in invalid_keys]
         self.pred_frames = [v for i, v in enumerate(self.pred_frames)
                             if i not in invalid_keys]
 
@@ -280,20 +243,27 @@ class ExtractSubtitle(object):
         else:
             raise ValueError(f'The {self.output_format} is not supported!')
 
-    def select_threshold(self):
-        """交互式选择二值化字幕阈值"""
-        random_index = random.choices(range(len(self.vr)), k=3)
-        frames = self.vr.get_batch(random_index).asnumpy()
+    def _select_roi(self):
+        roi_list = []
+        for i, frame in enumerate(self.selected_frames):
+            # 选择字幕区域
+            roi = cv2.selectROI(
+                f'[{i+1}/{self.select_nums}] Select a ROI and then press SPACE or ENTER button! Cancel the selection process by pressing c button!',
+                frame, True, False)
+            if sum(roi) > 0:
+                roi_list.append(list(roi))
+        cv2.destroyAllWindows()
+        return np.array(roi_list)
 
+    def _select_threshold(self):
         threshold_list = []
-        for i, frame in enumerate(frames):
-            crop_img = frame[self.crop_h:, :, :]
-
+        for i, frame in enumerate(self.selected_frames):
+            crop_img = frame[self.crop_start: self.crop_end, :, :]
             if i == 0:
                 threshold = vis_binary(i + 1, crop_img)
             else:
                 threshold = vis_binary(i + 1, crop_img,
-                                              threshold_list[-1])
+                                       threshold_list[-1])
 
             threshold_list.append(threshold)
         return np.max(threshold_list)

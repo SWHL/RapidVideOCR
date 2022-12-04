@@ -5,13 +5,21 @@
 import copy
 import datetime
 import difflib
-from pathlib import Path
 from io import BytesIO
+from pathlib import Path
 
 import cv2
 import numpy as np
 from docx import Document
+from docx.shared import Cm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+import yaml
+
+
+def read_yaml(yaml_path):
+    with open(yaml_path, 'rb') as f:
+        data = yaml.load(f, Loader=yaml.Loader)
+    return data
 
 
 def compute_centroid(dt_box):
@@ -33,8 +41,7 @@ def is_two_lines(dt_boxes):
                        + np.abs(first_point[1] - second_point[1]) ** 2)
     if distance > threshold:
         return False
-    else:
-        return True
+    return True
 
 
 def string_similar(s1, s2):
@@ -105,7 +112,7 @@ def vis_binary(i, img, default_pos=127):
     def update_theta(x): pass
 
     window_name = f'[{i}/3] Select the best threshold of binary,'\
-                    'press Enter to quit'
+        'press Enter to confirm.'
     tracker_name = 'threshold'
 
     cv2.namedWindow(window_name)
@@ -114,7 +121,7 @@ def vis_binary(i, img, default_pos=127):
                        winname=window_name,
                        pos=default_pos)
 
-    while (True):
+    while True:
         cv2.imshow(window_name, img)
 
         threshold = cv2.getTrackbarPos(tracker_name, window_name)

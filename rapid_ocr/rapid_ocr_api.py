@@ -10,13 +10,14 @@ import cv2
 import numpy as np
 import yaml
 
-root_dir = Path(__file__).resolve().parent
-sys.path.append(str(root_dir))
+CUR_DIR = Path(__file__).resolve().parent
+sys.path.append(str(CUR_DIR))
 
 
 class TextSystem(object):
-    def __init__(self, config_path):
+    def __init__(self, config_path=str(CUR_DIR / 'config_ocr.yaml')):
         super(TextSystem).__init__()
+
         if not Path(config_path).exists():
             raise FileExistsError(f'{config_path} does not exist!')
 
@@ -30,16 +31,20 @@ class TextSystem(object):
 
         TextDetector = self.init_module(config['Det']['module_name'],
                                         config['Det']['class_name'])
+        config['Det']['model_path'] = str(CUR_DIR / config['Det']['model_path'])
         self.text_detector = TextDetector(config['Det'])
 
         TextRecognizer = self.init_module(config['Rec']['module_name'],
                                           config['Rec']['class_name'])
+        config['Rec']['model_path'] = str(
+            CUR_DIR / config['Rec']['model_path'])
         self.text_recognizer = TextRecognizer(config['Rec'])
 
         self.use_angle_cls = config['Global']['use_angle_cls']
         if self.use_angle_cls:
             TextClassifier = self.init_module(config['Cls']['module_name'],
                                               config['Cls']['class_name'])
+            config['Cls']['model_path'] = str(CUR_DIR / config['Cls']['model_path'])
             self.text_cls = TextClassifier(config['Cls'])
 
     def __call__(self, img: np.ndarray):
@@ -152,13 +157,3 @@ class TextSystem(object):
                 filter_boxes.append(box)
                 filter_rec_res.append(rec_reuslt)
         return filter_boxes, filter_rec_res
-
-
-if __name__ == '__main__':
-    text_sys = TextSystem('config.yaml')
-
-    import cv2
-    img = cv2.imread('resources/test_images/det_images/ch_en_num.jpg')
-
-    result = text_sys(img)
-    print(result)
