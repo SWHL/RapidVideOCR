@@ -31,10 +31,6 @@ class ExtractSubtitle(object):
         self.is_dilate = config['is_dilate']
 
         self.select_nums = 3
-
-        if platform.system() != 'Windows':
-            raise ValueError('The code is only running under the Windows OS.')
-
         self.time_start = config['time_start']
         self.time_end = config['time_end']
 
