@@ -14,7 +14,25 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Windows-pink.svg"></a>
 </p>
 
+<details>
+    <summary>目录</summary>
 
+- [简介](#简介)
+- [更新日志（more）](#更新日志more)
+  - [🎄2022-12-04 update:](#2022-12-04-update)
+  - [✨2022-06-26 update:](#2022-06-26-update)
+- [整体框架](#整体框架)
+- [常见问题 FAQ](#常见问题-faq)
+- [视频OCR动态](#视频ocr动态)
+- [未来的应用场景探索](#未来的应用场景探索)
+- [耗时基准](#耗时基准)
+- [使用步骤](#使用步骤)
+- [`config_videocr.yaml`中相关参数](#config_videocryaml中相关参数)
+- [仓库分支说明](#仓库分支说明)
+
+</details>
+
+### 简介
 - 支持字幕语言：中文 | 英文 | 日文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
 
 - 想法源自 [videocr](https://github.com/apm1467/videocr)
@@ -45,7 +63,7 @@
         model_path: models/japan_rec_crnn.onnx
     ```
 
-### 更新日志（[more](./docs/changelog.md)）
+### 更新日志（[more](./docs/change_log.md)）
 #### 🎄2022-12-04 update:
 - 添加交互式框定字幕位置功能，默认开启，更加好用，详情可参考下面的GIF图。感谢@[Johndirr](https://github.com/Johndirr)的建议。
 - 优化代码结构，将RapidOCR相关模型和配置文件放到`rapidocr`目录下
@@ -54,9 +72,6 @@
 #### ✨2022-06-26 update:
 - 参数化配置相关参数，包括`rapid_ocr`和`rapid_videocr`两部分，更加灵活
 
-#### 🌼2022-05-08 update:
-- 添加交互式确定二值化字幕图像阈值操作，仅仅支持Windows系统，可以通过`is_select_threshold=True`来使用
-- 优化代码
 
 ### 整体框架
 ```mermaid

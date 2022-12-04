@@ -8,12 +8,31 @@
 [简体中文](../README.md) | English
 
 <p align="left">
-    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
+    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="../assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
-    <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/OS-Windows-pink.svg"></a>
 </p>
 
+
+<details>
+    <summary>Contents</summary>
+
+- [Introduction](#introduction)
+- [Change log (more)](#change-log-more)
+  - [🎄2022-12-04 update:](#2022-12-04-update)
+- [✨2022-06-26 update:](#2022-06-26-update)
+- [Overall Framework](#overall-framework)
+- [FAQ](#faq)
+- [Video OCR Research](#video-ocr-research)
+- [The benchmark of costing time](#the-benchmark-of-costing-time)
+- [Use](#use)
+- [`config_videocr.yaml` in the relevant parameters](#config_videocryaml-in-the-relevant-parameters)
+- [Other branch description](#other-branch-description)
+
+</details>
+
+### Introduction
 - Support subtitle language: Chinese | English | Japanese
 - Drive from [videocr](https://github.com/apm1467/videocr)
 - Extract subtitles embedded in the video faster and more accurately, and provide three formats of `txt|SRT|docx`
@@ -30,7 +49,7 @@
      Rec:
          module_name: ch_ppocr_v3_rec
          class_name: TextRecognizer
-         model_path: resources/rapid_ocr/models/en_number_mobile_v2.0_rec_infer.onnx
+         model_path: models/en_number_mobile_v2.0_rec_infer.onnx
     ```
 
   - Japanese
@@ -38,33 +57,18 @@
     Rec:
         module_name: ch_ppocr_v3_rec
         class_name: TextRecognizer
-        model_path: resources/rapid_ocr/models/japan_rec_crnn.onnx
+        model_path: models/japan_rec_crnn.onnx
     ```
 
-### Change log
+### Change log ([more](./change_log_en.md))
+#### 🎄2022-12-04 update:
+- Add the function of interactively framing the subtitle position, which is enabled by default and is more useful. For details, please refer to the GIF image below. Thanks to @[Johndirr](https://github.com/Johndirr) for the suggestion.
+- Optimize the code structure, put RapidOCR related models and configuration files in the `rapidocr` directory
+- The configuration file of `rapidvideocr` is also placed in the corresponding directory.
+
 ### ✨2022-06-26 update:
 - Parameterized configuration of relevant parameters, including `rapid_ocr` and `rapid_videocr` parts, more flexible
 
-#### 🌼2022-05-08 update:
-- Add an interactive operation to determine the threshold value of the binarized subtitle image, only supports Windows system, can be used by `is_select_threshold = True`
-- Optimized code
-
-#### 🎉2022-05-03 update:
-- Add GPU support, see the specific configuration tutorial: [onnxruntime-gpu version inference configuration](https://github.com/RapidAI/RapidOCR/blob/main/python/onnxruntime_infer/README.md#onnxruntime-gpu%E7%89%88%E6%8E%A8%E7%90%86%E9%85%8D%E7%BD%AE)
-- Added support for Japanese, more languages can be supported, see: [List of supported languages](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99)
-
-#### 💡2022-05-01 update:
-- Add the speech recognition module. Since the decoding part of this module can only run on Linux and Mac, if you want to use this module, please use Linux and Mac.
-- The current speech recognition code comes from the [RapidASR/python](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech) section. Model from [PaddleSpeech](https://github.com/PaddlePaddle/PaddleSpeech/tree/develop/examples/aishell/asr0).
-- After a simple test, the voice recognition module is not too accurate. -_-!
-
-#### 2022-03-09 update:
-- Add [FAQ]((./docs/FAQ.md)) module.
-
-#### 2021-12-14 update:
-  - [x] Add specific parameter descrition.
-  - [x] Make the project logo.
-  - [x] Add sample vidoe to run time-consuming benchmark.
 
 ### Overall Framework
 ```mermaid
@@ -85,7 +89,7 @@ graph LR
 ### The benchmark of costing time
 
 |Env|Test MP4| Total Frames | Frame Size|Cost(s/f)|
-|:---:|:---:|:---:|:---:|:---:|
+|:---|:---|:---|:---|:---|
 |`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
 |`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
 
@@ -93,36 +97,22 @@ graph LR
 ### Use
 1. Download the OCR models and dictionary keys used by RapidOCR. ([Baidu](https://pan.baidu.com/s/1SFVxSS2rDtmjZfP_9iTHIw?pwd=trqi) | [Google Drive](https://drive.google.com/drive/folders/1cX8fbVe4_pCNI98QBIYOp09hU6aGWSZL?usp=sharing))
 
-2. Put the downloaded `rapid_ocr` under the `resources`, the specific directories are as follows:
-   ```text
-   resources/
-   └── rapid_ocr
-      └── models
-          ├── ch_PP-OCRv3_rec_infer.onnx
-          ├── ch_ppocr_mobile_v2.0_cls_infer.onnx
-          └── ch_PP-OCRv3_det_infer.onnx
-   ```
-
-3. Install the run envirement.
+2. Install the run envirement.
    - Recommend the Window OS, because the entire project has only been tested under Windows now.
    - Install the relative packages as follows.
       ```bash
       $ cd RapidVideOCR
-
-      $ pip install -r requirements.txt -i https://pypi.douban.com/simple/
+      $ pip install -r requirements.txt
       ```
 
-4. Run
-   - The code:
+3. Run
+   - Run the code:
       ```bash
-      $ cd RapidVideOCR
-
       $ python main.py
       ```
-   - The binarization threshold can be interactively selected when the OS is Windows and the parameter `is_select_threshold=True`
-     - Slide the slider left and right, so that the text in the following figure is clearly displayed, press `Enter` to exit, you need to select three times
-     - For example：
-       ![interactive_select_threshold](./assets/interactive_select_threshold.gif)
+   - Select the subtitle area, press the main left button of the mouse to frame the area where the subtitle is located, don't just select the text, try to select the row area where the text is located
+   - Select an appropriate binarization threshold, slide the slider left and right, so that the text in the figure below is clearly displayed, press `Enter` to confirm, you need to select three times. The specific operation is shown in the following GIF:
+        ![interactive_select_threshold](../assets/interactive_select_threshold.gif)
     - The output log is as follows：
         ```text
         Loading assets/test_video/2.mp4
@@ -134,16 +124,21 @@ graph LR
         ```
    - Also run on the [Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/docs/RapidVideOCR.ipynb).
 
-5. Look the output files where the video is located.
+4. Look the output files where the video is located.
 
 ### [`config_videocr.yaml`](./config_videocr.yaml) in the relevant parameters
-|parameter name|value range|meaning|
-|:---|:---|:---|
-|`batch_size`|`[1, all_frames]`|The size of the batch to compare when getting keyframes, in theory, the bigger the faster|
-|`is_dilate`|`bool`|Whether to erode the background image of the caption|
-|`is_select_threshold`|`bool`|whether to interactively select binary values|
-|`subtitle_height`|`default:None`|The height of the subtitle text, which is automatically obtained by default
-|`error_num`|`[0, 1]`, default:0.005|The smaller the value, the more sensitive the difference between the two graphs|
-|`output_format`|`['txt', 'srt', 'docx', 'all']`|output the final caption file, `all` the previous three formats are output|
-|`time_start`|start extracting the start time of the subtitle|start extracting the start time of the subtitle, example: '00:00:00'|
-|`time_end`|the start point of the subtitle extraction| needs to be greater than `time_start`, `-1` means to the end, example: '-1'|
+|Parameter Name|Default|Value Range|Note|
+|:---|:---|:---|:---|
+|`is_dilate`|`True`|`bool`|Whether to erode the background image of the caption|
+|`error_num`|`0.005`|`[0, 1]`, default:0.005|The smaller the value, the more sensitive the difference between the two graphs|
+|`output_format`|`all`|`['txt', 'srt', 'docx', 'all']`|output the final caption file, `all` the previous three formats are output|
+|`time_start`|`00:00:00`|start extracting the start time of the subtitle|start extracting the start time of the subtitle, example: '00:00:00'|
+|`time_end`|`-1`|the start point of the subtitle extraction| needs to be greater than `time_start`, `-1` means to the end, example: '-1'|
+
+### Other branch description
+- `add_remove_bg_module`:
+   - Based on the image segmentation UNet algorithm to remove the background image of the subtitle image, leaving only the text content, the corresponding training code is [pytorch-unet](https://github.com/SWHL/pytorch-unet)
+   - The reason for not merging into the main warehouse: the model is large, the processing speed is slow, and the generalization performance is not very good, there is room for improvement, and you can explore by yourself.
+- `add_asr_module`:
+   - Reasoning code source: [RapidASR](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech)
+   - Reasons for not being merged into the main warehouse: slow processing speed, complex configuration environment, poor effect, and room for improvement, you can explore by yourself.

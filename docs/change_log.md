@@ -1,3 +1,8 @@
+#### 🎄2022-12-04 update:
+- 添加交互式框定字幕位置功能，默认开启，更加好用，详情可参考下面的GIF图。感谢@[Johndirr](https://github.com/Johndirr)的建议。
+- 优化代码结构，将RapidOCR相关模型和配置文件放到`rapidocr`目录下
+- `rapidvideocr`的配置文件也放到对应目录下
+
 #### 🌼2022-05-08 update:
 - 添加交互式确定二值化字幕图像阈值操作，仅仅支持Windows系统，可以通过`is_select_threshold = True`来使用
 - 优化代码
