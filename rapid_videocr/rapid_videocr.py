@@ -242,7 +242,9 @@ class ExtractSubtitle(object):
     def _select_roi(self):
         roi_list = []
         for i, frame in enumerate(self.selected_frames):
-            # 选择字幕区域
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            # 交互式选择字幕区域
             roi = cv2.selectROI(
                 f'[{i+1}/{self.select_nums}] Select a ROI and then press SPACE or ENTER button! Cancel the selection process by pressing c button!',
                 frame, True, False)
