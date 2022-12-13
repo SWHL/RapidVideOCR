@@ -3,14 +3,16 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-import platform
 import random
 from pathlib import Path
+import tempfile
 
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
+from pydub import AudioSegment
 from tqdm import tqdm
+import ffmpy
 
 from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
                     read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
@@ -19,11 +21,13 @@ from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
 CUR_DIR = Path(__file__).resolve().parent
 
 
-class ExtractSubtitle(object):
-    def __init__(self, ocr_system,
+class ExtractSubtitle():
+    def __init__(self, ocr_system, fast_asr,
                  config_path=str(CUR_DIR / 'config_videocr.yaml')):
         self.ocr_system = ocr_system
         self.text_det = ocr_system.text_detector
+
+        self.asr_executor = fast_asr
 
         config = read_yaml(config_path)
         self.error_num = config['error_num']
@@ -40,6 +44,8 @@ class ExtractSubtitle(object):
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path, ctx=cpu(0))
 
+        self.audio = AudioSegment .from_file(video_path, 'mp4')
+
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
 
@@ -47,13 +53,13 @@ class ExtractSubtitle(object):
                                            k=self.select_nums)
         self.selected_frames = self.vr.get_batch(self.random_index).asnumpy()
 
-        # 选择字幕区域, 仅限于Windows系统
+        # 选择字幕区域
         roi_array = self._select_roi()
         self.crop_start = np.min(roi_array[:, 1])
         self.subtitle_height = np.max(roi_array[:, 3])
         self.crop_end = self.crop_start + self.subtitle_height
 
-        # 交互式确定threshold最佳值，仅仅限于Windows系统
+        # 交互式确定threshold最佳值
         self.binary_threshold = self._select_threshold()
         print(f'The binary threshold: {self.binary_threshold}')
 
@@ -152,7 +158,6 @@ class ExtractSubtitle(object):
         :param time_start: 起始时间点
         :param time_end: 结束时间点，-1表示到最后
         """
-
         self.ocr_start = get_frame_from_time(time_start, self.fps)
 
         if time_end == '-1':
@@ -215,10 +220,26 @@ class ExtractSubtitle(object):
                             if i not in invalid_keys]
 
         self.extract_result = []
+        asr_result = []
         for i, (k, v) in enumerate(self.key_point_dict.items()):
-            start_index, _ = get_srt_timestamp(v[0], self.fps)
-            end_index, _ = get_srt_timestamp(v[-1], self.fps)
+            start_index, start_seconds = get_srt_timestamp(v[0], self.fps)
+            end_index, end_seconds = get_srt_timestamp(v[-1], self.fps)
 
+            # asr
+            clip_audio = self.audio[start_seconds: end_seconds]
+            with tempfile.TemporaryDirectory() as tmp_dir_name:
+                wav_tmp_path = str(Path(tmp_dir_name) / f'{i}.wav')
+                clip_audio.export(wav_tmp_path, format='wav')
+
+                new_wav_path = str(Path(tmp_dir_name) / f'{i}_new.wav')
+                ffmpy.FFmpeg(
+                    inputs={wav_tmp_path: None},
+                    outputs={new_wav_path: '-ac 1 -ar 16000 -loglevel quiet'}
+                ).run()
+
+                text = self.asr_executor(new_wav_path)
+                print(f'{i}\tasr:{text}\tocr:{self.pred_frames[i][0]}')
+                asr_result.append(text)
             self.extract_result.append([k, start_index,
                                         end_index,
                                         self.pred_frames[i][0]])
