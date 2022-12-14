@@ -10,7 +10,7 @@
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="../assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
-    <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/Python->=3.7,<=3.10-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
     <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
 </p>
@@ -23,12 +23,12 @@
 - [Change log (more)](#change-log-more)
   - [🎄2022-12-04 update:](#2022-12-04-update)
   - [✨2022-06-26 update:](#2022-06-26-update)
+- [Use](#use)
+- [`config_videocr.yaml` in the relevant parameters](#config_videocryaml-in-the-relevant-parameters)
 - [Overall Framework](#overall-framework)
 - [FAQ](#faq)
 - [Video OCR Research](#video-ocr-research)
 - [The benchmark of costing time](#the-benchmark-of-costing-time)
-- [Use](#use)
-- [`config_videocr.yaml` in the relevant parameters](#config_videocryaml-in-the-relevant-parameters)
 - [Other branch description](#other-branch-description)
 
 </details>
@@ -47,23 +47,6 @@
   - **More convenient**:
     - Using the ONNXRuntime reasoning engine with a size of only about 2M, without installing the PaddlePaddle framework, the deployment is more convenient.
 
-- 🐱If you want to recognize **English, Japanese, Korean** subtitles, you can change the corresponding model and dictionary file in [`config_ocr.yaml`](./config_ocr.yaml) to change the corresponding model files.
-  - English
-    ```yaml
-     Rec:
-         module_name: ch_ppocr_v3_rec
-         class_name: TextRecognizer
-         model_path: models/en_number_mobile_v2.0_rec_infer.onnx
-    ```
-
-  - Japanese
-    ```yaml
-    Rec:
-        module_name: ch_ppocr_v3_rec
-        class_name: TextRecognizer
-        model_path: models/japan_rec_crnn.onnx
-    ```
-
 ### Change log ([more](./change_log_en.md))
 #### 🎄2022-12-04 update:
 - Add the function of interactively framing the subtitle position, which is enabled by default and is more useful. For details, please refer to the GIF image below. Thanks to @[Johndirr](https://github.com/Johndirr) for the suggestion.
@@ -72,35 +55,6 @@
 
 #### ✨2022-06-26 update:
 - Parameterized configuration of relevant parameters, including `rapid_ocr` and `rapid_videocr` parts, more flexible
-
-
-### Overall Framework
-```mermaid
-flowchart LR
-	subgraph Step
-	direction TB
-	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
-	end
-
-	A[/Video file/] --> Step --> M(Output) --> G{Which format}
-    G --> H(SRT) & I(Txt) & J(Word)
-
-```
-
-### [FAQ](./docs/FAQ.md)
-
-
-### Video OCR Research
-- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888)
-- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
-
-
-### The benchmark of costing time
-
-|Env|Test MP4| Total Frames | Frame Size|Cost(s/f)|
-|:---|:---|:---|:---|:---|
-|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
-|`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
 
 
 ### Use
@@ -145,6 +99,35 @@ flowchart LR
 |`output_format`|`all`|`['txt', 'srt', 'docx', 'all']`|output the final caption file, `all` the previous three formats are output|
 |`time_start`|`00:00:00`|start extracting the start time of the subtitle|start extracting the start time of the subtitle, example: '00:00:00'|
 |`time_end`|`-1`|the start point of the subtitle extraction| needs to be greater than `time_start`, `-1` means to the end, example: '-1'|
+
+
+### Overall Framework
+```mermaid
+flowchart LR
+	subgraph Step
+	direction TB
+	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
+	end
+
+	A[/Video file/] --> Step --> M(Output) --> G{Which format}
+    G --> H(SRT) & I(Txt) & J(Word)
+
+```
+
+### [FAQ](./docs/FAQ.md)
+
+
+### Video OCR Research
+- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888)
+- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
+
+
+### The benchmark of costing time
+
+|Env|Test MP4| Total Frames | Frame Size|Cost(s/f)|
+|:---|:---|:---|:---|:---|
+|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
+|`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
 
 ### Other branch description
 - `add_remove_bg_module`:
