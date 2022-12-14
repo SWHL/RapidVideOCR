@@ -74,24 +74,24 @@
    - 也可以在[Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/docs/RapidVideOCR.ipynb)下快速查看运行Demo。
 
 3. 运行
-   - 执行代码
+   1. 执行代码
       ```bash
       $ python main.py
       ```
-   - 选择字幕区域，鼠标按主左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
+   2. 选择字幕区域，鼠标按主左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
        ![demo_of_select_ROI](./assets/demo_of_select_ROI.gif)
 
-   - 选择合适的二值化阈值，左右滑动滑块，使得下面图中文字清晰显示，按`Enter`确认，需要选择三次。具体操作如下GIF所示：
+   3. 选择合适的二值化阈值，左右滑动滑块，使得下面图中文字清晰显示，按`Enter`确认，需要选择三次。具体操作如下GIF所示：
        ![interactive_select_threshold](./assets/interactive_select_threshold.gif)
-   - 输出日志如下：
-     ```text
-     Loading assets/test_video/2.mp4
-     Get the key frame: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
-     Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
-     The srt has been saved in the assets\test_video\2.srt.
-     The txt has been saved in the assets\test_video\2.txt.
-     The docx has been saved in the assets\test_video\2.docx.
-     ```
+   4. 输出日志如下：
+      ```text
+      Loading assets/test_video/2.mp4
+      Get the key frame: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
+      Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
+      The srt has been saved in the assets\test_video\2.srt.
+      The txt has been saved in the assets\test_video\2.txt.
+      The docx has been saved in the assets\test_video\2.docx.
+      ```
 
 4. 可以去**video所在目录**查看输出的文件
 
