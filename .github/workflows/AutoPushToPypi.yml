@@ -7,6 +7,7 @@ on:
       - 'python/rapid_videocr/**'
       - 'docs/doc_whl.md'
       - 'setup.py'
+      - '.github/workflows/AutoPushToPypi.yml'
 
 jobs:
   GenerateWHL_PushPyPi:
@@ -19,7 +20,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python setup.py bdist_wheel
-          mv dist ../
 
       # - name: Publish distribution 📦 to Test PyPI
       #   uses: pypa/gh-action-pypi-publish@v1.5.0
