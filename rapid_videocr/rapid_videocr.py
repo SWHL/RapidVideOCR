@@ -2,40 +2,36 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import argparse
 import random
 from pathlib import Path
-import tempfile
 
 import cv2
 import numpy as np
 from decord import VideoReader, cpu
-from pydub import AudioSegment
+from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
-import ffmpy
 
 from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
                     read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
                     save_txt, string_similar, vis_binary)
-from rapidocr_onnxruntime import RapidOCR
 
-ocr_system = RapidOCR()
 CUR_DIR = Path(__file__).resolve().parent
 
 
 class ExtractSubtitle():
-    def __init__(self, fast_asr=None,
+    def __init__(self, output_format=None,
                  config_path=str(CUR_DIR / 'config_videocr.yaml')):
-        self.ocr_system = ocr_system
-        self.text_det = ocr_system.text_detector
-
-        if fast_asr:
-            self.asr_executor = fast_asr
-        else:
-            self.asr_executor = None
+        self.ocr_system = RapidOCR()
+        self.text_det = self.ocr_system.text_detector
 
         config = read_yaml(config_path)
         self.error_num = config['error_num']
-        self.output_format = config['output_format']
+        if output_format:
+            self.output_format = output_format
+        else:
+            self.output_format = config['output_format']
+
         self.is_dilate = config['is_dilate']
 
         self.select_nums = 3
@@ -47,9 +43,6 @@ class ExtractSubtitle():
 
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path, ctx=cpu(0))
-
-        if self.asr_executor:
-            self.audio = AudioSegment .from_file(video_path, 'mp4')
 
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
@@ -199,7 +192,6 @@ class ExtractSubtitle():
     def get_subtitles(self):
         """合并最终OCR提取字幕文件，并输出
         """
-
         slow, fast = 0, 1
         n = len(self.pred_frames)
         key_list = list(self.key_point_dict.keys())
@@ -222,35 +214,14 @@ class ExtractSubtitle():
                             if i not in invalid_keys]
 
         self.extract_result = []
-        asr_result = []
         for i, (k, v) in enumerate(self.key_point_dict.items()):
             start_index, start_seconds = get_srt_timestamp(v[0], self.fps)
             end_index, end_seconds = get_srt_timestamp(v[-1], self.fps)
-
-            if self.asr_executor:
-                text = self.run_asr(start_seconds, end_seconds)
-                asr_result.append(text)
-
             self.extract_result.append([k, start_index,
                                         end_index,
                                         self.pred_frames[i][0]])
         self._save_output()
         return self.extract_result
-
-    def run_asr(self, time_start, time_end):
-        clip_audio = self.audio[time_start: time_end]
-        with tempfile.TemporaryDirectory() as tmp_dir_name:
-            wav_tmp_path = str(Path(tmp_dir_name) / 'slices.wav')
-            clip_audio.export(wav_tmp_path, format='wav')
-
-            new_wav_path = str(Path(tmp_dir_name) / 'slices_new.wav')
-            ffmpy.FFmpeg(
-                inputs={wav_tmp_path: None},
-                outputs={
-                    new_wav_path: '-ac 1 -ar 16000 -loglevel quiet'}
-            ).run()
-            text = self.asr_executor(new_wav_path)
-        return text
 
     def _save_output(self):
         if self.output_format == 'srt':
@@ -301,3 +272,23 @@ class ExtractSubtitle():
 
         if slow not in self.key_frames:
             self.key_frames[slow] = slow_frame
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mp4_path', type=str)
+    parser.add_argument('--format', choices=['srt', 'txt', 'docx', 'all'],
+                        default='srt')
+    args = parser.parse_args()
+
+    mp4_path = args.mp4_path
+    if not Path(mp4_path).exists():
+        raise FileExistsError(f'{mp4_path} does not exists.')
+
+    extractor = ExtractSubtitle(output_format=args.format)
+    ocr_result = extractor(mp4_path)
+    print(ocr_result)
+
+
+if __name__ == '__main__':
+    main()

@@ -36,8 +36,6 @@
 ### 简介
 - 视频硬字幕提取，自动生成对应srt和带有关键帧的docx文件
 - 支持字幕语言：中文 | 英文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
-
-- 想法源自 [videocr](https://github.com/apm1467/videocr)
 - 可加入QQ群：**706807542**
 - 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
   - **更快**：
@@ -76,7 +74,7 @@
 3. 运行
    1. 执行代码
       ```bash
-      $ python main.py
+      $ python demo.py
       ```
    2. 选择字幕区域，鼠标按主左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
        ![demo_of_select_ROI](./assets/demo_of_select_ROI.gif)
