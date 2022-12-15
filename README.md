@@ -66,7 +66,9 @@
       $ rapid_videocr --mp4_path assets/test_video/2.mp4
       ```
    2. 选择字幕区域，鼠标按住左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
-       ![demo_of_select_ROI](./assets/demo_of_select_ROI.gif)
+      <div align="center">
+           <img src="./assets/demo_of_select_ROI.gif"  width="75%" height="75%">
+      </div>
 
    3. 选择合适的二值化阈值，左右滑动滑块，使得下面图中文字清晰显示，按`Enter`确认，需要选择三次。具体操作如下GIF所示：
        ![interactive_select_threshold](./assets/interactive_select_threshold.gif)
