@@ -40,11 +40,10 @@
 - 可加入QQ群：**706807542**
 - 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
   - **更快**：
-    - 采用[Decord](https://github.com/dmlc/decord)作为读取视频的库，更快;对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
+    - 采用[decord](https://github.com/dmlc/decord)作为读取视频的库，更快; 对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
     - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
   - **更准**：
-    - 整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)，模型均来自[PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.4/README_ch.md#pp-ocr%E7%B3%BB%E5%88%97%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8%E6%9B%B4%E6%96%B0%E4%B8%AD)。
-    - 当然也可以在GPU运行，只要根据机器配置，安装对应版本的`onnxruntime-gpu`，即可自动在英伟达显卡上运行。具体教程参见：[onnxruntime-gpu版推理配置](https://github.com/RapidAI/RapidOCR/blob/main/python/onnxruntime_infer/README.md#onnxruntime-gpu%E7%89%88%E6%8E%A8%E7%90%86%E9%85%8D%E7%BD%AE)
+    - 整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)
   - **更方便**：
     - 采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
 

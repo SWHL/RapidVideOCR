@@ -36,15 +36,14 @@
 
 ### Introduction
 - Video hard subtitle extraction, automatically generating corresponding srt and docx files with key frames.
-- Support subtitle language: Chinese | English | Japanese
-- Drive from [videocr](https://github.com/apm1467/videocr)
+- Support subtitle language: Chinese | English
 - Extract subtitles embedded in the video faster and more accurately, and provide three formats of `txt|SRT|docx`
   - **Faster**:
-    - Adapted the [Decord](https://github.com/dmlc/decord), which is dedicated to processing videos.
+    - Adapted the [decord](https://github.com/dmlc/decord), which is dedicated to processing videos.
     - Only extract the key frames of the whole video.
   - **More accurately**:
     - The entire project is completely offline CPU running.
-    - The OCR part is from [RapidOCR](https://github.com/RapidAI/RapidOCR), relying on the [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR/).
+    - The OCR part is from [RapidOCR](https://github.com/RapidAI/RapidOCR).
   - **More convenient**:
     - Using the ONNXRuntime reasoning engine with a size of only about 2M, without installing the PaddlePaddle framework, the deployment is more convenient.
 
