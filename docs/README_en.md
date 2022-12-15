@@ -64,8 +64,8 @@
       # or
       $ rapid_videocr --mp4_path assets/test_video/2.mp4
       ```
-   2. Select the subtitle area, press the main left button of the mouse to frame the area where the subtitle is located, don't just select the text, try to select the row area where the text is located
-         ![demo_of_select_ROI](../assets/demo_of_select_ROI.gif)
+   2. Select the subtitle area, press the main left button of the mouse to frame the area where the subtitle is located, don't just select the text, try to select the row area where the text is located:
+      ![demo_of_select_ROI](../assets/demo_of_select_ROI.gif)
 
    3. Select an appropriate binarization threshold, slide the slider left and right, so that the text in the figure below is clearly displayed, press `Enter` to confirm, you need to select three times. The specific operation is shown in the following GIF:
         ![interactive_select_threshold](../assets/interactive_select_threshold.gif)
