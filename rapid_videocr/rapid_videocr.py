@@ -1,5 +1,4 @@
 
-# !/usr/bin/env python
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
@@ -17,17 +16,22 @@ import ffmpy
 from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
                     read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
                     save_txt, string_similar, vis_binary)
+from rapidocr_onnxruntime import RapidOCR
 
+ocr_system = RapidOCR()
 CUR_DIR = Path(__file__).resolve().parent
 
 
 class ExtractSubtitle():
-    def __init__(self, ocr_system, fast_asr,
+    def __init__(self, fast_asr=None,
                  config_path=str(CUR_DIR / 'config_videocr.yaml')):
         self.ocr_system = ocr_system
         self.text_det = ocr_system.text_detector
 
-        self.asr_executor = fast_asr
+        if fast_asr:
+            self.asr_executor = fast_asr
+        else:
+            self.asr_executor = None
 
         config = read_yaml(config_path)
         self.error_num = config['error_num']
@@ -44,7 +48,8 @@ class ExtractSubtitle():
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path, ctx=cpu(0))
 
-        self.audio = AudioSegment .from_file(video_path, 'mp4')
+        if self.asr_executor:
+            self.audio = AudioSegment .from_file(video_path, 'mp4')
 
         self.num_frames = len(self.vr)
         self.fps = int(self.vr.get_avg_fps())
@@ -72,14 +77,52 @@ class ExtractSubtitle():
 
         return self.get_subtitles()
 
-    def _record_key_info(self, slow, duplicate_frame, slow_frame):
-        if slow in self.key_point_dict:
-            self.key_point_dict[slow].extend(duplicate_frame)
-        else:
-            self.key_point_dict[slow] = duplicate_frame
+    def run_ocr(self, time_start, time_end):
+        """对所给字幕图像进行OCR识别
 
-        if slow not in self.key_frames:
-            self.key_frames[slow] = slow_frame
+        :param time_start: 起始时间点
+        :param time_end: 结束时间点，-1表示到最后
+        """
+        self.ocr_start = get_frame_from_time(time_start, self.fps)
+
+        if time_end == '-1':
+            self.ocr_end = self.num_frames - 1
+        else:
+            self.ocr_end = get_frame_from_time(time_end, self.fps)
+
+        if self.ocr_end < self.ocr_start:
+            raise ValueError('time_start is later than time_end')
+
+        self.get_key_frame()
+
+        # Extract the filtered frames content.
+        self.pred_frames = []
+        key_index_frames = list(self.key_point_dict.keys())
+        frames = np.stack(list(self.key_frames.values()), axis=0)
+
+        for key, frame in tqdm(list(zip(key_index_frames, frames)),
+                               desc='OCR Key Frame', unit='frame'):
+            frame = cv2.copyMakeBorder(frame.squeeze(),
+                                       self.subtitle_height * 2,
+                                       self.subtitle_height * 2,
+                                       0, 0,
+                                       cv2.BORDER_CONSTANT,
+                                       value=(0, 0))
+
+            ocr_result, _ = self.ocr_system(frame)
+            if len(ocr_result) > 0 and ocr_result:
+                _, rec_res, confidence = list(zip(*ocr_result))
+                confidence = list(map(float, confidence))
+            else:
+                rec_res = []
+                confidence = 0.0
+
+            if rec_res is None or len(rec_res) <= 0:
+                del self.key_point_dict[key]
+            else:
+                text = '\n'.join(rec_res)
+                confidence = sum(confidence) / len(confidence)
+                self.pred_frames.append((text, confidence))
 
     def get_key_frame(self):
         """获得视频的字幕关键帧"""
@@ -109,7 +152,8 @@ class ExtractSubtitle():
 
                 batch_list = list(range(fast, fast+self.batch_size))
                 fast_frames = self.vr.get_batch(batch_list).asnumpy()
-                fast_frames = fast_frames[:, self.crop_start: self.crop_end, :, :]
+                fast_frames = fast_frames[:,
+                                          self.crop_start: self.crop_end, :, :]
 
                 fast_frames = remove_batch_bg(fast_frames,
                                               is_dilate=self.is_dilate,
@@ -152,48 +196,6 @@ class ExtractSubtitle():
                         and fast + self.batch_size > self.ocr_end:
                     self.batch_size = self.ocr_end - fast
 
-    def run_ocr(self, time_start, time_end):
-        """对所给字幕图像进行OCR识别
-
-        :param time_start: 起始时间点
-        :param time_end: 结束时间点，-1表示到最后
-        """
-        self.ocr_start = get_frame_from_time(time_start, self.fps)
-
-        if time_end == '-1':
-            self.ocr_end = self.num_frames - 1
-        else:
-            self.ocr_end = get_frame_from_time(time_end, self.fps)
-
-        if self.ocr_end < self.ocr_start:
-            raise ValueError('time_start is later than time_end')
-
-        self.get_key_frame()
-
-        # Extract the filtered frames content.
-        self.pred_frames = []
-        key_index_frames = list(self.key_point_dict.keys())
-        frames = np.stack(list(self.key_frames.values()), axis=0)
-
-        for key, frame in tqdm(list(zip(key_index_frames, frames)),
-                               desc='OCR Key Frame', unit='frame'):
-            frame = cv2.copyMakeBorder(frame.squeeze(),
-                                       self.subtitle_height * 2,
-                                       self.subtitle_height * 2,
-                                       0, 0,
-                                       cv2.BORDER_CONSTANT,
-                                       value=(0, 0))
-
-            _, rec_res = self.ocr_system(frame)
-
-            if rec_res is None or len(rec_res) <= 0:
-                del self.key_point_dict[key]
-            else:
-                text, confidence = list(zip(*rec_res))
-                text = '\n'.join(text)
-                confidence = sum(confidence) / len(confidence)
-                self.pred_frames.append((text, confidence))
-
     def get_subtitles(self):
         """合并最终OCR提取字幕文件，并输出
         """
@@ -225,26 +227,30 @@ class ExtractSubtitle():
             start_index, start_seconds = get_srt_timestamp(v[0], self.fps)
             end_index, end_seconds = get_srt_timestamp(v[-1], self.fps)
 
-            # asr
-            clip_audio = self.audio[start_seconds: end_seconds]
-            with tempfile.TemporaryDirectory() as tmp_dir_name:
-                wav_tmp_path = str(Path(tmp_dir_name) / f'{i}.wav')
-                clip_audio.export(wav_tmp_path, format='wav')
-
-                new_wav_path = str(Path(tmp_dir_name) / f'{i}_new.wav')
-                ffmpy.FFmpeg(
-                    inputs={wav_tmp_path: None},
-                    outputs={new_wav_path: '-ac 1 -ar 16000 -loglevel quiet'}
-                ).run()
-
-                text = self.asr_executor(new_wav_path)
-                print(f'{i}\tasr:{text}\tocr:{self.pred_frames[i][0]}')
+            if self.asr_executor:
+                text = self.run_asr(start_seconds, end_seconds)
                 asr_result.append(text)
+
             self.extract_result.append([k, start_index,
                                         end_index,
                                         self.pred_frames[i][0]])
         self._save_output()
         return self.extract_result
+
+    def run_asr(self, time_start, time_end):
+        clip_audio = self.audio[time_start: time_end]
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            wav_tmp_path = str(Path(tmp_dir_name) / 'slices.wav')
+            clip_audio.export(wav_tmp_path, format='wav')
+
+            new_wav_path = str(Path(tmp_dir_name) / 'slices_new.wav')
+            ffmpy.FFmpeg(
+                inputs={wav_tmp_path: None},
+                outputs={
+                    new_wav_path: '-ac 1 -ar 16000 -loglevel quiet'}
+            ).run()
+            text = self.asr_executor(new_wav_path)
+        return text
 
     def _save_output(self):
         if self.output_format == 'srt':
@@ -286,3 +292,12 @@ class ExtractSubtitle():
 
             threshold_list.append(threshold)
         return np.max(threshold_list)
+
+    def _record_key_info(self, slow, duplicate_frame, slow_frame):
+        if slow in self.key_point_dict:
+            self.key_point_dict[slow].extend(duplicate_frame)
+        else:
+            self.key_point_dict[slow] = duplicate_frame
+
+        if slow not in self.key_frames:
+            self.key_frames[slow] = slow_frame

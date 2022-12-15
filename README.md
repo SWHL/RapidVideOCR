@@ -10,7 +10,7 @@
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
-    <a href=""><img src="https://img.shields.io/badge/Python-3.6+-aff.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/Python->=3.6,<=3.10-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
     <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
 </p>
@@ -22,20 +22,20 @@
 - [更新日志（more）](#更新日志more)
   - [🎄2022-12-04 update:](#2022-12-04-update)
   - [✨2022-06-26 update:](#2022-06-26-update)
+- [使用步骤](#使用步骤)
+- [`config_videocr.yaml`中相关参数](#config_videocryaml中相关参数)
 - [整体框架](#整体框架)
 - [常见问题 FAQ](#常见问题-faq)
 - [视频OCR动态](#视频ocr动态)
 - [未来的应用场景探索](#未来的应用场景探索)
 - [耗时基准](#耗时基准)
-- [使用步骤](#使用步骤)
-- [`config_videocr.yaml`中相关参数](#config_videocryaml中相关参数)
 - [仓库分支说明](#仓库分支说明)
 
 </details>
 
 ### 简介
 - 视频硬字幕提取，自动生成对应srt和带有关键帧的docx文件
-- 支持字幕语言：中文 | 英文 | 日文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
+- 支持字幕语言：中文 | 英文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
 
 - 想法源自 [videocr](https://github.com/apm1467/videocr)
 - 可加入QQ群：**706807542**
@@ -49,22 +49,6 @@
   - **更方便**：
     - 采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
 
-- 🐱如果想要识别**纯英文、日文、韩文**等字幕，可以在[`config_ocr.yaml`](./rapid_ocr/config_ocr.yaml)中更改对应模型文件即可。
-  - 纯英文模型
-    ```yaml
-    Rec:
-        module_name: ch_ppocr_v3_rec
-        class_name: TextRecognizer
-        model_path: models/en_number_mobile_v2.0_rec_infer.onnx
-    ```
-  - 日文模型
-    ```yaml
-    Rec:
-        module_name: ch_ppocr_v3_rec
-        class_name: TextRecognizer
-        model_path: models/japan_rec_crnn.onnx
-    ```
-
 ### 更新日志（[more](./docs/change_log.md)）
 #### 🎄2022-12-04 update:
 - 添加交互式框定字幕位置功能，默认开启，更加好用，详情可参考下面的GIF图。感谢@[Johndirr](https://github.com/Johndirr)的建议。
@@ -75,46 +59,13 @@
 - 参数化配置相关参数，包括`rapid_ocr`和`rapid_videocr`两部分，更加灵活
 
 
-### 整体框架
-```mermaid
-flowchart LR
-	subgraph Step
-	direction TB
-	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
-	end
-
-	A[/Video file/] --> Step --> M(Output) --> G{Which format}
-    G --> H(SRT) & I(Txt) & J(Word)
-
-```
-
-### 常见问题 [FAQ](./docs/FAQ.md)
-
-### 视频OCR动态
-- [(ICCV 2021) STRIVE: Scene Text Replacement In videos.](https://openaccess.thecvf.com/content/ICCV2021/papers/G_STRIVE_Scene_Text_Replacement_in_Videos_ICCV_2021_paper.pdf)
-	- 使用时空转换网络将所有帧中的文字矫正
-	- 使用图片中文字编辑的方法替换单一参考帧中的文字，并且使用时空转换网络还原矫正的文字
-	- 提供了一个视频文本编辑的数据集
-- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
-- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
-
-### 未来的应用场景探索
-- 基于视频文本OCR的视频内容理解，结合图像特征+图像中文本特征
-- 视频字幕自动翻译
-- 基于视频文本特征的视频检索
-
-### 耗时基准
-|配置|测试MP4|总帧数|每帧大小|耗时(s)|
-|:---|:---|:---|:---|:---|
-|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
-|`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
-
-
 ### 使用步骤
-1. 从仓库下载项目源码和OCR所用模型，地址为[Github Release](https://github.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip) | [Gitee Release](https://gitee.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip)
+1. 安装`rapidocr_onnnxruntime`包
+   ```bash
+   $ pip install rapidocr_onnxruntime
+   ```
 
 2. 搭建运行环境
-   - 推荐Windows，整个项目目前只在Windows下测试过
    - 安装相应的包
       ```bash
       $ cd RapidVideOCR
@@ -153,6 +104,40 @@ flowchart LR
 |`output_format`|`all`|`['txt', 'srt', 'docx', 'all']`|输出最终字幕文件，`all`前面三个格式都输出|
 |`time_start`|`00:00:00`|开始提取字幕的起始时间点|开始提取字幕的起始时间点, 示例：'00:00:00'|
 |`time_end`|`-1`|开始提取字幕的起始时间点|需要大于`time_start`，`-1`表示到最后， 示例：'-1'|
+
+### 整体框架
+```mermaid
+flowchart LR
+	subgraph Step
+	direction TB
+	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
+	end
+
+	A[/Video file/] --> Step --> M(Output) --> G{Which format}
+    G --> H(SRT) & I(Txt) & J(Word)
+
+```
+
+### 常见问题 [FAQ](./docs/FAQ.md)
+
+### 视频OCR动态
+- [(ICCV 2021) STRIVE: Scene Text Replacement In videos.](https://openaccess.thecvf.com/content/ICCV2021/papers/G_STRIVE_Scene_Text_Replacement_in_Videos_ICCV_2021_paper.pdf)
+	- 使用时空转换网络将所有帧中的文字矫正
+	- 使用图片中文字编辑的方法替换单一参考帧中的文字，并且使用时空转换网络还原矫正的文字
+	- 提供了一个视频文本编辑的数据集
+- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
+- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
+
+### 未来的应用场景探索
+- 基于视频文本OCR的视频内容理解，结合图像特征+图像中文本特征
+- 视频字幕自动翻译
+- 基于视频文本特征的视频检索
+
+### 耗时基准
+|配置|测试MP4|总帧数|每帧大小|耗时(s)|
+|:---|:---|:---|:---|:---|
+|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
+|`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
 
 ### 仓库分支说明
 - `add_remove_bg_module`:

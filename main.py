@@ -3,15 +3,12 @@
 # @Contact: liekkaskono@163.com
 import time
 
-from rapid_videocr import ExtractSubtitle
-from rapid_ocr import TextSystem
 from fast_asr import FastASR
-
+from rapid_videocr import ExtractSubtitle
 
 if __name__ == '__main__':
-    ocr_system = TextSystem()
     fast_asr = FastASR()
-    extractor = ExtractSubtitle(ocr_system, fast_asr)
+    extractor = ExtractSubtitle(fast_asr)
 
     mp4_path = 'assets/test_video/2.mp4'
 

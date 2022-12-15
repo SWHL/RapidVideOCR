@@ -10,3 +10,4 @@ test_files/
 .DS_Store
 
 *.bin
+./rapid_ocr
