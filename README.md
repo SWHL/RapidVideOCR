@@ -8,12 +8,10 @@
 简体中文 | [English](./docs/README_en.md)
 
 <p align="left">
-    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="./assets/colab-badge.svg" alt="Open in Colab"></a>
-    <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/Python->=3.7,<=3.10-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
-    <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
     <a href="https://pypi.org/project/rapid-videocr/"><img alt="PyPI" src="https://img.shields.io/pypi/v/rapid_videocr?style=plastic"></a>
+    <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
 </p>
 
 <details>
@@ -35,17 +33,13 @@
 </details>
 
 ### 简介
-- 视频硬字幕提取，自动生成对应srt和带有关键帧的docx文件
+- 视频硬字幕提取，自动生成对应srt和带有关键帧的docx文件。
 - 支持字幕语言：中文 | 英文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
 - 可加入QQ群：**706807542**
-- 更快更准确地提取内嵌在视频的字幕，并提供`txt|SRT|docx`三种格式
-  - **更快**：
-    - 采用[decord](https://github.com/dmlc/decord)作为读取视频的库，更快; 对于整个输入的视频，并不全部提取，因为存在大量重复字幕内容；
-    - 这里采用预先找到出现不同字幕的关键帧，再送入OCR部分，因此更快
-  - **更准**：
-    - 整个项目完全为全离线CPU运行，OCR部分采用的是[RapidOCR](https://github.com/RapidAI/RapidOCR)
-  - **更方便**：
-    - 采用大小仅为2M左右的ONNXRuntime推理引擎，不安装PaddlePaddle框架，部署更加方便
+- 更快更准确地提取视频硬字幕，并提供`txt|SRT|docx`三种格式的输出。
+  - **更快**：采用[decord](https://github.com/dmlc/decord)作为读取视频的库，更快; 对于输入视频，只提取字幕关键帧。
+  - **更准**：采用[RapidOCR](https://github.com/RapidAI/RapidOCR)作为识别库。
+  - **更方便**：pip直接安装即可使用。
 
 ### 更新日志（[more](./docs/change_log.md)）
 #### 🎄2022-12-04 update:
@@ -58,25 +52,20 @@
 
 
 ### 使用步骤
-1. 安装`rapidocr_onnnxruntime`包
+1. 安装`rapid_videocr`包
    ```bash
-   $ pip install rapidocr_onnxruntime
+   $ pip install rapid_videocr
    ```
 
-2. 搭建运行环境
-   - 安装相应的包
-      ```bash
-      $ cd RapidVideOCR
-      $ pip install -r requirements.txt
-      ```
-   - 也可以在[Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/docs/RapidVideOCR.ipynb)下快速查看运行Demo。
-
-3. 运行
+2. 运行
    1. 执行代码
       ```bash
       $ python demo.py
+
+      # 或者
+      $ rapid_videocr --mp4_path assets/test_video/2.mp4
       ```
-   2. 选择字幕区域，鼠标按主左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
+   2. 选择字幕区域，鼠标按住左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
        ![demo_of_select_ROI](./assets/demo_of_select_ROI.gif)
 
    3. 选择合适的二值化阈值，左右滑动滑块，使得下面图中文字清晰显示，按`Enter`确认，需要选择三次。具体操作如下GIF所示：
@@ -91,7 +80,7 @@
       The docx has been saved in the assets\test_video\2.docx.
       ```
 
-4. 可以去**video所在目录**查看输出的文件
+3. 可以去**video所在目录**查看输出的文件
 
 
 ### [`config_videocr.yaml`](./rapid_videocr/config_videocr.yaml)中相关参数

@@ -8,12 +8,10 @@
 [简体中文](../README.md) | English
 
 <p align="left">
-    <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/main/docs/RapidVideOCR.ipynb" target="_blank"><img src="../assets/colab-badge.svg" alt="Open in Colab"></a>
-    <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-Apache%202-dfd.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/Python->=3.7,<=3.10-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
-    <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
     <a href="https://pypi.org/project/rapid-videocr/"><img alt="PyPI" src="https://img.shields.io/pypi/v/rapid_videocr?style=plastic"></a>
+    <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
 </p>
 
 
@@ -38,14 +36,9 @@
 - Video hard subtitle extraction, automatically generating corresponding srt and docx files with key frames.
 - Support subtitle language: Chinese | English
 - Extract subtitles embedded in the video faster and more accurately, and provide three formats of `txt|SRT|docx`
-  - **Faster**:
-    - Adapted the [decord](https://github.com/dmlc/decord), which is dedicated to processing videos.
-    - Only extract the key frames of the whole video.
-  - **More accurately**:
-    - The entire project is completely offline CPU running.
-    - The OCR part is from [RapidOCR](https://github.com/RapidAI/RapidOCR).
-  - **More convenient**:
-    - Using the ONNXRuntime reasoning engine with a size of only about 2M, without installing the PaddlePaddle framework, the deployment is more convenient.
+  - **Faster**: adapted the [decord](https://github.com/dmlc/decord), which is dedicated to processing videos.
+  - **More accurately**: adapted [RapidOCR](https://github.com/RapidAI/RapidOCR).
+  - **More convenient**: use by installing the package with pip tool.
 
 ### Change log ([more](./change_log_en.md))
 #### 🎄2022-12-04 update:
@@ -58,27 +51,25 @@
 
 
 ### Use
-1. Download the project source code and the model used for OCR from the repo, the link is [Github Release](https://github.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip) | [Gitee Release](https://gitee.com/SWHL/RapidVideOCR/releases/download/v1.0.0/models.zip)
+1. Install the `rapid_videocr` package.
+   ```bash
+   $ pip install rapid_videocr
+   ```
 
-2. Install the run envirement.
-   - Recommend the Window OS, because the entire project has only been tested under Windows now.
-   - Install the relative packages as follows.
-      ```bash
-      $ cd RapidVideOCR
-      $ pip install -r requirements.txt
-      ```
-
-3. Run
-   - Run the code:
+2. Run
+   1. Run the code:
       ```bash
       $ python main.py
+
+      # or
+      $ rapid_videocr --mp4_path assets/test_video/2.mp4
       ```
-   - Select the subtitle area, press the main left button of the mouse to frame the area where the subtitle is located, don't just select the text, try to select the row area where the text is located
+   2. Select the subtitle area, press the main left button of the mouse to frame the area where the subtitle is located, don't just select the text, try to select the row area where the text is located
          ![demo_of_select_ROI](../assets/demo_of_select_ROI.gif)
 
-   - Select an appropriate binarization threshold, slide the slider left and right, so that the text in the figure below is clearly displayed, press `Enter` to confirm, you need to select three times. The specific operation is shown in the following GIF:
+   3. Select an appropriate binarization threshold, slide the slider left and right, so that the text in the figure below is clearly displayed, press `Enter` to confirm, you need to select three times. The specific operation is shown in the following GIF:
         ![interactive_select_threshold](../assets/interactive_select_threshold.gif)
-    - The output log is as follows：
+   4. The output log is as follows：
         ```text
         Loading assets/test_video/2.mp4
         Get the key point: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
@@ -87,9 +78,8 @@
         The txt has been saved in the assets\test_video\2.txt.
         The docx has been saved in the assets\test_video\2.docx.
         ```
-   - Also run on the [Google Colab](https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/docs/RapidVideOCR.ipynb).
 
-4. Look the output files where the video is located.
+3. Look the output files where the video is located.
 
 ### [`config_videocr.yaml`](./config_videocr.yaml) in the relevant parameters
 |Parameter Name|Default|Value Range|Note|
