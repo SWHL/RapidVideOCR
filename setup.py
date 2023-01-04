@@ -53,7 +53,7 @@ setuptools.setup(
     license='Apache-2.0',
     include_package_data=True,
     install_requires=["tqdm>=4.52.0", "decord>=0.6.0",
-                      "opencv_python==4.5.1.48",
+                      "opencv_python>=4.5.1.48",
                       "python-docx>=0.8.10",
                       "rapidocr_onnxruntime"],
     packages=[MODULE_NAME],
