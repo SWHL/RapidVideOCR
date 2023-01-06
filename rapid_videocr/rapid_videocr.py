@@ -103,7 +103,7 @@ class ExtractSubtitle():
                                        value=(0, 0))
 
             ocr_result, _ = self.ocr_system(frame)
-            if len(ocr_result) > 0 and ocr_result:
+            if ocr_result and len(ocr_result) > 0:
                 _, rec_res, confidence = list(zip(*ocr_result))
                 confidence = list(map(float, confidence))
             else:
