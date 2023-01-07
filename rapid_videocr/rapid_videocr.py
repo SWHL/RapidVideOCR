@@ -7,21 +7,15 @@ import random
 from pathlib import Path
 
 import cv2
-import psutil
 import numpy as np
 from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
-from .utils import (VideoReader, get_frame_from_time, get_srt_timestamp, is_similar_batch,
-                    read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
-                    save_txt, string_similar, vis_binary)
+from .utils import (VideoReader, get_frame_from_time, get_srt_timestamp,
+                    is_similar_batch, read_yaml, remove_batch_bg, remove_bg,
+                    save_docx, save_srt, save_txt, string_similar, vis_binary)
 
 CUR_DIR = Path(__file__).resolve().parent
-
-
-def get_used_memory():
-    mem = psutil.virtual_memory()
-    return mem.used / 1024 / 1024 / 1024
 
 
 class ExtractSubtitle():
@@ -53,7 +47,8 @@ class ExtractSubtitle():
 
         self.random_index = random.choices(range(self.num_frames),
                                            k=self.select_nums)
-        self.selected_frames = self.vr.get_batch(self.random_index)
+        self.selected_frames = np.stack([self.vr.get_frame(idx)
+                                         for idx in self.random_index])
 
         # 选择字幕区域
         roi_array = self._select_roi()
@@ -65,9 +60,8 @@ class ExtractSubtitle():
         self.binary_threshold = self._select_threshold()
         print(f'The binary threshold: {self.binary_threshold}')
 
-        if batch_size is None:
-            self.batch_size = self.fps * 2
-        else:
+        self.batch_size = self.fps * 2
+        if batch_size:
             self.batch_size = batch_size
 
         self.run_ocr(self.time_start, self.time_end)
@@ -90,10 +84,7 @@ class ExtractSubtitle():
         if self.ocr_end < self.ocr_start:
             raise ValueError('time_start is later than time_end')
 
-        import time
-        s = time.time()
         self.get_key_frame()
-        print(f'get key frame cost: {time.time() - s}')
 
         # Extract the filtered frames content.
         self.pred_frames = []
@@ -149,7 +140,7 @@ class ExtractSubtitle():
                     slow_change = False
 
                 batch_list = list(range(fast, fast+self.batch_size))
-                fast_frames = self.vr.get_batch(batch_list)
+                fast_frames = self.vr.get_continue_batch(batch_list)
                 fast_frames = fast_frames[:, self.crop_start: self.crop_end, :, :]
 
                 fast_frames = remove_batch_bg(fast_frames,

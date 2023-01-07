@@ -42,7 +42,7 @@ class VideoReader():
     def get_frame_count(self, ):
         return int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    def get_batch(self, idx_list: List):
+    def get_continue_batch(self, idx_list: List):
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, idx_list[0])
         batch_frame = [self.cap.read()[1] for _ in range(len(idx_list))]
         return np.stack(batch_frame)
