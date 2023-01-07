@@ -102,20 +102,19 @@ class ExtractSubtitle():
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
 
+            rec_res = []
+            confidence = 0.0
             ocr_result, _ = self.ocr_system(frame)
-            if ocr_result and len(ocr_result) > 0:
+            if ocr_result:
                 _, rec_res, confidence = list(zip(*ocr_result))
                 confidence = list(map(float, confidence))
-            else:
-                rec_res = []
-                confidence = 0.0
 
-            if rec_res is None or len(rec_res) <= 0:
+            if not rec_res:
                 del self.key_point_dict[key]
-            else:
-                text = '\n'.join(rec_res)
-                confidence = sum(confidence) / len(confidence)
-                self.pred_frames.append((text, confidence))
+
+            text = '\n'.join(rec_res)
+            confidence = sum(confidence) / len(confidence)
+            self.pred_frames.append((text, confidence))
 
     def get_key_frame(self):
         """获得视频的字幕关键帧"""
