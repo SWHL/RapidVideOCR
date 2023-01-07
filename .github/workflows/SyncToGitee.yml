@@ -2,14 +2,14 @@ name: syncToGitee
 on:
   push:
     branches:
-      - main
+      - '**'
 jobs:
   repo-sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source codes
         uses: actions/checkout@v2
-  
+
       - name: Mirror the Github organization repos to Gitee.
         uses: Yikun/hub-mirror-action@master
         with:
@@ -21,4 +21,3 @@ jobs:
           # only sync this repo
           static_list: "RapidVideOCR"
           debug: true
-  
