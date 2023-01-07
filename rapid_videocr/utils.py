@@ -82,40 +82,38 @@ def is_two_lines(dt_boxes):
     return True
 
 
-def string_similar(s1, s2):
+def string_similar_ratio(s1: str, s2: str) -> float:
     return difflib.SequenceMatcher(None, s1, s2).ratio()
 
 
-def get_frame_from_time(time_str, fps):
-    if time_str:
-        frame_index = get_frame_index(time_str, fps)
-    else:
-        frame_index = 0
-    return frame_index
+def convert_time_to_frame(time_str, fps):
+    if not time_str:
+        return 0
 
-
-def get_frame_index(time_str: str, fps: float):
-    # convert time string to frame index
-    t = time_str.split(':')
-    t = list(map(float, t))
-    if len(t) == 3:
-        td = datetime.timedelta(hours=t[0], minutes=t[1], seconds=t[2])
-    elif len(t) == 2:
-        td = datetime.timedelta(minutes=t[0], seconds=t[1])
+    time_parts = list(map(float, time_str.split(':')))
+    len_time = len(time_parts)
+    if len_time == 3:
+        td = datetime.timedelta(hours=time_parts[0],
+                                minutes=time_parts[1],
+                                seconds=time_parts[2])
+    elif len_time == 2:
+        td = datetime.timedelta(minutes=time_parts[0],
+                                seconds=time_parts[1])
     else:
         raise ValueError(
             f'Time data "{time_str}" does not match format "%H:%M:%S"')
-    index = int(td.total_seconds() * fps)
-    return index
+
+    frame_index = int(td.total_seconds() * fps)
+    return frame_index
 
 
-def get_srt_timestamp(frame_index: int, fps: float):
+def get_srt_timestamp(frame_index: int, fps: float) -> str:
     # convert frame index into SRT timestamp
     td = datetime.timedelta(seconds=frame_index / fps)
     ms = td.microseconds // 1000
     m, s = divmod(td.seconds, 60)
     h, m = divmod(m, 60)
-    return f'{h:02d}:{m:02d}:{s:02d},{ms:03d}', td.seconds * 1000 + ms
+    return f'{h:02d}:{m:02d}:{s:02d},{ms:03d}'
 
 
 def is_similar_batch(img_a, img_batch, threshold=0.000):

@@ -3,11 +3,11 @@
 # @Contact: liekkaskono@163.com
 import time
 
-from rapid_videocr import ExtractSubtitle
+from rapid_videocr import RapidVideOCR
 
-extractor = ExtractSubtitle(output_format='srt')
+extractor = RapidVideOCR(output_format='srt')
 
-mp4_path = 'test_files/王子现身_720.mp4'
+mp4_path = 'assets/test_video/2.mp4'
 
 start_time = time.time()
 
