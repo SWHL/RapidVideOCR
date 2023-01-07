@@ -26,12 +26,11 @@ class ExtractSubtitle():
 
         config = read_yaml(config_path)
         self.error_num = config['error_num']
+        self.is_dilate = config['is_dilate']
+
+        self.output_format = config['output_format']
         if output_format:
             self.output_format = output_format
-        else:
-            self.output_format = config['output_format']
-
-        self.is_dilate = config['is_dilate']
 
         self.select_nums = 3
         self.time_start = config['time_start']
@@ -45,10 +44,10 @@ class ExtractSubtitle():
         self.num_frames = self.vr.get_frame_count()
         self.fps = int(self.vr.get_avg_fps())
 
-        self.random_index = random.choices(range(self.num_frames),
-                                           k=self.select_nums)
+        random_index = random.choices(range(self.num_frames),
+                                      k=self.select_nums)
         self.selected_frames = np.stack([self.vr.get_frame(idx)
-                                         for idx in self.random_index])
+                                         for idx in random_index])
 
         # 选择字幕区域
         roi_array = self._select_roi()
@@ -64,33 +63,25 @@ class ExtractSubtitle():
         if batch_size:
             self.batch_size = batch_size
 
-        self.run_ocr(self.time_start, self.time_end)
-
-        return self.get_subtitles()
-
-    def run_ocr(self, time_start, time_end):
-        """对所给字幕图像进行OCR识别
-
-        :param time_start: 起始时间点
-        :param time_end: 结束时间点，-1表示到最后
-        """
-        self.ocr_start = get_frame_from_time(time_start, self.fps)
-
-        if time_end == '-1':
+        self.ocr_start = get_frame_from_time(self.time_start, self.fps)
+        if self.time_end == '-1':
             self.ocr_end = self.num_frames - 1
         else:
-            self.ocr_end = get_frame_from_time(time_end, self.fps)
-
+            self.ocr_end = get_frame_from_time(self.time_end, self.fps)
         if self.ocr_end < self.ocr_start:
             raise ValueError('time_start is later than time_end')
 
+        self.run_ocr()
         self.get_key_frame()
+        extract_result = self.get_subtitles()
+        return extract_result
 
-        # Extract the filtered frames content.
+    def run_ocr(self,):
+        """对所给字幕图像进行OCR识别
+        """
         self.pred_frames = []
         key_index_frames = list(self.key_point_dict.keys())
         frames = np.stack(list(self.key_frames.values()), axis=0)
-
         for key, frame in tqdm(list(zip(key_index_frames, frames)),
                                desc='OCR Key Frame', unit='frame'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
