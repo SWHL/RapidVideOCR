@@ -7,16 +7,21 @@ import random
 from pathlib import Path
 
 import cv2
+import psutil
 import numpy as np
-from decord import VideoReader, cpu
 from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
-from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
+from .utils import (VideoReader, get_frame_from_time, get_srt_timestamp, is_similar_batch,
                     read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
                     save_txt, string_similar, vis_binary)
 
 CUR_DIR = Path(__file__).resolve().parent
+
+
+def get_used_memory():
+    mem = psutil.virtual_memory()
+    return mem.used / 1024 / 1024 / 1024
 
 
 class ExtractSubtitle():
@@ -40,16 +45,15 @@ class ExtractSubtitle():
 
     def __call__(self, video_path, batch_size=100):
         self.video_path = video_path
-
         print(f'Loading {video_path}')
-        self.vr = VideoReader(video_path, ctx=cpu(0))
+        self.vr = VideoReader(video_path)
 
-        self.num_frames = len(self.vr)
+        self.num_frames = self.vr.get_frame_count()
         self.fps = int(self.vr.get_avg_fps())
 
         self.random_index = random.choices(range(self.num_frames),
                                            k=self.select_nums)
-        self.selected_frames = self.vr.get_batch(self.random_index).asnumpy()
+        self.selected_frames = self.vr.get_batch(self.random_index)
 
         # 选择字幕区域
         roi_array = self._select_roi()
@@ -86,7 +90,10 @@ class ExtractSubtitle():
         if self.ocr_end < self.ocr_start:
             raise ValueError('time_start is later than time_end')
 
+        import time
+        s = time.time()
         self.get_key_frame()
+        print(f'get key frame cost: {time.time() - s}')
 
         # Extract the filtered frames content.
         self.pred_frames = []
@@ -103,7 +110,7 @@ class ExtractSubtitle():
                                        value=(0, 0))
 
             rec_res = []
-            confidence = 0.0
+            confidence = [0.0]
             ocr_result, _ = self.ocr_system(frame)
             if ocr_result:
                 _, rec_res, confidence = list(zip(*ocr_result))
@@ -132,8 +139,7 @@ class ExtractSubtitle():
             slow_change = True
             while fast + self.batch_size <= self.ocr_end:
                 if slow_change:
-                    ori_slow_frame = self.vr[slow].asnumpy(
-                    )[self.crop_start: self.crop_end, :, :]
+                    ori_slow_frame = self.vr[slow][self.crop_start: self.crop_end, :, :]
 
                     # Remove the background of the frame.
                     slow_frame = remove_bg(ori_slow_frame,
@@ -143,9 +149,8 @@ class ExtractSubtitle():
                     slow_change = False
 
                 batch_list = list(range(fast, fast+self.batch_size))
-                fast_frames = self.vr.get_batch(batch_list).asnumpy()
-                fast_frames = fast_frames[:,
-                                          self.crop_start: self.crop_end, :, :]
+                fast_frames = self.vr.get_batch(batch_list)
+                fast_frames = fast_frames[:, self.crop_start: self.crop_end, :, :]
 
                 fast_frames = remove_batch_bg(fast_frames,
                                               is_dilate=self.is_dilate,
@@ -240,8 +245,6 @@ class ExtractSubtitle():
         roi_list = []
         for i, frame in enumerate(self.selected_frames):
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-            # 交互式选择字幕区域
             roi = cv2.selectROI(
                 f'[{i+1}/{self.select_nums}] Select a ROI and then press SPACE or ENTER button! Cancel the selection process by pressing c button!',
                 frame, True, False)

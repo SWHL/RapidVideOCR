@@ -7,6 +7,7 @@ import datetime
 import difflib
 from io import BytesIO
 from pathlib import Path
+from typing import List
 
 import cv2
 import numpy as np
@@ -14,6 +15,43 @@ from docx import Document
 from docx.shared import Cm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 import yaml
+
+
+class VideoReader():
+    """OpenCV version
+    """
+    def __init__(self, video_path) -> None:
+        self.cap = cv2.VideoCapture(video_path)
+
+    def __getitem__(self, idx):
+        return self.get_frame(idx)
+
+    def __len__(self, ):
+        return self.get_frame_count()
+
+    def get_avg_fps(self,):
+        return self.cap.get(cv2.CAP_PROP_FPS)
+
+    def get_frame(self, idx):
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
+        is_success, frame = self.cap.read()
+        if is_success:
+            return frame
+        return None
+
+    def get_frame_count(self, ):
+        return int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    def get_batch(self, idx_list: List):
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, idx_list[0])
+        batch_frame = [self.cap.read()[1] for _ in range(len(idx_list))]
+        return np.stack(batch_frame)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.cap.release()
 
 
 def read_yaml(yaml_path):
