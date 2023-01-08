@@ -122,7 +122,7 @@ class ProcessImg():
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img2 = copy.deepcopy(img)
 
-        def update_theta(x): pass
+        def update_theta(x: Any) -> None: pass
 
         window_name = f'[{i}/3] Select the best threshold of binary,'\
             'press Enter to confirm.'

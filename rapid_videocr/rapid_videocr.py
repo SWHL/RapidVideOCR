@@ -38,7 +38,7 @@ class RapidVideOCR():
         self.process_img = ProcessImg()
         self.export_res = ExportResult()
 
-    def __call__(self, video_path: str, batch_size: int = 100):
+    def __call__(self, video_path: str, batch_size: int = 100) -> List:
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path)
         num_frames = self.vr.get_frame_count()
@@ -102,8 +102,8 @@ class RapidVideOCR():
     def get_key_frame(self, ) -> None:
         """获得视频的字幕关键帧"""
 
-        self.duplicate_frame = {}
-        self.key_frames = {}
+        self.duplicate_frame: dict = {}
+        self.key_frames: dict = {}
 
         with tqdm(total=self.end_frame,
                   desc='Obtain key frame', unit='frame') as pbar:
@@ -235,7 +235,7 @@ class RapidVideOCR():
         cv2.destroyAllWindows()
         return np.array(roi_list)
 
-    def _select_threshold(self, selected_frames: np.ndarray) -> np.int32:
+    def _select_threshold(self, selected_frames: np.ndarray) -> int:
         threshold_list : List = []
         for i, frame in enumerate(selected_frames):
             crop_img = frame[self.crop_start: self.crop_end, :, :]
@@ -245,7 +245,7 @@ class RapidVideOCR():
                 threshold = self.process_img.vis_binary(i + 1, crop_img,
                                                         threshold_list[-1])
             threshold_list.append(threshold)
-        return np.max(threshold_list)
+        return int(np.max(threshold_list))
 
     def _record_key_info(self, slow: int,
                          dup_frame: List,
