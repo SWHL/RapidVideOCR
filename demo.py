@@ -5,7 +5,7 @@ import time
 
 from rapid_videocr import RapidVideOCR
 
-extractor = RapidVideOCR(output_format='srt')
+extractor = RapidVideOCR()
 
 mp4_path = 'assets/test_video/2.mp4'
 

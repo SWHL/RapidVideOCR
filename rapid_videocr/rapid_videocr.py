@@ -6,41 +6,39 @@ import argparse
 import random
 from datetime import timedelta
 from pathlib import Path
+from typing import List, Union
 
 import cv2
 import numpy as np
+import yaml
 from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
-from .utils import (VideoReader, get_srt_timestamp, is_similar_batch,
-                    read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
-                    save_txt, string_similar_ratio, vis_binary)
+from .utils import (ExportResult, ProcessImg, VideoReader, calc_l2_dis_frames,
+                    calc_str_similar, get_srt_timestamp)
 
 CUR_DIR = Path(__file__).resolve().parent
 
 
 class RapidVideOCR():
-    def __init__(self, output_format=None,
-                 config_path=str(CUR_DIR / 'config_videocr.yaml')):
+    def __init__(self,
+                 config_path: Union[str, Path] = CUR_DIR / 'config_videocr.yaml'):
         self.rapid_ocr = RapidOCR()
         self.text_det = self.rapid_ocr.text_detector
 
-        config = read_yaml(config_path)
+        config = self._read_yaml(config_path)
         self.error_num = config['error_num']
         self.is_dilate = config['is_dilate']
-
-        self.output_format = config['output_format']
-        if output_format:
-            self.output_format = output_format
-
-        self.select_nums = 3
         self.time_start = config['time_start']
         self.time_end = config['time_end']
 
+        self.select_nums = 3
         self.str_similar_ratio = 0.6
 
-    def __call__(self, video_path, batch_size=100):
-        self.video_path = video_path
+        self.process_img = ProcessImg()
+        self.export_res = ExportResult()
+
+    def __call__(self, video_path: str, batch_size: int = 100):
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path)
         num_frames = self.vr.get_frame_count()
@@ -61,26 +59,28 @@ class RapidVideOCR():
         if batch_size:
             self.batch_size = batch_size
 
-        self.start_frame = self.convert_time_to_frame(self.time_start, self.fps)
+        self.start_frame = self.convert_time_to_frame(
+            self.time_start, self.fps)
         self.end_frame = num_frames - 1
         if self.time_end:
-            self.end_frame = self.convert_time_to_frame(self.time_end, self.fps)
+            self.end_frame = self.convert_time_to_frame(
+                self.time_end, self.fps)
         if self.end_frame < self.start_frame:
             raise ValueError('time_start is later than time_end')
 
         self.get_key_frame()
         self.run_ocr()
         extract_result = self.get_subtitles()
-        self._save_output(extract_result)
+        self.export_res(video_path, extract_result)
         return extract_result
 
     def get_random_frames(self, all_frame_nums: int) -> np.ndarray:
         random_idx = random.choices(range(all_frame_nums), k=self.select_nums)
         # N x H x W x 3
-        selected_frames = np.stack([self.vr.get_frame(i) for i in random_idx])
+        selected_frames = np.stack([self.vr[i] for i in random_idx])
         return selected_frames
 
-    def convert_time_to_frame(self, time_str, fps):
+    def convert_time_to_frame(self, time_str: str, fps: int) -> int:
         if not time_str:
             return 0
 
@@ -99,7 +99,7 @@ class RapidVideOCR():
         frame_index = int(td.total_seconds() * fps)
         return frame_index
 
-    def get_key_frame(self):
+    def get_key_frame(self, ) -> None:
         """获得视频的字幕关键帧"""
 
         self.duplicate_frame = {}
@@ -118,9 +118,9 @@ class RapidVideOCR():
                     ori_slow_frame = self.vr[slow][self.crop_start: self.crop_end, :, :]
 
                     # Remove the background of the frame.
-                    slow_frame = remove_bg(ori_slow_frame,
-                                           is_dilate=self.is_dilate,
-                                           binary_thr=self.binary_threshold)
+                    slow_frame = self.process_img.remove_bg(ori_slow_frame,
+                                                            is_dilate=self.is_dilate,
+                                                            binary_thr=self.binary_threshold)
 
                     slow_change = False
 
@@ -129,14 +129,14 @@ class RapidVideOCR():
                 fast_frames = fast_frames[:,
                                           self.crop_start: self.crop_end, :, :]
 
-                fast_frames = remove_batch_bg(fast_frames,
-                                              is_dilate=self.is_dilate,
-                                              binary_thr=self.binary_threshold)
+                fast_frames = self.process_img.remove_batch_bg(fast_frames,
+                                                               is_dilate=self.is_dilate,
+                                                               binary_thr=self.binary_threshold)
 
                 # Compare the similarity between the frames.
-                compare_result = is_similar_batch(slow_frame,
-                                                  fast_frames,
-                                                  threshold=self.error_num)
+                compare_result = calc_l2_dis_frames(slow_frame,
+                                                    fast_frames,
+                                                    threshold=self.error_num)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
 
@@ -170,7 +170,7 @@ class RapidVideOCR():
                         and fast + self.batch_size > self.end_frame:
                     self.batch_size = self.end_frame - fast
 
-    def run_ocr(self,):
+    def run_ocr(self,) -> None:
         self.pred_frames = []
         for key, frame in tqdm(self.key_frames.items(),
                                desc='OCR Key Frame', unit='frame'):
@@ -191,7 +191,8 @@ class RapidVideOCR():
                 continue
             self.pred_frames.append('\n'.join(rec_res))
 
-    def get_subtitles(self):
+    def get_subtitles(self, ) -> List:
+        # TODO: List类型注解需要具化
         """合并最终OCR提取字幕文件，并输出
         """
         slow, fast = 0, 1
@@ -200,8 +201,8 @@ class RapidVideOCR():
         invalid_keys = []
         while fast < n:
             slow_rec, fast_rec = self.pred_frames[slow], self.pred_frames[fast]
-            similar_ratio = string_similar_ratio(slow_rec, fast_rec)
-            if similar_ratio > self.str_similar_ratio:
+            str_ratio = calc_str_similar(slow_rec, fast_rec)
+            if str_ratio > self.str_similar_ratio:
                 # 相似→合并两个list
                 self.duplicate_frame[key_list[slow]].extend(
                     self.duplicate_frame[key_list[fast]])
@@ -223,21 +224,7 @@ class RapidVideOCR():
                                    self.pred_frames[i]])
         return extract_result
 
-    def _save_output(self, extract_result):
-        if self.output_format == 'srt':
-            save_srt(self.video_path, extract_result)
-        elif self.output_format == 'txt':
-            save_txt(self.video_path, extract_result)
-        elif self.output_format == 'docx':
-            save_docx(self.video_path, extract_result, self.vr)
-        elif self.output_format == 'all':
-            save_srt(self.video_path, extract_result)
-            save_txt(self.video_path, extract_result)
-            save_docx(self.video_path, extract_result, self.vr)
-        else:
-            raise ValueError(f'The {self.output_format} is not supported!')
-
-    def _select_roi(self, selected_frames: np.ndarray):
+    def _select_roi(self, selected_frames: np.ndarray) -> np.ndarray:
         roi_list = []
         for i, frame in enumerate(selected_frames):
             roi = cv2.selectROI(
@@ -248,28 +235,34 @@ class RapidVideOCR():
         cv2.destroyAllWindows()
         return np.array(roi_list)
 
-    def _select_threshold(self, selected_frames: np.ndarray):
-        threshold_list = []
+    def _select_threshold(self, selected_frames: np.ndarray) -> np.int32:
+        threshold_list : List = []
         for i, frame in enumerate(selected_frames):
             crop_img = frame[self.crop_start: self.crop_end, :, :]
             if i == 0:
-                threshold = vis_binary(i + 1, crop_img)
+                threshold = self.process_img.vis_binary(i + 1, crop_img)
             else:
-                threshold = vis_binary(i + 1, crop_img, threshold_list[-1])
+                threshold = self.process_img.vis_binary(i + 1, crop_img,
+                                                        threshold_list[-1])
             threshold_list.append(threshold)
         return np.max(threshold_list)
 
-    def _record_key_info(self, slow, dup_frame, slow_frame):
-        if slow in self.duplicate_frame:
-            self.duplicate_frame[slow].extend(dup_frame)
-        else:
-            self.duplicate_frame[slow] = dup_frame
+    def _record_key_info(self, slow: int,
+                         dup_frame: List,
+                         slow_frame: np.ndarray) -> None:
+        self.duplicate_frame.setdefault(slow, []).extend(dup_frame)
 
         if slow not in self.key_frames:
             self.key_frames[slow] = slow_frame
 
+    @staticmethod
+    def _read_yaml(yaml_path: Union[str, Path]) -> dict:
+        with open(str(yaml_path), 'rb') as f:
+            data = yaml.load(f, Loader=yaml.Loader)
+        return data
 
-def main():
+
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--mp4_path', type=str)
     parser.add_argument('--format', choices=['srt', 'txt', 'docx', 'all'],
@@ -280,7 +273,7 @@ def main():
     if not Path(mp4_path).exists():
         raise FileExistsError(f'{mp4_path} does not exists.')
 
-    extractor = RapidVideOCR(output_format=args.format)
+    extractor = RapidVideOCR()
     ocr_result = extractor(mp4_path)
     print(ocr_result)
 
