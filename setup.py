@@ -9,11 +9,13 @@ import setuptools
 
 
 def get_latest_version(package_name: str) -> Optional[str]:
-    output = subprocess.run(["pip", "index", "versions", package_name],
+    output: str = subprocess.run(["pip", "index", "versions", package_name],
                             capture_output=True).stdout.decode('utf-8')
     if output:
-        output = list(filter(lambda x: len(x) > 0, output.split('\n')))
-        latest_version = output[0].split(' ')[-1][1:-2]
+        name_versions = list(filter(lambda x: len(x) > 0, output.split('\n')))
+        # e.g. opencv-python (4.7.0.68)
+        pack_name_version = name_versions[0].strip()
+        latest_version = pack_name_version.split(' ')[-1][1:-1]
         return latest_version
     return None
 

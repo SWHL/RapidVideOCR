@@ -8,6 +8,7 @@ import copy
 import datetime
 import difflib
 from pathlib import Path
+import random
 from typing import List, Optional, Tuple, Union, Any
 
 import cv2
@@ -28,18 +29,23 @@ class VideoReader():
         return None
 
     def __len__(self, ) -> int:
-        return self.get_frame_count()
+        return self.get_num_frames()
 
-    def get_avg_fps(self,) -> int:
+    def get_fps(self,) -> int:
         return int(self.cap.get(cv2.CAP_PROP_FPS))
 
-    def get_frame_count(self, ) -> int:
+    def get_num_frames(self, ) -> int:
         return int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     def get_continue_batch(self, idx_list: List) -> np.ndarray:
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, idx_list[0])
         batch_frame = [self.cap.read()[1] for _ in range(len(idx_list))]
         return np.stack(batch_frame)
+
+    def get_random_frames(self, select_num: int) -> np.ndarray:
+        random_idx = random.choices(range(self.get_num_frames()), k=select_num)
+        selected_frames = np.stack([self.__getitem__(i) for i in random_idx])
+        return selected_frames
 
     def __enter__(self) -> VideoReader:
         return self

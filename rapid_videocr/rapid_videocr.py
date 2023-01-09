@@ -6,7 +6,7 @@ import argparse
 import random
 from datetime import timedelta
 from pathlib import Path
-from typing import List, Union
+from typing import List, Tuple, Union
 
 import cv2
 import numpy as np
@@ -27,58 +27,37 @@ class RapidVideOCR():
         self.text_det = self.rapid_ocr.text_detector
 
         config = self._read_yaml(config_path)
-        self.error_num = config['error_num']
+        self.error_threshold = config['error_threshold']
         self.is_dilate = config['is_dilate']
         self.time_start = config['time_start']
         self.time_end = config['time_end']
 
         self.select_nums = 3
         self.str_similar_ratio = 0.6
+        self.batch_size = 100
 
         self.process_img = ProcessImg()
         self.export_res = ExportResult()
 
-    def __call__(self, video_path: str, batch_size: int = 100) -> List:
+    def __call__(self, video_path: str) -> List:
         print(f'Loading {video_path}')
         self.vr = VideoReader(video_path)
-        num_frames = self.vr.get_frame_count()
-        self.fps = int(self.vr.get_avg_fps())
+        num_frames = self.vr.get_num_frames()
+        fps = self.vr.get_fps()
+        selected_frames = self.vr.get_random_frames(self.select_nums)
 
-        selected_frames = self.get_random_frames(num_frames)
+        rois = self._select_roi(selected_frames)
+        crop_y_start, crop_y_end, select_box_h = self._get_crop_range(rois)
 
-        # 选择字幕区域
-        roi_array = self._select_roi(selected_frames)
-        self.crop_start = np.min(roi_array[:, 1])
-        self.subtitle_height = np.max(roi_array[:, 3])
-        self.crop_end = self.crop_start + self.subtitle_height
+        binary_threshold = self._select_threshold(selected_frames)
 
-        # 交互式确定threshold最佳值
-        self.binary_threshold = self._select_threshold(selected_frames)
-
-        self.batch_size = self.fps * 2
-        if batch_size:
-            self.batch_size = batch_size
-
-        self.start_frame = self.convert_time_to_frame(
-            self.time_start, self.fps)
-        self.end_frame = num_frames - 1
-        if self.time_end:
-            self.end_frame = self.convert_time_to_frame(
-                self.time_end, self.fps)
-        if self.end_frame < self.start_frame:
-            raise ValueError('time_start is later than time_end')
+        start_frame, end_frame = self._get_phrase_frame(fps, num_frames)
 
         self.get_key_frame()
         self.run_ocr()
         extract_result = self.get_subtitles()
         self.export_res(video_path, extract_result)
         return extract_result
-
-    def get_random_frames(self, all_frame_nums: int) -> np.ndarray:
-        random_idx = random.choices(range(all_frame_nums), k=self.select_nums)
-        # N x H x W x 3
-        selected_frames = np.stack([self.vr[i] for i in random_idx])
-        return selected_frames
 
     def convert_time_to_frame(self, time_str: str, fps: int) -> int:
         if not time_str:
@@ -136,7 +115,7 @@ class RapidVideOCR():
                 # Compare the similarity between the frames.
                 compare_result = calc_l2_dis_frames(slow_frame,
                                                     fast_frames,
-                                                    threshold=self.error_num)
+                                                    threshold=self.error_threshold)
                 batch_array = np.array(batch_list)
                 not_similar_index = batch_array[np.logical_not(compare_result)]
 
@@ -235,6 +214,12 @@ class RapidVideOCR():
         cv2.destroyAllWindows()
         return np.array(roi_list)
 
+    def _get_crop_range(self, rois: np.ndarray) -> Tuple[int, int, int]:
+        crop_y_start = int(np.min(rois[:, 1]))
+        select_box_h = int(np.max(rois[:, 3]))
+        crop_y_end = crop_y_start + select_box_h
+        return crop_y_start, crop_y_end, select_box_h
+
     def _select_threshold(self, selected_frames: np.ndarray) -> int:
         threshold_list : List = []
         for i, frame in enumerate(selected_frames):
@@ -246,6 +231,16 @@ class RapidVideOCR():
                                                         threshold_list[-1])
             threshold_list.append(threshold)
         return int(np.max(threshold_list))
+
+    def _get_phrase_frame(self, fps: int, num_frames: int) -> Tuple[int, int]:
+        start_frame = self.convert_time_to_frame(self.time_start, fps)
+        end_frame = num_frames - 1
+        if self.time_end:
+            end_frame = self.convert_time_to_frame(self.time_end, fps)
+
+        if end_frame < start_frame:
+            raise ValueError('time_start is later than time_end')
+        return start_frame, end_frame
 
     def _record_key_info(self, slow: int,
                          dup_frame: List,
