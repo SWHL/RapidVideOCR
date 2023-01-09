@@ -16,8 +16,7 @@ import numpy as np
 
 
 class VideoReader():
-    """OpenCV version
-    """
+    """OpenCV version"""
     def __init__(self, video_path: str) -> None:
         self.cap = cv2.VideoCapture(video_path)
 
@@ -124,21 +123,24 @@ class ProcessImg():
         return img
 
     @staticmethod
-    def vis_binary(i: int, img: np.ndarray, default_pos: int = 127) -> int:
+    def vis_binary(cur_num: int,
+                   img: np.ndarray,
+                   pos: int = 127,
+                   run_nums: int = 3) -> int:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img2 = copy.deepcopy(img)
 
         def update_theta(x: Any) -> None: pass
 
-        window_name = f'[{i}/3] Select the best threshold of binary,'\
-            'press Enter to confirm.'
+        window_name = f'[{cur_num}/{run_nums}] Select the best threshold of' \
+                       ' binary, press Enter to confirm.'
         tracker_name = 'threshold'
 
         cv2.namedWindow(window_name)
         cv2.createTrackbar(tracker_name, window_name, 0, 255, update_theta)
         cv2.setTrackbarPos(trackbarname=tracker_name,
                            winname=window_name,
-                           pos=default_pos)
+                           pos=pos)
 
         while True:
             cv2.imshow(window_name, img)

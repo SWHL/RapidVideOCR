@@ -40,20 +40,19 @@ class RapidVideOCR():
         self.export_res = ExportResult()
 
     def __call__(self, video_path: str) -> List:
-        print(f'Loading {video_path}')
         self.vr = VideoReader(video_path)
         num_frames = self.vr.get_num_frames()
         fps = self.vr.get_fps()
         selected_frames = self.vr.get_random_frames(self.select_nums)
 
         rois = self._select_roi(selected_frames)
-        crop_y_start, crop_y_end, select_box_h = self._get_crop_range(rois)
+        y_start, y_end, select_box_h = self._get_crop_range(rois)
 
-        binary_threshold = self._select_threshold(selected_frames)
+        binary_thr = self._select_threshold(selected_frames, y_start, y_end)
 
-        start_frame, end_frame = self._get_phrase_frame(fps, num_frames)
+        start_idx, end_idx = self._get_range_frame(fps, num_frames)
 
-        self.get_key_frame()
+        self.get_key_frame(end_idx, y_start, y_end, binary_thr)
         self.run_ocr()
         extract_result = self.get_subtitles()
         self.export_res(video_path, extract_result)
@@ -78,76 +77,68 @@ class RapidVideOCR():
         frame_index = int(td.total_seconds() * fps)
         return frame_index
 
-    def get_key_frame(self, ) -> None:
+    def get_key_frame(self, end_idx, y_start, y_end, binary_thr) -> None:
         """获得视频的字幕关键帧"""
 
         self.duplicate_frame: dict = {}
         self.key_frames: dict = {}
 
-        with tqdm(total=self.end_frame,
-                  desc='Obtain key frame', unit='frame') as pbar:
-            # Use two fast and slow pointers to filter duplicate frame.
-            if self.batch_size > self.end_frame:
-                self.batch_size = self.end_frame - 1
+        pbar = tqdm(total=end_idx, desc='Obtain key frame', unit='frame')
+        # Use two fast and slow pointers to filter duplicate frame.
+        batch_size = end_idx - 1 if self.batch_size > end_idx else self.batch_size
 
-            slow, fast = 0, 1
-            slow_change = True
-            while fast + self.batch_size <= self.end_frame:
-                if slow_change:
-                    ori_slow_frame = self.vr[slow][self.crop_start: self.crop_end, :, :]
+        cur_idx, next_idx = 0, 1
+        slow_change = True
+        while next_idx + batch_size <= end_idx:
+            if slow_change:
+                cur_crop_frame = self.vr[cur_idx][y_start:y_end, :, :]
 
-                    # Remove the background of the frame.
-                    slow_frame = self.process_img.remove_bg(ori_slow_frame,
-                                                            is_dilate=self.is_dilate,
-                                                            binary_thr=self.binary_threshold)
+                # Remove the background of the frame.
+                cur_frame = self.process_img.remove_bg(cur_crop_frame,
+                                                       is_dilate=self.is_dilate,
+                                                       binary_thr=binary_thr)
+                slow_change = False
 
-                    slow_change = False
+            next_batch_idxs = list(range(next_idx, next_idx + batch_size))
+            next_frames = self.vr.get_continue_batch(next_batch_idxs)
+            next_crop_frames = next_frames[:, y_start:y_end, :, :]
+            next_frames = self.process_img.remove_batch_bg(next_crop_frames,
+                                                           is_dilate=self.is_dilate,
+                                                           binary_thr=binary_thr)
 
-                batch_list = list(range(fast, fast+self.batch_size))
-                fast_frames = self.vr.get_continue_batch(batch_list)
-                fast_frames = fast_frames[:,
-                                          self.crop_start: self.crop_end, :, :]
+            # Compare the similarity between the frames.
+            compare_result = calc_l2_dis_frames(cur_frame,
+                                                next_frames,
+                                                threshold=self.error_threshold)
+            batch_array = np.array(next_batch_idxs)
+            not_similar_index = batch_array[np.logical_not(compare_result)]
 
-                fast_frames = self.process_img.remove_batch_bg(fast_frames,
-                                                               is_dilate=self.is_dilate,
-                                                               binary_thr=self.binary_threshold)
+            duplicate_frame = []
+            if not_similar_index.size == 0:
+                # All are similar with the cur_frame.
+                duplicate_frame = next_batch_idxs
 
-                # Compare the similarity between the frames.
-                compare_result = calc_l2_dis_frames(slow_frame,
-                                                    fast_frames,
-                                                    threshold=self.error_threshold)
-                batch_array = np.array(batch_list)
-                not_similar_index = batch_array[np.logical_not(compare_result)]
+                pbar.update(batch_size)
+                next_idx += batch_size
 
-                duplicate_frame = []
-                if not_similar_index.size == 0:
-                    # All are similar with the slow frame.
-                    duplicate_frame = batch_list
+                self._record_key_info(cur_idx, duplicate_frame, cur_crop_frame)
+            else:
+                # Exist the non similar frame.
+                index = not_similar_index[0] - cur_idx
+                duplicate_frame = next_batch_idxs[:index]
 
-                    pbar.update(self.batch_size)
-                    fast += self.batch_size
+                # record
+                self._record_key_info(cur_idx, duplicate_frame, cur_crop_frame)
 
-                    self._record_key_info(
-                        slow, duplicate_frame, ori_slow_frame)
-                else:
-                    # Exist the non similar frame.
-                    index = not_similar_index[0] - slow
-                    duplicate_frame = batch_list[:index]
+                cur_idx = not_similar_index[0]
+                next_idx = cur_idx + 1
+                pbar.update(cur_idx - pbar.n + 1)
 
-                    # record
-                    self._record_key_info(
-                        slow, duplicate_frame, ori_slow_frame)
+                slow_change = True
 
-                    slow = not_similar_index[0]
-                    fast = slow + 1
-                    pbar.update(slow - pbar.n + 1)
-
-                    slow_change = True
-
-                # Take care the left frames, which can't up to the batch_size.
-                if fast != self.end_frame \
-                        and fast + self.batch_size > self.end_frame:
-                    self.batch_size = self.end_frame - fast
+            if next_idx != end_idx and next_idx + batch_size > end_idx:
+                batch_size = end_idx - next_idx
+        pbar.close()
 
     def run_ocr(self,) -> None:
         self.pred_frames = []
@@ -220,27 +211,28 @@ class RapidVideOCR():
         crop_y_end = crop_y_start + select_box_h
         return crop_y_start, crop_y_end, select_box_h
 
-    def _select_threshold(self, selected_frames: np.ndarray) -> int:
-        threshold_list : List = []
-        for i, frame in enumerate(selected_frames):
-            crop_img = frame[self.crop_start: self.crop_end, :, :]
-            if i == 0:
-                threshold = self.process_img.vis_binary(i + 1, crop_img)
-            else:
-                threshold = self.process_img.vis_binary(i + 1, crop_img,
-                                                        threshold_list[-1])
-            threshold_list.append(threshold)
-        return int(np.max(threshold_list))
+    def _select_threshold(self,
+                          selected_frames: np.ndarray,
+                          y_start: int,
+                          y_end: int) -> int:
+        threshold = 127
+        crop_frames = selected_frames[:, y_start:y_end, ...]
+        for i, frame in enumerate(crop_frames):
+            new_thresh = self.process_img.vis_binary(i, frame,
+                                                     threshold,
+                                                     self.select_nums)
+            threshold = new_thresh if new_thresh > threshold else threshold
+        return threshold
 
-    def _get_phrase_frame(self, fps: int, num_frames: int) -> Tuple[int, int]:
-        start_frame = self.convert_time_to_frame(self.time_start, fps)
-        end_frame = num_frames - 1
+    def _get_range_frame(self, fps: int, num_frames: int) -> Tuple[int, int]:
+        start_idx = self.convert_time_to_frame(self.time_start, fps)
+        end_idx = num_frames - 1
         if self.time_end:
-            end_frame = self.convert_time_to_frame(self.time_end, fps)
+            end_idx = self.convert_time_to_frame(self.time_end, fps)
 
-        if end_frame < start_frame:
+        if end_idx < start_idx:
             raise ValueError('time_start is later than time_end')
-        return start_frame, end_frame
+        return start_idx, end_idx
 
     def _record_key_info(self, slow: int,
                          dup_frame: List,
