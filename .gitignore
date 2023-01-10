@@ -11,3 +11,5 @@ test_files/
 
 *.bin
 ./rapid_ocr
+
+.mypy_cache

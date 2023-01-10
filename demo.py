@@ -3,9 +3,9 @@
 # @Contact: liekkaskono@163.com
 import time
 
-from rapid_videocr import ExtractSubtitle
+from rapid_videocr import RapidVideOCR
 
-extractor = ExtractSubtitle(output_format='srt')
+extractor = RapidVideOCR()
 
 mp4_path = 'assets/test_video/2.mp4'
 

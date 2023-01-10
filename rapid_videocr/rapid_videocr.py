@@ -1,291 +1,270 @@
-
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-import random
 from pathlib import Path
+from typing import Dict, List, Tuple, Union
 
 import cv2
 import numpy as np
-from decord import VideoReader, cpu
+import yaml
 from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
-from .utils import (get_frame_from_time, get_srt_timestamp, is_similar_batch,
-                    read_yaml, remove_batch_bg, remove_bg, save_docx, save_srt,
-                    save_txt, string_similar, vis_binary)
+from .utils import (ExportResult, ProcessImg, VideoReader, calc_l2_dis_frames,
+                    calc_str_similar, convert_frame_to_time,
+                    convert_time_to_frame)
 
 CUR_DIR = Path(__file__).resolve().parent
+CONFIG_PATH = CUR_DIR / 'config_videocr.yaml'
 
 
-class ExtractSubtitle():
-    def __init__(self, output_format=None,
-                 config_path=str(CUR_DIR / 'config_videocr.yaml')):
-        self.ocr_system = RapidOCR()
-        self.text_det = self.ocr_system.text_detector
+class RapidVideOCR():
+    def __init__(self, config_path: Union[str, Path] = CONFIG_PATH):
+        self.rapid_ocr = RapidOCR()
+        self.text_det = self.rapid_ocr.text_detector
 
-        config = read_yaml(config_path)
-        self.error_num = config['error_num']
-        if output_format:
-            self.output_format = output_format
-        else:
-            self.output_format = config['output_format']
-
+        config = self._read_yaml(config_path)
+        self.error_thr = config['error_thr']
         self.is_dilate = config['is_dilate']
-
-        self.select_nums = 3
         self.time_start = config['time_start']
         self.time_end = config['time_end']
 
-    def __call__(self, video_path, batch_size=100):
-        self.video_path = video_path
+        self.select_nums = 3
+        self.str_similar_ratio = 0.6
+        self.batch_size = 100
 
-        print(f'Loading {video_path}')
-        self.vr = VideoReader(video_path, ctx=cpu(0))
+        self.process_img = ProcessImg()
+        self.export_res = ExportResult()
 
-        self.num_frames = len(self.vr)
-        self.fps = int(self.vr.get_avg_fps())
+    def __call__(self, video_path: str) -> List:
+        self.vr = VideoReader(video_path)
+        num_frames = self.vr.get_num_frames()
+        fps = self.vr.get_fps()
+        selected_frames = self.vr.get_random_frames(self.select_nums)
 
-        self.random_index = random.choices(range(self.num_frames),
-                                           k=self.select_nums)
-        self.selected_frames = self.vr.get_batch(self.random_index).asnumpy()
+        rois = self._select_roi(selected_frames)
+        y_start, y_end, select_box_h = self._get_crop_range(rois)
 
-        # 选择字幕区域
-        roi_array = self._select_roi()
-        self.crop_start = np.min(roi_array[:, 1])
-        self.subtitle_height = np.max(roi_array[:, 3])
-        self.crop_end = self.crop_start + self.subtitle_height
+        binary_thr = self._select_threshold(selected_frames, y_start, y_end)
 
-        # 交互式确定threshold最佳值
-        self.binary_threshold = self._select_threshold()
-        print(f'The binary threshold: {self.binary_threshold}')
+        start_idx, end_idx = self._get_range_frame(fps, num_frames)
 
-        if batch_size is None:
-            self.batch_size = self.fps * 2
-        else:
-            self.batch_size = batch_size
+        key_frames, duplicate_frames = self.get_key_frames(start_idx,
+                                                           end_idx,
+                                                           y_start, y_end,
+                                                           binary_thr)
+        frames_ocr_res, invalid_keys = self.run_ocr(key_frames, select_box_h)
 
-        self.run_ocr(self.time_start, self.time_end)
+        duplicate_frames = self.remove_invalid(duplicate_frames, invalid_keys)
+        filter_frames, invalid_keys = self.merge_frames(frames_ocr_res,
+                                                        duplicate_frames)
+        extract_result = self.generate_srt(frames_ocr_res, fps,
+                                           filter_frames, invalid_keys)
+        self.export_res(video_path, extract_result)
+        return extract_result
 
-        return self.get_subtitles()
-
-    def run_ocr(self, time_start, time_end):
-        """对所给字幕图像进行OCR识别
-
-        :param time_start: 起始时间点
-        :param time_end: 结束时间点，-1表示到最后
-        """
-        self.ocr_start = get_frame_from_time(time_start, self.fps)
-
-        if time_end == '-1':
-            self.ocr_end = self.num_frames - 1
-        else:
-            self.ocr_end = get_frame_from_time(time_end, self.fps)
-
-        if self.ocr_end < self.ocr_start:
-            raise ValueError('time_start is later than time_end')
-
-        self.get_key_frame()
-
-        # Extract the filtered frames content.
-        self.pred_frames = []
-        key_index_frames = list(self.key_point_dict.keys())
-        frames = np.stack(list(self.key_frames.values()), axis=0)
-
-        for key, frame in tqdm(list(zip(key_index_frames, frames)),
-                               desc='OCR Key Frame', unit='frame'):
-            frame = cv2.copyMakeBorder(frame.squeeze(),
-                                       self.subtitle_height * 2,
-                                       self.subtitle_height * 2,
-                                       0, 0,
-                                       cv2.BORDER_CONSTANT,
-                                       value=(0, 0))
-
-            ocr_result, _ = self.ocr_system(frame)
-            if ocr_result and len(ocr_result) > 0:
-                _, rec_res, confidence = list(zip(*ocr_result))
-                confidence = list(map(float, confidence))
-            else:
-                rec_res = []
-                confidence = 0.0
-
-            if rec_res is None or len(rec_res) <= 0:
-                del self.key_point_dict[key]
-            else:
-                text = '\n'.join(rec_res)
-                confidence = sum(confidence) / len(confidence)
-                self.pred_frames.append((text, confidence))
-
-    def get_key_frame(self):
+    def get_key_frames(self,
+                       start_idx: int,
+                       end_idx: int,
+                       y_start: int, y_end: int,
+                       binary_thr: int) -> Tuple[Dict, Dict]:
         """获得视频的字幕关键帧"""
+        key_frames: Dict = {}
+        duplicate_frames: Dict = {}
 
-        self.key_point_dict = {}
-        self.key_frames = {}
+        pbar = tqdm(total=end_idx, desc='Obtain key frame', unit='frame')
+        if self.batch_size > end_idx:
+            batch_size = end_idx - 1
+        else:
+            batch_size = self.batch_size
 
-        with tqdm(total=self.ocr_end,
-                  desc='Obtain key frame', unit='frame') as pbar:
-            # Use two fast and slow pointers to filter duplicate frame.
-            if self.batch_size > self.ocr_end:
-                self.batch_size = self.ocr_end - 1
+        cur_idx, next_idx = start_idx, 1
+        is_cur_idx_change = True
+        while next_idx + batch_size <= end_idx:
+            if is_cur_idx_change:
+                cur_crop_frame = self.vr[cur_idx][y_start:y_end, :, :]
 
-            slow, fast = 0, 1
-            slow_change = True
-            while fast + self.batch_size <= self.ocr_end:
-                if slow_change:
-                    ori_slow_frame = self.vr[slow].asnumpy(
-                    )[self.crop_start: self.crop_end, :, :]
+                # Remove the background of the frame.
+                cur_frame = self.process_img.remove_bg(cur_crop_frame,
+                                                       self.is_dilate,
+                                                       binary_thr)
+                is_cur_idx_change = False
 
-                    # Remove the background of the frame.
-                    slow_frame = remove_bg(ori_slow_frame,
-                                           is_dilate=self.is_dilate,
-                                           binary_thr=self.binary_threshold)
+            next_batch_idxs = np.array(range(next_idx, next_idx + batch_size))
+            next_frames = self.vr.get_continue_batch(next_batch_idxs)
+            next_crop_frames = next_frames[:, y_start:y_end, :, :]
+            next_frames = self.process_img.remove_bg(next_crop_frames,
+                                                     self.is_dilate,
+                                                     binary_thr)
 
-                    slow_change = False
+            compare_result = calc_l2_dis_frames(cur_frame,
+                                                next_frames,
+                                                threshold=self.error_thr)
+            dissimilar_idxs = next_batch_idxs[~compare_result]
+            if dissimilar_idxs.size == 0:
+                next_idx += batch_size
+                update_step = batch_size
 
-                batch_list = list(range(fast, fast+self.batch_size))
-                fast_frames = self.vr.get_batch(batch_list).asnumpy()
-                fast_frames = fast_frames[:,
-                                          self.crop_start: self.crop_end, :, :]
+                duplicate_frames.setdefault(
+                    cur_idx, []).extend(next_batch_idxs)
+                if cur_idx not in key_frames:
+                    key_frames[cur_idx] = cur_crop_frame
+            else:
+                first_dissimilar_idx = dissimilar_idxs[0]
+                similar_last_idx = first_dissimilar_idx - cur_idx
+                next_batch_idxs = next_batch_idxs[:similar_last_idx]
 
-                fast_frames = remove_batch_bg(fast_frames,
-                                              is_dilate=self.is_dilate,
-                                              binary_thr=self.binary_threshold)
+                duplicate_frames.setdefault(
+                    cur_idx, []).extend(next_batch_idxs)
+                if cur_idx not in key_frames:
+                    key_frames[cur_idx] = cur_crop_frame
 
-                # Compare the similarity between the frames.
-                compare_result = is_similar_batch(slow_frame,
-                                                  fast_frames,
-                                                  threshold=self.error_num)
-                batch_array = np.array(batch_list)
-                not_similar_index = batch_array[np.logical_not(compare_result)]
+                cur_idx = first_dissimilar_idx
+                next_idx = cur_idx + 1
 
-                duplicate_frame = []
-                if not_similar_index.size == 0:
-                    # All are similar with the slow frame.
-                    duplicate_frame = batch_list
+                update_step = first_dissimilar_idx - pbar.n + 1
 
-                    pbar.update(self.batch_size)
-                    fast += self.batch_size
+                is_cur_idx_change = True
 
-                    self._record_key_info(
-                        slow, duplicate_frame, ori_slow_frame)
-                else:
-                    # Exist the non similar frame.
-                    index = not_similar_index[0] - slow
-                    duplicate_frame = batch_list[:index]
+            if next_idx != end_idx and next_idx + batch_size > end_idx:
+                batch_size = end_idx - next_idx
 
-                    # record
-                    self._record_key_info(
-                        slow, duplicate_frame, ori_slow_frame)
+            pbar.update(update_step)
+        pbar.close()
+        return key_frames, duplicate_frames
 
-                    slow = not_similar_index[0]
-                    fast = slow + 1
-                    pbar.update(slow - pbar.n + 1)
+    def run_ocr(self, key_frames: Dict,
+                padding_pixel: int) -> Tuple[List, List]:
+        frames_ocr_res: List = []
+        invalid_keys: List = []
+        for key, frame in tqdm(key_frames.items(), desc='OCR', unit='frame'):
+            frame = self.padding_img(frame, padding_pixel)
 
-                    slow_change = True
+            rec_res = []
+            ocr_result, _ = self.rapid_ocr(frame)
+            if ocr_result:
+                _, rec_res, _ = list(zip(*ocr_result))
 
-                # Take care the left frames, which can't up to the batch_size.
-                if fast != self.ocr_end \
-                        and fast + self.batch_size > self.ocr_end:
-                    self.batch_size = self.ocr_end - fast
+            if not rec_res:
+                invalid_keys.append(key)
+                continue
+            frames_ocr_res.append('\n'.join(rec_res))
+        return frames_ocr_res, invalid_keys
 
-    def get_subtitles(self):
-        """合并最终OCR提取字幕文件，并输出
-        """
-        slow, fast = 0, 1
-        n = len(self.pred_frames)
-        key_list = list(self.key_point_dict.keys())
+    @staticmethod
+    def padding_img(img: np.ndarray, padding_pixel: int) -> np.ndarray:
+        padded_img = cv2.copyMakeBorder(img,
+                                        padding_pixel * 2,
+                                        padding_pixel * 2,
+                                        0, 0,
+                                        cv2.BORDER_CONSTANT,
+                                        value=(0, 0))
+        return padded_img
+
+    @staticmethod
+    def remove_invalid(duplicate_frames: Dict, invalid_keys: List) -> Dict:
+        return {k: v for k, v in duplicate_frames.items()
+                if k not in invalid_keys}
+
+    def generate_srt(self,
+                     frames_ocr_res: List[Union[str, str, str]],
+                     fps: int,
+                     filter_frames: Dict,
+                     invalid_keys: List) -> List:
+        extract_result = []
+        for i, (k, v) in enumerate(filter_frames.items()):
+            if i in invalid_keys:
+                continue
+            v.sort()
+
+            start_time = convert_frame_to_time(v[0], fps)
+            end_time = convert_frame_to_time(v[-1], fps)
+            extract_result.append([k, start_time, end_time, frames_ocr_res[i]])
+        return extract_result
+
+    def merge_frames(self,
+                     frames_ocr_res: List[Union[str, str, str]],
+                     duplicate_frames: Dict) -> Tuple[Dict, List]:
+        keys = list(duplicate_frames)
         invalid_keys = []
-        while fast < n:
-            if string_similar(self.pred_frames[slow][0],
-                              self.pred_frames[fast][0]) > 0.6:
+
+        cur_idx, next_idx = 0, 1
+        n = len(frames_ocr_res)
+        while next_idx < n:
+            cur_rec = frames_ocr_res[cur_idx]
+            next_rec = frames_ocr_res[next_idx]
+
+            str_ratio = calc_str_similar(cur_rec, next_rec)
+            if str_ratio > self.str_similar_ratio:
                 # 相似→合并两个list
-                self.key_point_dict[key_list[slow]].extend(
-                    self.key_point_dict[key_list[fast]])
-                self.key_point_dict[key_list[slow]].sort()
-                invalid_keys.append(fast)
+                cur_key = keys[cur_idx]
+                similar_idxs = duplicate_frames[keys[next_idx]]
+                duplicate_frames[cur_key].extend(similar_idxs)
+                invalid_keys.append(next_idx)
             else:
                 # 不相似
-                slow = fast
-            fast += 1
+                cur_idx = next_idx
+            next_idx += 1
+        return duplicate_frames, invalid_keys
 
-        _ = [self.key_point_dict.pop(key_list[i]) for i in invalid_keys]
-        self.pred_frames = [v for i, v in enumerate(self.pred_frames)
-                            if i not in invalid_keys]
-
-        self.extract_result = []
-        for i, (k, v) in enumerate(self.key_point_dict.items()):
-            start_index, start_seconds = get_srt_timestamp(v[0], self.fps)
-            end_index, end_seconds = get_srt_timestamp(v[-1], self.fps)
-            self.extract_result.append([k, start_index,
-                                        end_index,
-                                        self.pred_frames[i][0]])
-        self._save_output()
-        return self.extract_result
-
-    def _save_output(self):
-        if self.output_format == 'srt':
-            save_srt(self.video_path, self.extract_result)
-        elif self.output_format == 'txt':
-            save_txt(self.video_path, self.extract_result)
-        elif self.output_format == 'docx':
-            save_docx(self.video_path, self.extract_result, self.vr)
-        elif self.output_format == 'all':
-            save_srt(self.video_path, self.extract_result)
-            save_txt(self.video_path, self.extract_result)
-            save_docx(self.video_path, self.extract_result, self.vr)
-        else:
-            raise ValueError(f'The {self.output_format} is not supported!')
-
-    def _select_roi(self):
+    def _select_roi(self, selected_frames: np.ndarray) -> np.ndarray:
         roi_list = []
-        for i, frame in enumerate(self.selected_frames):
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-            # 交互式选择字幕区域
+        for i, frame in enumerate(selected_frames):
             roi = cv2.selectROI(
                 f'[{i+1}/{self.select_nums}] Select a ROI and then press SPACE or ENTER button! Cancel the selection process by pressing c button!',
-                frame, True, False)
+                frame, showCrosshair=True, fromCenter=False)
             if sum(roi) > 0:
-                roi_list.append(list(roi))
+                roi_list.append(roi)
         cv2.destroyAllWindows()
         return np.array(roi_list)
 
-    def _select_threshold(self):
-        threshold_list = []
-        for i, frame in enumerate(self.selected_frames):
-            crop_img = frame[self.crop_start: self.crop_end, :, :]
-            if i == 0:
-                threshold = vis_binary(i + 1, crop_img)
-            else:
-                threshold = vis_binary(i + 1, crop_img,
-                                       threshold_list[-1])
+    def _get_crop_range(self, rois: np.ndarray) -> Tuple[int, int, int]:
+        crop_y_start = int(np.min(rois[:, 1]))
+        select_box_h = int(np.max(rois[:, 3]))
+        crop_y_end = crop_y_start + select_box_h
+        return crop_y_start, crop_y_end, select_box_h
 
-            threshold_list.append(threshold)
-        return np.max(threshold_list)
+    def _select_threshold(self,
+                          selected_frames: np.ndarray,
+                          y_start: int,
+                          y_end: int) -> int:
+        threshold = 127
+        crop_frames = selected_frames[:, y_start:y_end, ...]
+        for i, frame in enumerate(crop_frames):
+            new_thresh = self.process_img.vis_binary(i, frame,
+                                                     threshold,
+                                                     self.select_nums)
+            threshold = new_thresh if new_thresh > threshold else threshold
+        return threshold
 
-    def _record_key_info(self, slow, duplicate_frame, slow_frame):
-        if slow in self.key_point_dict:
-            self.key_point_dict[slow].extend(duplicate_frame)
-        else:
-            self.key_point_dict[slow] = duplicate_frame
+    def _get_range_frame(self, fps: int, num_frames: int) -> Tuple[int, int]:
+        start_idx = convert_time_to_frame(self.time_start, fps)
+        end_idx = num_frames - 1
+        if self.time_end:
+            end_idx = convert_time_to_frame(self.time_end, fps)
 
-        if slow not in self.key_frames:
-            self.key_frames[slow] = slow_frame
+        if end_idx < start_idx:
+            raise ValueError('time_start is later than time_end')
+        return start_idx, end_idx
+
+    @staticmethod
+    def _read_yaml(yaml_path: Union[str, Path]) -> dict:
+        with open(str(yaml_path), 'rb') as f:
+            data = yaml.load(f, Loader=yaml.Loader)
+        return data
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--mp4_path', type=str)
-    parser.add_argument('--format', choices=['srt', 'txt', 'docx', 'all'],
-                        default='srt')
     args = parser.parse_args()
 
     mp4_path = args.mp4_path
     if not Path(mp4_path).exists():
         raise FileExistsError(f'{mp4_path} does not exists.')
 
-    extractor = ExtractSubtitle(output_format=args.format)
+    extractor = RapidVideOCR()
     ocr_result = extractor(mp4_path)
     print(ocr_result)
 
