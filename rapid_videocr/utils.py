@@ -77,7 +77,7 @@ def convert_time_to_frame(time_str: str, fps: int) -> int:
     return frame_index
 
 
-def get_srt_timestamp(frame_index: int, fps: float) -> str:
+def convert_frame_to_time(frame_index: int, fps: float) -> str:
     # convert frame index into SRT timestamp
     td = datetime.timedelta(seconds=frame_index / fps)
     ms = td.microseconds // 1000

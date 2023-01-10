@@ -6,7 +6,7 @@ import argparse
 import random
 from datetime import timedelta
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict
 
 import cv2
 import numpy as np
@@ -15,7 +15,7 @@ from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
 from .utils import (ExportResult, ProcessImg, VideoReader, calc_l2_dis_frames,
-                    calc_str_similar, get_srt_timestamp)
+                    calc_str_similar, convert_frame_to_time)
 
 CUR_DIR = Path(__file__).resolve().parent
 
@@ -52,9 +52,16 @@ class RapidVideOCR():
 
         start_idx, end_idx = self._get_range_frame(fps, num_frames)
 
-        self.get_key_frame(end_idx, y_start, y_end, binary_thr)
-        self.run_ocr(select_box_h)
-        extract_result = self.get_subtitles(fps)
+        key_frames, duplicate_frames = self.get_key_frames(end_idx,
+                                                           y_start, y_end,
+                                                           binary_thr)
+        frames_ocr_res, invalid_keys = self.run_ocr(key_frames, select_box_h)
+
+        duplicate_frames = self.remove_invalid(duplicate_frames, invalid_keys)
+
+        extract_result = self.get_subtitles(frames_ocr_res,
+                                            duplicate_frames,
+                                            fps)
         self.export_res(video_path, extract_result)
         return extract_result
 
@@ -77,14 +84,14 @@ class RapidVideOCR():
         frame_index = int(td.total_seconds() * fps)
         return frame_index
 
-    def get_key_frame(self, end_idx, y_start, y_end, binary_thr) -> None:
+    def get_key_frames(self, end_idx: int,
+                       y_start: int, y_end: int,
+                       binary_thr: int) -> Tuple[Dict, Dict]:
         """获得视频的字幕关键帧"""
-
-        self.duplicate_frame: dict = {}
-        self.key_frames: dict = {}
+        key_frames: Dict = {}
+        duplicate_frames: Dict = {}
 
         pbar = tqdm(total=end_idx, desc='Obtain key frame', unit='frame')
-        # Use two fast and slow pointers to filter duplicate frame.
         batch_size = end_idx - 1 if self.batch_size > end_idx else self.batch_size
 
         cur_idx, next_idx = 0, 1
@@ -114,17 +121,19 @@ class RapidVideOCR():
                 next_idx += batch_size
                 update_step = batch_size
 
-                self.duplicate_frame.setdefault(cur_idx, []).extend(next_batch_idxs)
-                if cur_idx not in self.key_frames:
-                    self.key_frames[cur_idx] = cur_crop_frame
+                duplicate_frames.setdefault(
+                    cur_idx, []).extend(next_batch_idxs)
+                if cur_idx not in key_frames:
+                    key_frames[cur_idx] = cur_crop_frame
             else:
                 first_dissimilar_idx = dissimilar_idxs[0]
                 similar_last_idx = first_dissimilar_idx - cur_idx
                 next_batch_idxs = next_batch_idxs[:similar_last_idx]
 
-                self.duplicate_frame.setdefault(cur_idx, []).extend(next_batch_idxs)
-                if cur_idx not in self.key_frames:
-                    self.key_frames[cur_idx] = cur_crop_frame
+                duplicate_frames.setdefault(
+                    cur_idx, []).extend(next_batch_idxs)
+                if cur_idx not in key_frames:
+                    key_frames[cur_idx] = cur_crop_frame
 
                 cur_idx = first_dissimilar_idx
                 next_idx = cur_idx + 1
@@ -138,17 +147,14 @@ class RapidVideOCR():
 
             pbar.update(update_step)
         pbar.close()
+        return key_frames, duplicate_frames
 
-    def run_ocr(self, padding_pixel: int) -> None:
-        self.pred_frames = []
-        for key, frame in tqdm(self.key_frames.items(),
-                               desc='OCR Key Frame', unit='frame'):
-            frame = cv2.copyMakeBorder(frame.squeeze(),
-                                       padding_pixel * 2,
-                                       padding_pixel * 2,
-                                       0, 0,
-                                       cv2.BORDER_CONSTANT,
-                                       value=(0, 0))
+    def run_ocr(self, key_frames: Dict,
+                padding_pixel: int) -> Tuple[List, List]:
+        frames_ocr_res: List = []
+        invalid_keys: List = []
+        for key, frame in tqdm(key_frames.items(), desc='OCR', unit='frame'):
+            frame = self.padding_img(frame, padding_pixel)
 
             rec_res = []
             ocr_result, _ = self.rapid_ocr(frame)
@@ -156,41 +162,61 @@ class RapidVideOCR():
                 _, rec_res, _ = list(zip(*ocr_result))
 
             if not rec_res:
-                del self.duplicate_frame[key]
+                invalid_keys.append(key)
                 continue
-            self.pred_frames.append('\n'.join(rec_res))
+            frames_ocr_res.append('\n'.join(rec_res))
+        return frames_ocr_res, invalid_keys
 
-    def get_subtitles(self, fps: int) -> List:
+    @staticmethod
+    def padding_img(img: np.ndarray, padding_pixel: int) -> np.ndarray:
+        padded_img = cv2.copyMakeBorder(img,
+                                        padding_pixel * 2,
+                                        padding_pixel * 2,
+                                        0, 0,
+                                        cv2.BORDER_CONSTANT,
+                                        value=(0, 0))
+        return padded_img
+
+    @staticmethod
+    def remove_invalid(duplicate_frames: Dict, keys: List) -> Dict:
+        return {k: v for k, v in duplicate_frames.items() if k not in keys}
+
+    def get_subtitles(self,
+                      frames_ocr_res: List,
+                      duplicate_frames: Dict,
+                      fps: int) -> List:
         # TODO: List类型注解需要具化
-        """合并最终OCR提取字幕文件，并输出
-        """
-        slow, fast = 0, 1
-        n = len(self.pred_frames)
-        key_list = list(self.duplicate_frame.keys())
+        """合并最终OCR提取字幕文件，并输出"""
+        keys = list(duplicate_frames)
+
         invalid_keys = []
-        while fast < n:
-            slow_rec, fast_rec = self.pred_frames[slow], self.pred_frames[fast]
-            str_ratio = calc_str_similar(slow_rec, fast_rec)
+
+        cur_idx, next_idx = 0, 1
+        n = len(frames_ocr_res)
+        while next_idx < n:
+            cur_rec = frames_ocr_res[cur_idx]
+            next_rec = frames_ocr_res[next_idx]
+
+            str_ratio = calc_str_similar(cur_rec, next_rec)
             if str_ratio > self.str_similar_ratio:
                 # 相似→合并两个list
-                self.duplicate_frame[key_list[slow]].extend(
-                    self.duplicate_frame[key_list[fast]])
-                self.duplicate_frame[key_list[slow]].sort()
-                invalid_keys.append(fast)
+                cur_key = keys[cur_idx]
+                similar_idxs = duplicate_frames[keys[next_idx]]
+                duplicate_frames[cur_key].extend(similar_idxs)
+                invalid_keys.append(next_idx)
             else:
                 # 不相似
-                slow = fast
-            fast += 1
+                cur_idx = next_idx
+            next_idx += 1
 
         extract_result = []
-        for i, (k, v) in enumerate(self.duplicate_frame.items()):
+        for i, (k, v) in enumerate(duplicate_frames.items()):
             if i in invalid_keys:
                 continue
-
-            start_time = get_srt_timestamp(v[0], fps)
-            end_time = get_srt_timestamp(v[-1], fps)
-            extract_result.append([k, start_time, end_time,
-                                   self.pred_frames[i]])
+            v.sort()
+            start_time = convert_frame_to_time(v[0], fps)
+            end_time = convert_frame_to_time(v[-1], fps)
+            extract_result.append([k, start_time, end_time, frames_ocr_res[i]])
         return extract_result
 
     def _select_roi(self, selected_frames: np.ndarray) -> np.ndarray:
