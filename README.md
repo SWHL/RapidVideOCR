@@ -15,8 +15,6 @@
     <a href="https://pypi.org/project/rapid-videocr/"><img src="https://img.shields.io/pypi/dm/rapid-videocr?color=9cf"></a>
 </p>
 
-📌当前最新版本存在内存泄漏问题，处理大一些的视频会出现卡死机器情况，目前正在修复中，详情可参见分支
-
 <details>
     <summary>目录</summary>
 
