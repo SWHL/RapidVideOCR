@@ -94,9 +94,7 @@ flowchart LR
 	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
 	end
 
-	A[/Video file/] --> Step --> M(Output) --> G{Which format}
-    G --> H(SRT) & I(Txt) & J(Word)
-
+	A[/Video file/] --> Step --> M(Output) --> H(SRT)
 ```
 
 ### [FAQ](./docs/FAQ.md)
