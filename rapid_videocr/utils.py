@@ -16,7 +16,6 @@ import numpy as np
 
 
 class VideoReader():
-    """OpenCV version"""
     def __init__(self, video_path: str) -> None:
         self.cap = cv2.VideoCapture(video_path)
 
