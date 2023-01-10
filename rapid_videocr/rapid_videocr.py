@@ -3,7 +3,6 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-import random
 from datetime import timedelta
 from pathlib import Path
 from typing import List, Tuple, Union, Dict
@@ -52,7 +51,8 @@ class RapidVideOCR():
 
         start_idx, end_idx = self._get_range_frame(fps, num_frames)
 
-        key_frames, duplicate_frames = self.get_key_frames(end_idx,
+        key_frames, duplicate_frames = self.get_key_frames(start_idx,
+                                                           end_idx,
                                                            y_start, y_end,
                                                            binary_thr)
         frames_ocr_res, invalid_keys = self.run_ocr(key_frames, select_box_h)
@@ -84,7 +84,9 @@ class RapidVideOCR():
         frame_index = int(td.total_seconds() * fps)
         return frame_index
 
-    def get_key_frames(self, end_idx: int,
+    def get_key_frames(self,
+                       start_idx: int,
+                       end_idx: int,
                        y_start: int, y_end: int,
                        binary_thr: int) -> Tuple[Dict, Dict]:
         """获得视频的字幕关键帧"""
@@ -94,7 +96,7 @@ class RapidVideOCR():
         pbar = tqdm(total=end_idx, desc='Obtain key frame', unit='frame')
         batch_size = end_idx - 1 if self.batch_size > end_idx else self.batch_size
 
-        cur_idx, next_idx = 0, 1
+        cur_idx, next_idx = start_idx, 1
         is_cur_idx_change = True
         while next_idx + batch_size <= end_idx:
             if is_cur_idx_change:
@@ -178,8 +180,9 @@ class RapidVideOCR():
         return padded_img
 
     @staticmethod
-    def remove_invalid(duplicate_frames: Dict, keys: List) -> Dict:
-        return {k: v for k, v in duplicate_frames.items() if k not in keys}
+    def remove_invalid(duplicate_frames: Dict, invalid_keys: List) -> Dict:
+        return {k: v for k, v in duplicate_frames.items()
+                if k not in invalid_keys}
 
     def get_subtitles(self,
                       frames_ocr_res: List,
