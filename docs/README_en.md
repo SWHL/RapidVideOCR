@@ -21,8 +21,7 @@
 
 - [Introduction](#introduction)
 - [Change log (more)](#change-log-more)
-  - [🎄2022-12-04 update:](#2022-12-04-update)
-  - [✨2022-06-26 update:](#2022-06-26-update)
+  - [🌈2023-01-10 v1.0.3 update:](#2023-01-10-v103-update)
 - [Use](#use)
 - [`config_videocr.yaml` in the relevant parameters](#config_videocryaml-in-the-relevant-parameters)
 - [Overall Framework](#overall-framework)
@@ -34,22 +33,16 @@
 </details>
 
 ### Introduction
-- Video hard subtitle extraction, automatically generating corresponding srt and docx files with key frames.
+- Video hard subtitle extraction, automatically generating corresponding `srt` file.
 - Support subtitle language: Chinese | English
-- Extract subtitles embedded in the video faster and more accurately, and provide three formats of `txt|SRT|docx`
-  - **Faster**: adapted the [decord](https://github.com/dmlc/decord), which is dedicated to processing videos.
+- Extract subtitles embedded in the video faster and more accurately, and provide three formats of `srt`:
+  - **Faster**: ~~adapted the [decord](https://github.com/dmlc/decord), which is dedicated to processing videos.~~ Use OpenCV instead, low memory consumption. For input video, only subtitle key frames are extracted.
   - **More accurately**: adapted [RapidOCR](https://github.com/RapidAI/RapidOCR).
   - **More convenient**: use by installing the package with pip tool.
 
 ### Change log ([more](./change_log_en.md))
-#### 🎄2022-12-04 update:
-- Add the function of interactively framing the subtitle position, which is enabled by default and is more useful. For details, please refer to the GIF image below. Thanks to @[Johndirr](https://github.com/Johndirr) for the suggestion.
-- Optimize the code structure, put RapidOCR related models and configuration files in the `rapidocr` directory
-- The configuration file of `rapidvideocr` is also placed in the corresponding directory.
-
-#### ✨2022-06-26 update:
-- Parameterized configuration of relevant parameters, including `rapid_ocr` and `rapid_videocr` parts, more flexible
-
+#### 🌈2023-01-10 v1.0.3 update:
+- Replace decord with OpenCV because there is a memory leak when decord processes MP4.
 
 ### Use
 1. Install the `rapid_videocr` package.
@@ -60,7 +53,7 @@
 2. Run
    1. Run the code:
       ```bash
-      $ python main.py
+      $ python demo.py
 
       # or
       $ rapid_videocr --mp4_path assets/test_video/2.mp4
@@ -88,8 +81,7 @@
 |Parameter Name|Default|Value Range|Note|
 |:---|:---|:---|:---|
 |`is_dilate`|`True`|`bool`|Whether to erode the background image of the caption|
-|`error_num`|`0.005`|`[0, 1]`, default:0.005|The smaller the value, the more sensitive the difference between the two graphs|
-|`output_format`|`all`|`['txt', 'srt', 'docx', 'all']`|output the final caption file, `all` the previous three formats are output|
+|`error_thr`|`0.005`|`[0, 1]`, default:0.005|The smaller the value, the more sensitive the difference between the two graphs|
 |`time_start`|`00:00:00`|start extracting the start time of the subtitle|start extracting the start time of the subtitle, example: '00:00:00'|
 |`time_end`|`-1`|the start point of the subtitle extraction| needs to be greater than `time_start`, `-1` means to the end, example: '-1'|
 
@@ -126,6 +118,3 @@ flowchart LR
 - `add_remove_bg_module`:
    - Based on the image segmentation UNet algorithm to remove the background image of the subtitle image, leaving only the text content, the corresponding training code is [pytorch-unet](https://github.com/SWHL/pytorch-unet)
    - The reason for not merging into the main warehouse: the model is large, the processing speed is slow, and the generalization performance is not very good, there is room for improvement, and you can explore by yourself.
-- `add_asr_module`:
-   - Reasoning code source: [RapidASR](https://github.com/RapidAI/RapidASR/tree/main/python/base_paddlespeech)
-   - Reasons for not being merged into the main warehouse: slow processing speed, complex configuration environment, poor effect, and room for improvement, you can explore by yourself.

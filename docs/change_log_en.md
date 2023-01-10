@@ -3,7 +3,6 @@
 - Optimize the code structure, put RapidOCR related models and configuration files in the `rapidocr` directory
 - The configuration file of `rapidvideocr` is also placed in the corresponding directory.
 
-
 #### ✨2022-06-26 update:
 - Parameterized configuration of relevant parameters, including `rapid_ocr` and `rapid_videocr` parts, more flexible
 

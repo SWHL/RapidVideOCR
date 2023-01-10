@@ -1,3 +1,6 @@
+#### 🌈2023-01-10 v1.0.3 update:
+- 将decord替换为OpenCV，因为decord处理MP4时，存在内存泄漏问题。
+
 #### 🎄2022-12-04 update:
 - 添加交互式框定字幕位置功能，默认开启，更加好用，详情可参考下面的GIF图。感谢@[Johndirr](https://github.com/Johndirr)的建议。
 - 优化代码结构，将RapidOCR相关模型和配置文件放到`rapidocr`目录下
