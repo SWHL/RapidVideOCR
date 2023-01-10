@@ -12,9 +12,9 @@ $ pip install rapid_videocr
 
 ### 2. Run by script.
 ```python
-from rapid_videocr import ExtractSubtitle
+from rapid_videocr import RapidVideOCR
 
-extractor = ExtractSubtitle()
+extractor = RapidVideOCR()
 mp4_path = 'assets/test_video/2.mp4'
 ocr_result = extractor(mp4_path)
 print(ocr_result)
@@ -22,7 +22,7 @@ print(ocr_result)
 
 ### 3. Run by command line.
 ```bash
-$ rapid_videocr --mp4_path xxx.mp4 --format srt
+$ rapid_videocr --mp4_path xxx.mp4
 ```
 
 ### 4. Result.

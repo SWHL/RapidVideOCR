@@ -9,7 +9,7 @@ import datetime
 import difflib
 from pathlib import Path
 import random
-from typing import List, Optional, Tuple, Union, Any
+from typing import List, Union, Any
 
 import cv2
 import numpy as np
@@ -19,7 +19,7 @@ class VideoReader():
     def __init__(self, video_path: str) -> None:
         self.cap = cv2.VideoCapture(video_path)
 
-    def __getitem__(self, idx: int) -> Optional[np.ndarray]:
+    def __getitem__(self, idx: int) -> Any:
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
         is_success, frame = self.cap.read()
         if is_success:
@@ -77,8 +77,7 @@ def convert_time_to_frame(time_str: str, fps: int) -> int:
     return frame_index
 
 
-def convert_frame_to_time(frame_index: int, fps: float) -> str:
-    # convert frame index into SRT timestamp
+def convert_frame_to_time(frame_index: int, fps: int) -> str:
     td = datetime.timedelta(seconds=frame_index / fps)
     ms = td.microseconds // 1000
     m, s = divmod(td.seconds, 60)
@@ -88,7 +87,7 @@ def convert_frame_to_time(frame_index: int, fps: float) -> str:
 
 def calc_l2_dis_frames(img_a: np.ndarray,
                        img_batch: np.ndarray,
-                       threshold: float = 0.000) -> Tuple[bool]:
+                       threshold: float = 0.000) -> np.ndarray:
     img_a_tmp = copy.deepcopy(img_a)
     img_batch_tmp = copy.deepcopy(img_batch)
 
@@ -129,10 +128,11 @@ class ProcessImg():
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img2 = copy.deepcopy(img)
 
-        def update_theta(x: Any) -> None: pass
+        def update_theta(x: Any) -> None:
+            pass
 
         window_name = f'[{cur_num}/{run_nums}] Select the best threshold of' \
-                       ' binary, press Enter to confirm.'
+                      ' binary, press Enter to confirm.'
         tracker_name = 'threshold'
 
         cv2.namedWindow(window_name)
@@ -159,36 +159,34 @@ class ProcessImg():
     def remove_bg(self, img: np.ndarray,
                   is_dilate: bool = True,
                   binary_thr: int = 243) -> np.ndarray:
-        # TODO: 优化
-        img = self.rgb_to_grey(img).squeeze()
-        if is_dilate:
-            img = self.dilate_img(self.binary_img(img, binary_thr))
-        img = img[np.newaxis, :, :]
-        return img
+        """根据阈值移除图像背景
 
-    def remove_batch_bg(self, img_batch: np.ndarray,
-                        is_dilate: bool = True,
-                        binary_thr: int = 243) -> np.ndarray:
-        # TODO: 优化
-        img_batch = self.rgb_to_grey(img_batch)
-        new_img_batch = []
-        for img_one in img_batch:
+        Args:
+            img (np.ndarray): H x W x C
+            is_dilate (bool, optional): _description_. Defaults to True.
+            binary_thr (int, optional): _description_. Defaults to 243.
+
+        Returns:
+            np.ndarray: 1 x H x W
+        """
+        result_img = []
+        img = self.rgb_to_grey(img)
+        for img_one in img:
             if is_dilate:
-                img_one = self.dilate_img(self.binary_img(img_one, binary_thr))
-
-            new_img_batch.append(img_one)
-        img_batch = np.array(new_img_batch)
-        return img_batch
+                binaried_img = self.binary_img(img_one, binary_thr)
+                img_one = self.dilate_img(binaried_img)
+            result_img.append(img_one)
+        return np.array(result_img)
 
 
 class ExportResult():
     def __init__(self) -> None:
         pass
 
-    def __call__(self, video_path: str, extract_result) -> None:
-        # TODO: List[List[Union[int, str, str, str]]]
+    def __call__(self, video_path: str,
+                 extract_res: List[List[Union[int, str, str, str]]]) -> None:
         content = []
-        for i, start_time, end_time, text in extract_result:
+        for i, start_time, end_time, text in extract_res:
             content.append(f'{i}\n{start_time} --> {end_time}\n{text}\n')
 
         full_path = Path(video_path).parent / f'{Path(video_path).stem}.srt'

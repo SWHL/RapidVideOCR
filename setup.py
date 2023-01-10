@@ -10,10 +10,10 @@ import setuptools
 
 def get_latest_version(package_name: str) -> Optional[str]:
     output: str = subprocess.run(["pip", "index", "versions", package_name],
-                            capture_output=True).stdout.decode('utf-8')
+                                 capture_output=True).stdout.decode('utf-8')
     if output:
         name_versions = list(filter(lambda x: len(x) > 0, output.split('\n')))
-        # e.g. opencv-python (4.7.0.68)
+        # e.g. opencv-python (4.7.0.68) → 68
         pack_name_version = name_versions[0].strip()
         latest_version = pack_name_version.split(' ')[-1][1:-1]
         return latest_version
@@ -55,10 +55,7 @@ setuptools.setup(
     url="https://github.com/SWHL/RapidVideOCR.git",
     license='Apache-2.0',
     include_package_data=True,
-    install_requires=["tqdm>=4.52.0", "decord>=0.6.0",
-                      "opencv_python>=4.5.1.48",
-                      "python-docx>=0.8.10",
-                      "rapidocr_onnxruntime"],
+    install_requires=["tqdm>=4.52.0", "rapidocr_onnxruntime"],
     packages=[MODULE_NAME],
     package_data={'': ['*.yaml']},
     keywords=['rapidocr,videocr,subtitle'],

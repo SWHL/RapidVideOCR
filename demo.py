@@ -7,7 +7,7 @@ from rapid_videocr import RapidVideOCR
 
 extractor = RapidVideOCR()
 
-mp4_path = 'assets/test_video/long.mp4'
+mp4_path = 'assets/test_video/2.mp4'
 
 start_time = time.time()
 

@@ -1,11 +1,9 @@
-
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-from datetime import timedelta
 from pathlib import Path
-from typing import List, Tuple, Union, Dict
+from typing import Dict, List, Tuple, Union
 
 import cv2
 import numpy as np
@@ -14,14 +12,15 @@ from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
 from .utils import (ExportResult, ProcessImg, VideoReader, calc_l2_dis_frames,
-                    calc_str_similar, convert_frame_to_time)
+                    calc_str_similar, convert_frame_to_time,
+                    convert_time_to_frame)
 
 CUR_DIR = Path(__file__).resolve().parent
+CONFIG_PATH = CUR_DIR / 'config_videocr.yaml'
 
 
 class RapidVideOCR():
-    def __init__(self,
-                 config_path: Union[str, Path] = CUR_DIR / 'config_videocr.yaml'):
+    def __init__(self, config_path: Union[str, Path] = CONFIG_PATH):
         self.rapid_ocr = RapidOCR()
         self.text_det = self.rapid_ocr.text_detector
 
@@ -58,31 +57,12 @@ class RapidVideOCR():
         frames_ocr_res, invalid_keys = self.run_ocr(key_frames, select_box_h)
 
         duplicate_frames = self.remove_invalid(duplicate_frames, invalid_keys)
-
-        extract_result = self.get_subtitles(frames_ocr_res,
-                                            duplicate_frames,
-                                            fps)
+        filter_frames, invalid_keys = self.merge_frames(frames_ocr_res,
+                                                        duplicate_frames)
+        extract_result = self.generate_srt(frames_ocr_res, fps,
+                                           filter_frames, invalid_keys)
         self.export_res(video_path, extract_result)
         return extract_result
-
-    def convert_time_to_frame(self, time_str: str, fps: int) -> int:
-        if not time_str:
-            return 0
-
-        time_parts = list(map(float, time_str.split(':')))
-        len_time = len(time_parts)
-        if len_time == 3:
-            td = timedelta(hours=time_parts[0],
-                           minutes=time_parts[1],
-                           seconds=time_parts[2])
-        elif len_time == 2:
-            td = timedelta(minutes=time_parts[0], seconds=time_parts[1])
-        else:
-            raise ValueError(
-                f'Time data "{time_str}" does not match format "%H:%M:%S"')
-
-        frame_index = int(td.total_seconds() * fps)
-        return frame_index
 
     def get_key_frames(self,
                        start_idx: int,
@@ -94,7 +74,10 @@ class RapidVideOCR():
         duplicate_frames: Dict = {}
 
         pbar = tqdm(total=end_idx, desc='Obtain key frame', unit='frame')
-        batch_size = end_idx - 1 if self.batch_size > end_idx else self.batch_size
+        if self.batch_size > end_idx:
+            batch_size = end_idx - 1
+        else:
+            batch_size = self.batch_size
 
         cur_idx, next_idx = start_idx, 1
         is_cur_idx_change = True
@@ -111,14 +94,14 @@ class RapidVideOCR():
             next_batch_idxs = np.array(range(next_idx, next_idx + batch_size))
             next_frames = self.vr.get_continue_batch(next_batch_idxs)
             next_crop_frames = next_frames[:, y_start:y_end, :, :]
-            next_frames = self.process_img.remove_batch_bg(next_crop_frames,
-                                                           self.is_dilate,
-                                                           binary_thr)
+            next_frames = self.process_img.remove_bg(next_crop_frames,
+                                                     self.is_dilate,
+                                                     binary_thr)
 
             compare_result = calc_l2_dis_frames(cur_frame,
                                                 next_frames,
                                                 threshold=self.error_thr)
-            dissimilar_idxs = next_batch_idxs[np.logical_not(compare_result)]
+            dissimilar_idxs = next_batch_idxs[~compare_result]
             if dissimilar_idxs.size == 0:
                 next_idx += batch_size
                 update_step = batch_size
@@ -184,14 +167,26 @@ class RapidVideOCR():
         return {k: v for k, v in duplicate_frames.items()
                 if k not in invalid_keys}
 
-    def get_subtitles(self,
-                      frames_ocr_res: List,
-                      duplicate_frames: Dict,
-                      fps: int) -> List:
-        # TODO: List类型注解需要具化
-        """合并最终OCR提取字幕文件，并输出"""
-        keys = list(duplicate_frames)
+    def generate_srt(self,
+                     frames_ocr_res: List[Union[str, str, str]],
+                     fps: int,
+                     filter_frames: Dict,
+                     invalid_keys: List) -> List:
+        extract_result = []
+        for i, (k, v) in enumerate(filter_frames.items()):
+            if i in invalid_keys:
+                continue
+            v.sort()
 
+            start_time = convert_frame_to_time(v[0], fps)
+            end_time = convert_frame_to_time(v[-1], fps)
+            extract_result.append([k, start_time, end_time, frames_ocr_res[i]])
+        return extract_result
+
+    def merge_frames(self,
+                     frames_ocr_res: List[Union[str, str, str]],
+                     duplicate_frames: Dict) -> Tuple[Dict, List]:
+        keys = list(duplicate_frames)
         invalid_keys = []
 
         cur_idx, next_idx = 0, 1
@@ -211,16 +206,7 @@ class RapidVideOCR():
                 # 不相似
                 cur_idx = next_idx
             next_idx += 1
-
-        extract_result = []
-        for i, (k, v) in enumerate(duplicate_frames.items()):
-            if i in invalid_keys:
-                continue
-            v.sort()
-            start_time = convert_frame_to_time(v[0], fps)
-            end_time = convert_frame_to_time(v[-1], fps)
-            extract_result.append([k, start_time, end_time, frames_ocr_res[i]])
-        return extract_result
+        return duplicate_frames, invalid_keys
 
     def _select_roi(self, selected_frames: np.ndarray) -> np.ndarray:
         roi_list = []
@@ -253,10 +239,10 @@ class RapidVideOCR():
         return threshold
 
     def _get_range_frame(self, fps: int, num_frames: int) -> Tuple[int, int]:
-        start_idx = self.convert_time_to_frame(self.time_start, fps)
+        start_idx = convert_time_to_frame(self.time_start, fps)
         end_idx = num_frames - 1
         if self.time_end:
-            end_idx = self.convert_time_to_frame(self.time_end, fps)
+            end_idx = convert_time_to_frame(self.time_end, fps)
 
         if end_idx < start_idx:
             raise ValueError('time_start is later than time_end')
@@ -272,8 +258,6 @@ class RapidVideOCR():
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--mp4_path', type=str)
-    parser.add_argument('--format', choices=['srt', 'txt', 'docx', 'all'],
-                        default='srt')
     args = parser.parse_args()
 
     mp4_path = args.mp4_path
