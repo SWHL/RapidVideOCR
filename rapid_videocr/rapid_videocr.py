@@ -27,7 +27,7 @@ class RapidVideOCR():
         self.text_det = self.rapid_ocr.text_detector
 
         config = self._read_yaml(config_path)
-        self.error_threshold = config['error_threshold']
+        self.error_thr = config['error_thr']
         self.is_dilate = config['is_dilate']
         self.time_start = config['time_start']
         self.time_end = config['time_end']
@@ -53,8 +53,8 @@ class RapidVideOCR():
         start_idx, end_idx = self._get_range_frame(fps, num_frames)
 
         self.get_key_frame(end_idx, y_start, y_end, binary_thr)
-        self.run_ocr()
-        extract_result = self.get_subtitles()
+        self.run_ocr(select_box_h)
+        extract_result = self.get_subtitles(fps)
         self.export_res(video_path, extract_result)
         return extract_result
 
@@ -88,65 +88,64 @@ class RapidVideOCR():
         batch_size = end_idx - 1 if self.batch_size > end_idx else self.batch_size
 
         cur_idx, next_idx = 0, 1
-        slow_change = True
+        is_cur_idx_change = True
         while next_idx + batch_size <= end_idx:
-            if slow_change:
+            if is_cur_idx_change:
                 cur_crop_frame = self.vr[cur_idx][y_start:y_end, :, :]
 
                 # Remove the background of the frame.
                 cur_frame = self.process_img.remove_bg(cur_crop_frame,
-                                                       is_dilate=self.is_dilate,
-                                                       binary_thr=binary_thr)
-                slow_change = False
+                                                       self.is_dilate,
+                                                       binary_thr)
+                is_cur_idx_change = False
 
-            next_batch_idxs = list(range(next_idx, next_idx + batch_size))
+            next_batch_idxs = np.array(range(next_idx, next_idx + batch_size))
             next_frames = self.vr.get_continue_batch(next_batch_idxs)
             next_crop_frames = next_frames[:, y_start:y_end, :, :]
             next_frames = self.process_img.remove_batch_bg(next_crop_frames,
-                                                           is_dilate=self.is_dilate,
-                                                           binary_thr=binary_thr)
+                                                           self.is_dilate,
+                                                           binary_thr)
 
-            # Compare the similarity between the frames.
             compare_result = calc_l2_dis_frames(cur_frame,
                                                 next_frames,
-                                                threshold=self.error_threshold)
-            batch_array = np.array(next_batch_idxs)
-            not_similar_index = batch_array[np.logical_not(compare_result)]
-
-            duplicate_frame = []
-            if not_similar_index.size == 0:
-                # All are similar with the cur_frame.
-                duplicate_frame = next_batch_idxs
-
-                pbar.update(batch_size)
+                                                threshold=self.error_thr)
+            dissimilar_idxs = next_batch_idxs[np.logical_not(compare_result)]
+            if dissimilar_idxs.size == 0:
                 next_idx += batch_size
+                update_step = batch_size
 
-                self._record_key_info(cur_idx, duplicate_frame, cur_crop_frame)
+                self.duplicate_frame.setdefault(cur_idx, []).extend(next_batch_idxs)
+                if cur_idx not in self.key_frames:
+                    self.key_frames[cur_idx] = cur_crop_frame
             else:
-                # Exist the non similar frame.
-                index = not_similar_index[0] - cur_idx
-                duplicate_frame = next_batch_idxs[:index]
+                first_dissimilar_idx = dissimilar_idxs[0]
+                similar_last_idx = first_dissimilar_idx - cur_idx
+                next_batch_idxs = next_batch_idxs[:similar_last_idx]
 
-                # record
-                self._record_key_info(cur_idx, duplicate_frame, cur_crop_frame)
+                self.duplicate_frame.setdefault(cur_idx, []).extend(next_batch_idxs)
+                if cur_idx not in self.key_frames:
+                    self.key_frames[cur_idx] = cur_crop_frame
 
-                cur_idx = not_similar_index[0]
+                cur_idx = first_dissimilar_idx
                 next_idx = cur_idx + 1
-                pbar.update(cur_idx - pbar.n + 1)
 
-                slow_change = True
+                update_step = first_dissimilar_idx - pbar.n + 1
+
+                is_cur_idx_change = True
 
             if next_idx != end_idx and next_idx + batch_size > end_idx:
                 batch_size = end_idx - next_idx
+
+            pbar.update(update_step)
         pbar.close()
 
-    def run_ocr(self,) -> None:
+    def run_ocr(self, padding_pixel: int) -> None:
         self.pred_frames = []
         for key, frame in tqdm(self.key_frames.items(),
                                desc='OCR Key Frame', unit='frame'):
             frame = cv2.copyMakeBorder(frame.squeeze(),
-                                       self.subtitle_height * 2,
-                                       self.subtitle_height * 2,
+                                       padding_pixel * 2,
+                                       padding_pixel * 2,
                                        0, 0,
                                        cv2.BORDER_CONSTANT,
                                        value=(0, 0))
@@ -161,7 +160,7 @@ class RapidVideOCR():
                 continue
             self.pred_frames.append('\n'.join(rec_res))
 
-    def get_subtitles(self, ) -> List:
+    def get_subtitles(self, fps: int) -> List:
         # TODO: List类型注解需要具化
         """合并最终OCR提取字幕文件，并输出
         """
@@ -188,8 +187,8 @@ class RapidVideOCR():
             if i in invalid_keys:
                 continue
 
-            start_time = get_srt_timestamp(v[0], self.fps)
-            end_time = get_srt_timestamp(v[-1], self.fps)
+            start_time = get_srt_timestamp(v[0], fps)
+            end_time = get_srt_timestamp(v[-1], fps)
             extract_result.append([k, start_time, end_time,
                                    self.pred_frames[i]])
         return extract_result
@@ -233,14 +232,6 @@ class RapidVideOCR():
         if end_idx < start_idx:
             raise ValueError('time_start is later than time_end')
         return start_idx, end_idx
-
-    def _record_key_info(self, slow: int,
-                         dup_frame: List,
-                         slow_frame: np.ndarray) -> None:
-        self.duplicate_frame.setdefault(slow, []).extend(dup_frame)
-
-        if slow not in self.key_frames:
-            self.key_frames[slow] = slow_frame
 
     @staticmethod
     def _read_yaml(yaml_path: Union[str, Path]) -> dict:
