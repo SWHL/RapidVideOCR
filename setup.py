@@ -42,6 +42,7 @@ def get_readme() -> str:
 MODULE_NAME = 'rapid_videocr'
 latest_version = get_latest_version(MODULE_NAME)
 VERSION_NUM = version_add_one(latest_version)
+VERSION_NUM = '1.1.0'
 
 setuptools.setup(
     name=MODULE_NAME,
