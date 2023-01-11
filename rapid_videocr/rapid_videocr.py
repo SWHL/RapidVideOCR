@@ -39,24 +39,25 @@ class RapidVideOCR():
 
     def __call__(self, video_path: str) -> List:
         self.vr = VideoReader(video_path)
-        num_frames = self.vr.get_num_frames()
-        fps = self.vr.get_fps()
+
         selected_frames = self.vr.get_random_frames(self.select_nums)
-
         rois = self._select_roi(selected_frames)
-        y_start, y_end, select_box_h = self._get_crop_range(rois)
-
+        y_start, y_end, padding_pixel = self._get_crop_range(rois)
         binary_thr = self._select_threshold(selected_frames, y_start, y_end)
 
+        fps = self.vr.get_fps()
+        num_frames = self.vr.get_num_frames()
         start_idx, end_idx = self._get_range_frame(fps, num_frames)
 
         key_frames, duplicate_frames = self.get_key_frames(start_idx,
                                                            end_idx,
                                                            y_start, y_end,
                                                            binary_thr)
-        frames_ocr_res, invalid_keys = self.run_ocr(key_frames, select_box_h)
+
+        frames_ocr_res, invalid_keys = self.run_ocr(key_frames, padding_pixel)
 
         duplicate_frames = self.remove_invalid(duplicate_frames, invalid_keys)
+
         filter_frames, invalid_keys = self.merge_frames(frames_ocr_res,
                                                         duplicate_frames)
         extract_result = self.generate_srt(frames_ocr_res, fps,
@@ -64,149 +65,11 @@ class RapidVideOCR():
         self.export_res(video_path, extract_result)
         return extract_result
 
-    def get_key_frames(self,
-                       start_idx: int,
-                       end_idx: int,
-                       y_start: int, y_end: int,
-                       binary_thr: int) -> Tuple[Dict, Dict]:
-        """获得视频的字幕关键帧"""
-        key_frames: Dict = {}
-        duplicate_frames: Dict = {}
-
-        pbar = tqdm(total=end_idx, desc='Obtain key frame', unit='frame')
-        if self.batch_size > end_idx:
-            batch_size = end_idx - 1
-        else:
-            batch_size = self.batch_size
-
-        cur_idx, next_idx = start_idx, 1
-        is_cur_idx_change = True
-        while next_idx + batch_size <= end_idx:
-            if is_cur_idx_change:
-                cur_crop_frame = self.vr[cur_idx][y_start:y_end, :, :]
-
-                # Remove the background of the frame.
-                cur_frame = self.process_img.remove_bg(cur_crop_frame,
-                                                       self.is_dilate,
-                                                       binary_thr)
-                is_cur_idx_change = False
-
-            next_batch_idxs = np.array(range(next_idx, next_idx + batch_size))
-            next_frames = self.vr.get_continue_batch(next_batch_idxs)
-            next_crop_frames = next_frames[:, y_start:y_end, :, :]
-            next_frames = self.process_img.remove_bg(next_crop_frames,
-                                                     self.is_dilate,
-                                                     binary_thr)
-
-            compare_result = calc_l2_dis_frames(cur_frame,
-                                                next_frames,
-                                                threshold=self.error_thr)
-            dissimilar_idxs = next_batch_idxs[~compare_result]
-            if dissimilar_idxs.size == 0:
-                next_idx += batch_size
-                update_step = batch_size
-
-                duplicate_frames.setdefault(
-                    cur_idx, []).extend(next_batch_idxs)
-                if cur_idx not in key_frames:
-                    key_frames[cur_idx] = cur_crop_frame
-            else:
-                first_dissimilar_idx = dissimilar_idxs[0]
-                similar_last_idx = first_dissimilar_idx - cur_idx
-                next_batch_idxs = next_batch_idxs[:similar_last_idx]
-
-                duplicate_frames.setdefault(
-                    cur_idx, []).extend(next_batch_idxs)
-                if cur_idx not in key_frames:
-                    key_frames[cur_idx] = cur_crop_frame
-
-                cur_idx = first_dissimilar_idx
-                next_idx = cur_idx + 1
-
-                update_step = first_dissimilar_idx - pbar.n + 1
-
-                is_cur_idx_change = True
-
-            if next_idx != end_idx and next_idx + batch_size > end_idx:
-                batch_size = end_idx - next_idx
-
-            pbar.update(update_step)
-        pbar.close()
-        return key_frames, duplicate_frames
-
-    def run_ocr(self, key_frames: Dict,
-                padding_pixel: int) -> Tuple[List, List]:
-        frames_ocr_res: List = []
-        invalid_keys: List = []
-        for key, frame in tqdm(key_frames.items(), desc='OCR', unit='frame'):
-            frame = self.padding_img(frame, padding_pixel)
-
-            rec_res = []
-            ocr_result, _ = self.rapid_ocr(frame)
-            if ocr_result:
-                _, rec_res, _ = list(zip(*ocr_result))
-
-            if not rec_res:
-                invalid_keys.append(key)
-                continue
-            frames_ocr_res.append('\n'.join(rec_res))
-        return frames_ocr_res, invalid_keys
-
     @staticmethod
-    def padding_img(img: np.ndarray, padding_pixel: int) -> np.ndarray:
-        padded_img = cv2.copyMakeBorder(img,
-                                        padding_pixel * 2,
-                                        padding_pixel * 2,
-                                        0, 0,
-                                        cv2.BORDER_CONSTANT,
-                                        value=(0, 0))
-        return padded_img
-
-    @staticmethod
-    def remove_invalid(duplicate_frames: Dict, invalid_keys: List) -> Dict:
-        return {k: v for k, v in duplicate_frames.items()
-                if k not in invalid_keys}
-
-    def generate_srt(self,
-                     frames_ocr_res: List[Union[str, str, str]],
-                     fps: int,
-                     filter_frames: Dict,
-                     invalid_keys: List) -> List:
-        extract_result = []
-        for i, (k, v) in enumerate(filter_frames.items()):
-            if i in invalid_keys:
-                continue
-            v.sort()
-
-            start_time = convert_frame_to_time(v[0], fps)
-            end_time = convert_frame_to_time(v[-1], fps)
-            extract_result.append([k, start_time, end_time, frames_ocr_res[i]])
-        return extract_result
-
-    def merge_frames(self,
-                     frames_ocr_res: List[Union[str, str, str]],
-                     duplicate_frames: Dict) -> Tuple[Dict, List]:
-        keys = list(duplicate_frames)
-        invalid_keys = []
-
-        cur_idx, next_idx = 0, 1
-        n = len(frames_ocr_res)
-        while next_idx < n:
-            cur_rec = frames_ocr_res[cur_idx]
-            next_rec = frames_ocr_res[next_idx]
-
-            str_ratio = calc_str_similar(cur_rec, next_rec)
-            if str_ratio > self.str_similar_ratio:
-                # 相似→合并两个list
-                cur_key = keys[cur_idx]
-                similar_idxs = duplicate_frames[keys[next_idx]]
-                duplicate_frames[cur_key].extend(similar_idxs)
-                invalid_keys.append(next_idx)
-            else:
-                # 不相似
-                cur_idx = next_idx
-            next_idx += 1
-        return duplicate_frames, invalid_keys
+    def _read_yaml(yaml_path: Union[str, Path]) -> dict:
+        with open(str(yaml_path), 'rb') as f:
+            data = yaml.load(f, Loader=yaml.Loader)
+        return data
 
     def _select_roi(self, selected_frames: np.ndarray) -> np.ndarray:
         roi_list = []
@@ -248,11 +111,147 @@ class RapidVideOCR():
             raise ValueError('time_start is later than time_end')
         return start_idx, end_idx
 
+    def get_key_frames(self,
+                       start_idx: int,
+                       end_idx: int,
+                       y_start: int, y_end: int,
+                       binary_thr: int) -> Tuple[Dict, Dict]:
+
+        def get_batch_size(end_idx: int) -> int:
+            if self.batch_size > end_idx:
+                return end_idx - 1
+            return self.batch_size
+
+        key_frames: Dict = {}
+        duplicate_frames: Dict = {}
+        batch_size = get_batch_size(end_idx)
+
+        pbar = tqdm(total=end_idx, desc='Obtain key frame', unit='frame')
+
+        cur_idx, next_idx = start_idx, 1
+        is_cur_idx_change = True
+        while next_idx + batch_size <= end_idx:
+            if is_cur_idx_change:
+                cur_crop_frame = self.vr[cur_idx][y_start:y_end, :, :]
+                cur_frame = self.process_img.remove_bg(cur_crop_frame,
+                                                       self.is_dilate,
+                                                       binary_thr)
+                is_cur_idx_change = False
+
+            if cur_idx not in key_frames:
+                key_frames[cur_idx] = cur_crop_frame
+
+            next_batch_idxs = np.array(range(next_idx, next_idx + batch_size))
+            next_frames = self.vr.get_continue_batch(next_batch_idxs)
+            next_crop_frames = next_frames[:, y_start:y_end, :, :]
+            next_frames = self.process_img.remove_bg(next_crop_frames,
+                                                     self.is_dilate,
+                                                     binary_thr)
+
+            compare_result = calc_l2_dis_frames(cur_frame, next_frames,
+                                                threshold=self.error_thr)
+            dissimilar_idxs = next_batch_idxs[~compare_result]
+            if dissimilar_idxs.size == 0:
+                next_idx += batch_size
+                update_step = batch_size
+
+                duplicate_frames.setdefault(
+                    cur_idx, []).extend(next_batch_idxs)
+            else:
+                first_dissimilar_idx = dissimilar_idxs[0]
+                similar_last_idx = first_dissimilar_idx - cur_idx
+                next_batch_idxs = next_batch_idxs[:similar_last_idx]
+
+                duplicate_frames.setdefault(
+                    cur_idx, []).extend(next_batch_idxs)
+
+                cur_idx = first_dissimilar_idx
+                next_idx = cur_idx + 1
+
+                update_step = first_dissimilar_idx - pbar.n + 1
+
+                is_cur_idx_change = True
+
+            if next_idx != end_idx and next_idx + batch_size > end_idx:
+                batch_size = end_idx - next_idx
+
+            pbar.update(update_step)
+        pbar.close()
+        return key_frames, duplicate_frames
+
+    def run_ocr(self,
+                key_frames: Dict,
+                padding_pixel: int) -> Tuple[List, List]:
+        def padding_img(img: np.ndarray, padding_pixel: int) -> np.ndarray:
+            padded_img = cv2.copyMakeBorder(img,
+                                            padding_pixel * 2,
+                                            padding_pixel * 2,
+                                            0, 0,
+                                            cv2.BORDER_CONSTANT,
+                                            value=(0, 0))
+            return padded_img
+
+        frames_ocr_res: List = []
+        invalid_keys: List = []
+        for key, frame in tqdm(key_frames.items(), desc='OCR', unit='frame'):
+            frame = padding_img(frame, padding_pixel)
+
+            rec_res = []
+            ocr_result, _ = self.rapid_ocr(frame)
+            if ocr_result:
+                _, rec_res, _ = list(zip(*ocr_result))
+
+            if not rec_res:
+                invalid_keys.append(key)
+                continue
+            frames_ocr_res.append('\n'.join(rec_res))
+        return frames_ocr_res, invalid_keys
+
     @staticmethod
-    def _read_yaml(yaml_path: Union[str, Path]) -> dict:
-        with open(str(yaml_path), 'rb') as f:
-            data = yaml.load(f, Loader=yaml.Loader)
-        return data
+    def remove_invalid(duplicate_frames: Dict, invalid_keys: List) -> Dict:
+        return {k: v for k, v in duplicate_frames.items()
+                if k not in invalid_keys}
+
+    def merge_frames(self,
+                     frames_ocr_res: List[Union[str, str, str]],
+                     duplicate_frames: Dict) -> Tuple[Dict, List]:
+        keys = list(duplicate_frames)
+        invalid_keys = []
+
+        cur_idx, next_idx = 0, 1
+        n = len(frames_ocr_res)
+        while next_idx < n:
+            cur_rec = frames_ocr_res[cur_idx]
+            next_rec = frames_ocr_res[next_idx]
+
+            str_ratio = calc_str_similar(cur_rec, next_rec)
+            if str_ratio > self.str_similar_ratio:
+                # 相似→合并两个list
+                cur_key = keys[cur_idx]
+                similar_idxs = duplicate_frames[keys[next_idx]]
+                duplicate_frames[cur_key].extend(similar_idxs)
+                invalid_keys.append(next_idx)
+            else:
+                # 不相似
+                cur_idx = next_idx
+            next_idx += 1
+        return duplicate_frames, invalid_keys
+
+    def generate_srt(self,
+                     frames_ocr_res: List[Union[str, str, str]],
+                     fps: int,
+                     filter_frames: Dict,
+                     invalid_keys: List) -> List:
+        extract_result = []
+        for i, (k, v) in enumerate(filter_frames.items()):
+            if i in invalid_keys:
+                continue
+            v.sort()
+
+            start_time = convert_frame_to_time(v[0], fps)
+            end_time = convert_frame_to_time(v[-1], fps)
+            extract_result.append([k, start_time, end_time, frames_ocr_res[i]])
+        return extract_result
 
 
 def main() -> None:

@@ -3,7 +3,6 @@
 </div>
 <br/>
 
----
 
 简体中文 | [English](./docs/README_en.md)
 
