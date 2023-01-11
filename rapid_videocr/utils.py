@@ -85,9 +85,7 @@ def convert_frame_to_time(frame_index: int, fps: int) -> str:
     return f'{h:02d}:{m:02d}:{s:02d},{ms:03d}'
 
 
-def calc_l2_dis_frames(img_a: np.ndarray,
-                       img_batch: np.ndarray,
-                       threshold: float = 0.000) -> np.ndarray:
+def calc_l2_dis_frames(img_a: np.ndarray, img_batch: np.ndarray) -> np.ndarray:
     img_a_tmp = copy.deepcopy(img_a)
     img_batch_tmp = copy.deepcopy(img_batch)
 
@@ -102,7 +100,7 @@ def calc_l2_dis_frames(img_a: np.ndarray,
 
     # np.sum() → (70, ) → (70, )
     error = np.sum(difference, axis=1) / img_a_tmp.size
-    return error < threshold
+    return error
 
 
 class ProcessImg():

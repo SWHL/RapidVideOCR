@@ -148,9 +148,8 @@ class RapidVideOCR():
                                                      self.is_dilate,
                                                      binary_thr)
 
-            compare_result = calc_l2_dis_frames(cur_frame, next_frames,
-                                                threshold=self.error_thr)
-            dissimilar_idxs = next_batch_idxs[~compare_result]
+            l2_dis = calc_l2_dis_frames(cur_frame, next_frames)
+            dissimilar_idxs = next_batch_idxs[~(l2_dis < self.error_thr)]
             if dissimilar_idxs.size == 0:
                 next_idx += batch_size
                 update_step = batch_size
