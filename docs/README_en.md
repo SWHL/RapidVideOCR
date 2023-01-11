@@ -41,7 +41,7 @@
 
 ### Change log ([more](./change_log_en.md))
 #### 🌈2023-01-10 v1.0.3 update:
-- Replace decord with OpenCV because there is a memory leak when decord processes MP4.
+- Replace decord with OpenCV because there is a memory leak when decord processes MP4. For details, see [#208](https://github.com/dmlc/decord/issues/208).
 
 ### Use
 1. Install the `rapid_videocr` package.
@@ -76,7 +76,7 @@
 
 3. Look the output files where the video is located.
 
-### [`config_videocr.yaml`](./config_videocr.yaml) in the relevant parameters
+### [`config_videocr.yaml`](../rapid_videocr/config_videocr.yaml) in the relevant parameters
 |Parameter Name|Default|Value Range|Note|
 |:---|:---|:---|:---|
 |`is_dilate`|`True`|`bool`|Whether to erode the background image of the caption|
@@ -96,7 +96,7 @@ flowchart LR
 	A[/Video file/] --> Step --> M(Output) --> H(SRT)
 ```
 
-### [FAQ](./docs/FAQ.md)
+### [FAQ](../docs/FAQ.md)
 
 
 ### Video OCR Research
@@ -108,8 +108,7 @@ flowchart LR
 
 |Env|Test MP4| Total Frames | Frame Size|Cost(s/f)|
 |:---|:---|:---|:---|:---|
-|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
-|`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
+|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|15s|
 
 ### Other branch description
 - `add_remove_bg_module`:

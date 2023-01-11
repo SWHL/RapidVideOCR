@@ -42,7 +42,7 @@
 
 ### 更新日志（[more](./docs/change_log.md)）
 #### 🌈2023-01-10 v1.0.3 update:
-- 将decord替换为OpenCV，因为decord处理MP4时，存在内存泄漏问题。
+- 将decord替换为OpenCV，因为decord处理MP4时，存在内存泄漏问题。详情参见：[#208](https://github.com/dmlc/decord/issues/208)
 
 
 ### 使用步骤
@@ -117,8 +117,7 @@ flowchart LR
 ### 耗时基准
 |配置|测试MP4|总帧数|每帧大小|耗时(s)|
 |:---|:---|:---|:---|:---|
-|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|4.681s|
-|`Intel(R) Core(TM) i5-4210M CPU @2.60GHz 2.59 GHz`|`assets/test_video/2.mp4`|71|1920x800|6.832s|
+|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|15s|
 
 ### 仓库分支说明
 - `add_remove_bg_module`:
