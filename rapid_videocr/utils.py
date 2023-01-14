@@ -4,13 +4,14 @@
 # @Contact: liekkaskono@163.com
 from __future__ import annotations
 
+import tkinter as tk
 import copy
 import datetime
 import difflib
 from enum import Enum
 from pathlib import Path
 import random
-from typing import List, Union, Any
+from typing import List, Union, Any, Tuple
 
 import cv2
 import numpy as np
@@ -128,6 +129,7 @@ class ProcessImg():
                    run_nums: int = 3) -> int:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img2 = copy.deepcopy(img)
+        h, w = img.shape[:2]
 
         def update_theta(x: Any) -> None:
             pass
@@ -137,6 +139,7 @@ class ProcessImg():
         tracker_name = 'threshold'
 
         cv2.namedWindow(window_name)
+        cv2.resizeWindow(window_name, w, h)
         cv2.createTrackbar(tracker_name, window_name, 0, 255, update_theta)
         cv2.setTrackbarPos(trackbarname=tracker_name,
                            winname=window_name,
@@ -242,3 +245,10 @@ def debug_vis_box(i: int, dt_boxes: np.ndarray, one_frame: np.ndarray) -> None:
         cv2.polylines(one_frame, [box], True,
                       color=(255, 255, 0), thickness=2)
     cv2.imwrite(f'temp/{i}.jpg', one_frame)
+
+
+def get_screen_w_h() -> Tuple[int, int]:
+    win = tk.Tk()
+    width = win.winfo_screenwidth()
+    height = win.winfo_screenheight()
+    return height, width

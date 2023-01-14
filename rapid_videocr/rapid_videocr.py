@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 from .utils import (ExportResult, ProcessImg, VideoReader, calc_l2_dis_frames,
                     calc_str_similar, convert_frame_to_time,
-                    convert_time_to_frame)
+                    convert_time_to_frame, get_screen_w_h)
 
 CUR_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = CUR_DIR / 'config_videocr.yaml'
@@ -36,6 +36,8 @@ class RapidVideOCR():
 
         self.process_img = ProcessImg()
         self.export_res = ExportResult()
+
+        self.screen_w, self.screen_h = get_screen_w_h()
 
     def __call__(self, video_path: str, out_format: str = 'all') -> List:
         self.vr = VideoReader(video_path)
@@ -74,13 +76,24 @@ class RapidVideOCR():
     def _select_roi(self, selected_frames: np.ndarray) -> np.ndarray:
         roi_list = []
         for i, frame in enumerate(selected_frames):
+            frame, map_ratio = self.get_adjust_frame(frame)
             roi = cv2.selectROI(
                 f'[{i+1}/{self.select_nums}] Select a ROI and then press SPACE or ENTER button! Cancel the selection process by pressing c button!',
                 frame, showCrosshair=True, fromCenter=False)
+    
             if sum(roi) > 0:
+                roi = [round(v * map_ratio) for v in roi]
                 roi_list.append(roi)
         cv2.destroyAllWindows()
         return np.array(roi_list)
+
+    def get_adjust_frame(self, frame: np.ndarray) -> Tuple[np.ndarray, float]:
+        h, w = frame.shape[:2]
+        img_ratio = w / h
+        resized_w = round(2 * self.screen_w / 3)
+        resized_h = round(resized_w / img_ratio)
+        map_ratio = w / (2 * self.screen_w / 3)
+        return cv2.resize(frame, (resized_w, resized_h)), map_ratio
 
     def _get_crop_range(self, rois: np.ndarray) -> Tuple[int, int, int]:
         crop_y_start = int(np.min(rois[:, 1]))
@@ -95,6 +108,7 @@ class RapidVideOCR():
         threshold = 127
         crop_frames = selected_frames[:, y_start:y_end, ...]
         for i, frame in enumerate(crop_frames):
+            frame, _ = self.get_adjust_frame(frame)
             new_thresh = self.process_img.vis_binary(i, frame,
                                                      threshold,
                                                      self.select_nums)
