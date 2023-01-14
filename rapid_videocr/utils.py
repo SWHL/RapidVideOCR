@@ -251,4 +251,5 @@ def get_screen_w_h() -> Tuple[int, int]:
     win = tk.Tk()
     width = win.winfo_screenwidth()
     height = win.winfo_screenheight()
+    win.destroy()
     return height, width

@@ -38,6 +38,7 @@ class RapidVideOCR():
         self.export_res = ExportResult()
 
         self.screen_w, self.screen_h = get_screen_w_h()
+        print(self.screen_h, self.screen_w)
 
     def __call__(self, video_path: str, out_format: str = 'all') -> List:
         self.vr = VideoReader(video_path)
@@ -80,7 +81,7 @@ class RapidVideOCR():
             roi = cv2.selectROI(
                 f'[{i+1}/{self.select_nums}] Select a ROI and then press SPACE or ENTER button! Cancel the selection process by pressing c button!',
                 frame, showCrosshair=True, fromCenter=False)
-    
+
             if sum(roi) > 0:
                 roi = [round(v * map_ratio) for v in roi]
                 roi_list.append(roi)
@@ -89,10 +90,14 @@ class RapidVideOCR():
 
     def get_adjust_frame(self, frame: np.ndarray) -> Tuple[np.ndarray, float]:
         h, w = frame.shape[:2]
-        img_ratio = w / h
-        resized_w = round(2 * self.screen_w / 3)
+        try:
+            img_ratio = w / h
+        except ZeroDivisionError as exc:
+            raise ValueError(f'{exc}\nThe height of frame is zero!')
+
+        resized_w = self.screen_w
         resized_h = round(resized_w / img_ratio)
-        map_ratio = w / (2 * self.screen_w / 3)
+        map_ratio = w / self.screen_w
         return cv2.resize(frame, (resized_w, resized_h)), map_ratio
 
     def _get_crop_range(self, rois: np.ndarray) -> Tuple[int, int, int]:
