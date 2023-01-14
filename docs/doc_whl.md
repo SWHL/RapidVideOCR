@@ -11,19 +11,36 @@ $ pip install rapid_videocr
 ```
 
 ### 2. Run by script.
+- RapidVideOCR has the default `out_format`, which is one of `['srt', 'txt', 'all']`, the default value is `all`.
+- 📌 `2.mp4` source: [link](https://github.com/SWHL/RapidVideOCR/blob/269beb52397c0cb18fc65f696ff5ddb546d1e711/assets/test_video/2.mp4)
+
 ```python
 from rapid_videocr import RapidVideOCR
 
 extractor = RapidVideOCR()
-mp4_path = 'assets/test_video/2.mp4'
-ocr_result = extractor(mp4_path)
+
+mp4_path = '2.mp4'
+ocr_result = extractor(mp4_path, out_format='srt')
 print(ocr_result)
 ```
 
 ### 3. Run by command line.
-```bash
-$ rapid_videocr --mp4_path xxx.mp4
-```
+- Usage:
+    ```bash
+    $ rapid_videocr -h
+    usage: rapid_videocr [-h] [-mp4 MP4_PATH] [-o {srt,txt,all}]
+
+    optional arguments:
+    -h, --help            show this help message and exit
+    -mp4 MP4_PATH, --mp4_path MP4_PATH
+                            The full path of mp4 video.
+    -o {srt,txt,all}, --out_format {srt,txt,all}
+                            Output file format. Default is "all"
+    ```
+- Example:
+  ```bash
+  $ rapid_videocr -o srt -mp4 2.mp4
+  ```
 
 ### 4. Result.
 - Return value.

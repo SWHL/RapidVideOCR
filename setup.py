@@ -1,23 +1,22 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import re
 import subprocess
+import sys
 from pathlib import Path
 from typing import Optional
 
 import setuptools
 
 
-def get_latest_version(package_name: str) -> Optional[str]:
-    output: str = subprocess.run(["pip", "index", "versions", package_name],
-                                 capture_output=True).stdout.decode('utf-8')
+def get_latest_version(package_name) -> str:
+    output = subprocess.run(["pip", "index", "versions", package_name],
+                            capture_output=True)
+    output = output.stdout.decode('utf-8')
     if output:
-        name_versions = list(filter(lambda x: len(x) > 0, output.split('\n')))
-        # e.g. opencv-python (4.7.0.68) → 68
-        pack_name_version = name_versions[0].strip()
-        latest_version = pack_name_version.split(' ')[-1][1:-1]
-        return latest_version
-    return None
+        return extract_version(output)
+    return ''
 
 
 def version_add_one(version: Optional[str], add_loc: int = -1) -> str:
@@ -39,15 +38,31 @@ def get_readme() -> str:
     return readme
 
 
+def extract_version(message: str) -> str:
+    pattern = r'\d+\.(?:\d+\.)*\d+'
+    matched_versions = re.findall(pattern, message)
+    if matched_versions:
+        return matched_versions[0]
+    return ''
+
+
 MODULE_NAME = 'rapid_videocr'
 latest_version = get_latest_version(MODULE_NAME)
 VERSION_NUM = version_add_one(latest_version)
+
+# 优先提取commit message中的语义化版本号，如无，则自动加1
+if len(sys.argv) > 2:
+    match_str = ' '.join(sys.argv[2:])
+    matched_versions = extract_version(match_str)
+    if matched_versions:
+        VERSION_NUM = matched_versions
+sys.argv = sys.argv[:2]
 
 setuptools.setup(
     name=MODULE_NAME,
     version=VERSION_NUM,
     platforms="Any",
-    description="RapidVideOCR",
+    description="Tool for extracting hard subtitles from videos.",
     long_description=get_readme(),
     long_description_content_type='text/markdown',
     author="SWHL",

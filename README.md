@@ -52,31 +52,67 @@
    ```
 
 2. 运行
-   1. 执行代码
-      ```bash
-      $ python demo.py
+    - 脚本执行
+        ```python
+        from rapid_videocr import RapidVideOCR
 
-      # 或者
-      $ rapid_videocr --mp4_path assets/test_video/2.mp4
-      ```
-   2. 选择字幕区域，鼠标按住左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
-      <div align="center">
-           <img src="./assets/demo_of_select_ROI.gif"  width="75%" height="75%">
-      </div>
+        extractor = RapidVideOCR()
 
-   3. 选择合适的二值化阈值，左右滑动滑块，使得下面图中文字清晰显示，按`Enter`确认，需要选择三次。具体操作如下GIF所示：
-       ![interactive_select_threshold](./assets/interactive_select_threshold.gif)
-   4. 输出日志如下：
-      ```text
-      Loading assets/test_video/2.mp4
-      Get the key frame: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
-      Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
-      The srt has been saved in the assets\test_video\2.srt.
-      The txt has been saved in the assets\test_video\2.txt.
-      The docx has been saved in the assets\test_video\2.docx.
-      ```
+        mp4_path = 'assets/test_video/2.mp4'
 
-3. 可以去**video所在目录**查看输出的文件
+        # out_format: ['srt', 'txt', 'all']，默认是all
+        ocr_result = extractor(mp4_path, out_format='srt')
+        print(ocr_result)
+
+        # output:
+        # [
+        #     [0, '00:00:00,041', '00:00:00,416', '空间里面他绝对赢不了的'],
+        #     [10, '00:00:00,458', '00:00:01,166', '我进去帮他'],
+        #     [37, '00:00:01,583', '00:00:02,541', '你们接着善后']
+        # ]
+        ```
+    - 命令行执行
+      - Usage:
+        ```bash
+        $ rapid_videocr -h
+        usage: rapid_videocr [-h] [-mp4 MP4_PATH] [-o {srt,txt,all}]
+
+        optional arguments:
+        -h, --help            show this help message and exit
+        -mp4 MP4_PATH, --mp4_path MP4_PATH
+                                The full path of mp4 video.
+        -o {srt,txt,all}, --out_format {srt,txt,all}
+                                Output file format. Default is "all"
+        ```
+      - 示例：
+        ```bash
+        $ rapid_videocr -o srt -mp4 assets/test_video/2.mp4
+        ```
+
+3. 选择字幕区域，鼠标按住左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
+   <div align="center">
+        <img src="./assets/demo_of_select_ROI.gif"  width="75%" height="75%">
+   </div>
+
+4. 选择合适的二值化阈值，左右滑动滑块，使得下面图中文字清晰显示，按`Enter`确认，需要选择三次。具体操作如下GIF所示：
+
+    ![interactive_select_threshold](./assets/interactive_select_threshold.gif)
+5. 输出日志如下：
+   ```text
+    Select a ROI and then press SPACE or ENTER button!
+    Cancel the selection process by pressing c button!
+    Select a ROI and then press SPACE or ENTER button!
+    Cancel the selection process by pressing c button!
+    Select a ROI and then press SPACE or ENTER button!
+    Cancel the selection process by pressing c button!
+    Obtain key frame: 100%|██████████████████| 71/71 [00:03<00:00, 19.19frame/s]
+    OCR: 100%|███████████████████████████| 5/5 [00:03<00:00,  1.40frame/s]
+    The file has been saved in the assets\test_video\2.txt
+    [[0, '00:00:00,041', '00:00:00,416', '空间里面他绝对赢不了的'], [10, '00:00:00,458', '00:00:01,166', '我进去帮他'], [37, '00:00:01,583', '00:00:02,541', '你们接着善后']]
+    elapse: 16.00002384185791s
+   ```
+
+6. 可以去**video所在目录**查看输出的文件
 
 
 ### [`config_videocr.yaml`](./rapid_videocr/config_videocr.yaml)中相关参数

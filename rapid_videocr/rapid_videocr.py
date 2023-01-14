@@ -37,7 +37,7 @@ class RapidVideOCR():
         self.process_img = ProcessImg()
         self.export_res = ExportResult()
 
-    def __call__(self, video_path: str) -> List:
+    def __call__(self, video_path: str, out_format: str = 'all') -> List:
         self.vr = VideoReader(video_path)
 
         selected_frames = self.vr.get_random_frames(self.select_nums)
@@ -62,7 +62,7 @@ class RapidVideOCR():
                                                         duplicate_frames)
         extract_result = self.generate_srt(frames_ocr_res, fps,
                                            filter_frames, invalid_keys)
-        self.export_res(video_path, extract_result)
+        self.export_res(video_path, extract_result, out_format.strip().lower())
         return extract_result
 
     @staticmethod
@@ -255,7 +255,11 @@ class RapidVideOCR():
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mp4_path', type=str)
+    parser.add_argument('-mp4', '--mp4_path', type=str,
+                        help='The full path of mp4 video.')
+    parser.add_argument('-o', '--out_format', type=str, default='all',
+                        choices=['srt', 'txt', 'all'],
+                        help='Output file format. Default is "all"')
     args = parser.parse_args()
 
     mp4_path = args.mp4_path

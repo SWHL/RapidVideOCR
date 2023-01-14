@@ -7,12 +7,15 @@ from __future__ import annotations
 import copy
 import datetime
 import difflib
+from enum import Enum
 from pathlib import Path
 import random
 from typing import List, Union, Any
 
 import cv2
 import numpy as np
+
+ExtractType = List[List[Union[int, str, str, str]]]
 
 
 class VideoReader():
@@ -177,22 +180,48 @@ class ProcessImg():
         return np.array(result_img)
 
 
+class OutputFormat(Enum):
+    SRT = 'srt'
+    TXT = 'txt'
+    ALL = 'all'
+
+
 class ExportResult():
     def __init__(self) -> None:
         pass
 
     def __call__(self, video_path: str,
-                 extract_res: List[List[Union[int, str, str, str]]]) -> None:
+                 extract_res: ExtractType,
+                 out_format: str = 'all') -> None:
+        save_stem = Path(video_path).parent / Path(video_path).stem
+
+        if out_format == OutputFormat.SRT.value:
+            content = self.get_srt_content(extract_res)
+            save_path = f'{save_stem}.{OutputFormat.SRT.value}'
+        elif out_format == OutputFormat.TXT.value:
+            content = self.get_txt_content(extract_res)
+            save_path = f'{save_stem}.{OutputFormat.TXT.value}'
+        elif out_format == OutputFormat.ALL.value:
+            content = self.get_srt_content(extract_res)
+            save_path = f'{save_stem}.{OutputFormat.SRT.value}'
+
+            content = self.get_txt_content(extract_res)
+            save_path = f'{save_stem}.{OutputFormat.TXT.value}'
+        else:
+            raise ValueError(f'{out_format} is not supported!')
+        self.save_file(save_path, content)
+
+    def get_srt_content(self, extract_res: ExtractType) -> List:
         content = []
         for i, start_time, end_time, text in extract_res:
             content.append(f'{i}\n{start_time} --> {end_time}\n{text}\n')
+        return content
 
-        full_path = Path(video_path).parent / f'{Path(video_path).stem}.srt'
-        self.write_txt(full_path, content)
-        print(f'The srt has been saved in the {full_path}.')
+    def get_txt_content(self, extract_res: ExtractType) -> List:
+        return [text for _, _, _, text in extract_res]
 
     @staticmethod
-    def write_txt(save_path: Union[str, Path],
+    def save_file(save_path: Union[str, Path],
                   content: list,
                   mode: str = 'w') -> None:
         if not isinstance(save_path, str):
@@ -204,6 +233,7 @@ class ExportResult():
         with open(save_path, mode, encoding='utf-8') as f:
             for value in content:
                 f.write(f'{value}\n')
+        print(f'The file has been saved in the {save_path}')
 
 
 def debug_vis_box(i: int, dt_boxes: np.ndarray, one_frame: np.ndarray) -> None:
