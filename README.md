@@ -19,6 +19,7 @@
 
 - [简介](#简介)
 - [更新日志（more）](#更新日志more)
+  - [👊 2023-01-15 v1.1.4 update:](#-2023-01-15-v114-update)
   - [🌈2023-01-10 v1.0.3 update:](#2023-01-10-v103-update)
 - [使用步骤](#使用步骤)
 - [`config_videocr.yaml`中相关参数](#config_videocryaml中相关参数)
@@ -41,6 +42,10 @@
   - **更方便**：pip直接安装即可使用。
 
 ### 更新日志（[more](./docs/change_log.md)）
+#### 👊 2023-01-15 v1.1.4 update:
+- 添加输出txt格式的选项，目前v1.1.4版本默认输出srt和txt两种格式
+- 添加根据运行程序屏幕大小，调节选择字幕的框大小
+
 #### 🌈2023-01-10 v1.0.3 update:
 - 将decord替换为OpenCV，因为decord处理MP4时，存在内存泄漏问题。详情参见：[#208](https://github.com/dmlc/decord/issues/208)
 

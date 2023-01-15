@@ -239,14 +239,6 @@ class ExportResult():
         print(f'The file has been saved in the {save_path}')
 
 
-def debug_vis_box(i: int, dt_boxes: np.ndarray, one_frame: np.ndarray) -> None:
-    for box in dt_boxes:
-        box = np.array(box).astype(np.int32).reshape(-1, 2)
-        cv2.polylines(one_frame, [box], True,
-                      color=(255, 255, 0), thickness=2)
-    cv2.imwrite(f'temp/{i}.jpg', one_frame)
-
-
 def get_screen_w_h() -> Tuple[int, int]:
     win = tk.Tk()
     width = win.winfo_screenwidth()
