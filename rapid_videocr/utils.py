@@ -201,9 +201,11 @@ class ExportResult():
         if out_format == OutputFormat.SRT.value:
             content = self.get_srt_content(extract_res)
             save_path = f'{save_stem}.{OutputFormat.SRT.value}'
+            self.save_file(save_path, content)
         elif out_format == OutputFormat.TXT.value:
             content = self.get_txt_content(extract_res)
             save_path = f'{save_stem}.{OutputFormat.TXT.value}'
+            self.save_file(save_path, content)
         elif out_format == OutputFormat.ALL.value:
             content = self.get_srt_content(extract_res)
             save_path = f'{save_stem}.{OutputFormat.SRT.value}'
@@ -214,7 +216,6 @@ class ExportResult():
             self.save_file(save_path, content)
         else:
             raise ValueError(f'{out_format} is not supported!')
-        self.save_file(save_path, content)
 
     def get_srt_content(self, extract_res: ExtractType) -> List:
         content = []

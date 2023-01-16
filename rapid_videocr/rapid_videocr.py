@@ -38,7 +38,6 @@ class RapidVideOCR():
         self.export_res = ExportResult()
 
         self.screen_w, self.screen_h = get_screen_w_h()
-        print(self.screen_h, self.screen_w)
 
     def __call__(self, video_path: str, out_format: str = 'all') -> List:
         self.vr = VideoReader(video_path)
