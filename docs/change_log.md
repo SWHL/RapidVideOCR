@@ -1,5 +1,12 @@
+#### 🧨2023-01-28 v1.1.5 update:
+- 修复时间轴对不齐问题
+
+#### 👊 2023-01-15 v1.1.4 update:
+- 添加输出txt格式的选项，目前v1.1.4版本默认输出srt和txt两种格式
+- 添加根据运行程序屏幕大小，调节选择字幕的框大小
+
 #### 🌈2023-01-10 v1.0.3 update:
-- 将decord替换为OpenCV，因为decord处理MP4时，存在内存泄漏问题。
+- 将decord替换为OpenCV，因为decord处理MP4时，存在内存泄漏问题。详情参见：[#208](https://github.com/dmlc/decord/issues/208)
 
 #### 🎄2022-12-04 update:
 - 添加交互式框定字幕位置功能，默认开启，更加好用，详情可参考下面的GIF图。感谢@[Johndirr](https://github.com/Johndirr)的建议。

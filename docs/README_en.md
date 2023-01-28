@@ -20,6 +20,8 @@
 
 - [Introduction](#introduction)
 - [Change log (more)](#change-log-more)
+  - [🧨2023-01-28 v1.1.5 update:](#2023-01-28-v115-update)
+  - [👊 2023-01-15 v1.1.4 update:](#-2023-01-15-v114-update)
   - [🌈2023-01-10 v1.0.3 update:](#2023-01-10-v103-update)
 - [Use](#use)
 - [`config_videocr.yaml` in the relevant parameters](#config_videocryaml-in-the-relevant-parameters)
@@ -40,6 +42,13 @@
   - **More convenient**: use by installing the package with pip tool.
 
 ### Change log ([more](./change_log_en.md))
+#### 🧨2023-01-28 v1.1.5 update:
+- Fix the misalignment of the time axis.
+
+#### 👊 2023-01-15 v1.1.4 update:
+- Add the option to output txt format, currently the v1.1.4 version outputs srt and txt by default.
+- Added to adjust the size of the box for selecting subtitles according to the screen size of the running program.
+
 #### 🌈2023-01-10 v1.0.3 update:
 - Replace decord with OpenCV because there is a memory leak when decord processes MP4. For details, see [#208](https://github.com/dmlc/decord/issues/208).
 
