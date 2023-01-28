@@ -20,7 +20,7 @@
 
 - [Introduction](#introduction)
 - [Change log (more)](#change-log-more)
-  - [🧨2023-01-28 v1.1.5 update:](#2023-01-28-v115-update)
+  - [🧨2023-01-28 v1.1.9 update:](#2023-01-28-v119-update)
   - [👊 2023-01-15 v1.1.4 update:](#-2023-01-15-v114-update)
   - [🌈2023-01-10 v1.0.3 update:](#2023-01-10-v103-update)
 - [Use](#use)
@@ -42,7 +42,7 @@
   - **More convenient**: use by installing the package with pip tool.
 
 ### Change log ([more](./change_log_en.md))
-#### 🧨2023-01-28 v1.1.5 update:
+#### 🧨2023-01-28 v1.1.9 update:
 - Fix the misalignment of the time axis.
 
 #### 👊 2023-01-15 v1.1.4 update:
