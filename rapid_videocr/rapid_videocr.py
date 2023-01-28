@@ -2,6 +2,7 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
+import copy
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
@@ -62,6 +63,7 @@ class RapidVideOCR():
 
         filter_frames, invalid_keys = self.merge_frames(frames_ocr_res,
                                                         duplicate_frames)
+        filter_frames = self.truncate_overlap(filter_frames)
         extract_result = self.generate_srt(frames_ocr_res, fps,
                                            filter_frames, invalid_keys)
         self.export_res(video_path, extract_result, out_format.strip().lower())
@@ -247,12 +249,26 @@ class RapidVideOCR():
                 cur_key = keys[cur_idx]
                 similar_idxs = duplicate_frames[keys[next_idx]]
                 duplicate_frames[cur_key].extend(similar_idxs)
+                duplicate_frames[cur_key] = list(set(duplicate_frames[cur_key]))
+                duplicate_frames[cur_key].sort()
                 invalid_keys.append(next_idx)
             else:
                 # 不相似
                 cur_idx = next_idx
             next_idx += 1
         return duplicate_frames, invalid_keys
+
+    @staticmethod
+    def truncate_overlap(duplicate_frames: Dict) -> Dict:
+        tmp_duplicate_frames = copy.deepcopy(duplicate_frames)
+        key_idxs = list(duplicate_frames.keys())
+        for i, (k, v) in enumerate(tmp_duplicate_frames.items()):
+            other_keys = key_idxs[i:]
+            for other_key in other_keys:
+                if other_key in v:
+                    loc_idx = v.index(other_key)
+                    duplicate_frames[k] = v[:loc_idx]
+        return duplicate_frames
 
     def generate_srt(self,
                      frames_ocr_res: List[Union[str, str, str]],
@@ -263,7 +279,6 @@ class RapidVideOCR():
         for i, (k, v) in enumerate(filter_frames.items()):
             if i in invalid_keys:
                 continue
-            v.sort()
 
             start_time = convert_frame_to_time(v[0], fps)
             end_time = convert_frame_to_time(v[-1], fps)
