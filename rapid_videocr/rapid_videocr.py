@@ -263,6 +263,9 @@ class RapidVideOCR():
         tmp_duplicate_frames = copy.deepcopy(duplicate_frames)
         key_idxs = list(duplicate_frames.keys())
         for i, (k, v) in enumerate(tmp_duplicate_frames.items()):
+            if not v:
+                continue
+
             other_keys = key_idxs[i:]
             for other_key in other_keys:
                 if other_key in v:
@@ -277,7 +280,7 @@ class RapidVideOCR():
                      invalid_keys: List) -> List:
         extract_result = []
         for i, (k, v) in enumerate(filter_frames.items()):
-            if i in invalid_keys:
+            if i in invalid_keys or not v:
                 continue
 
             start_time = convert_frame_to_time(v[0], fps)
