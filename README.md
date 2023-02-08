@@ -41,7 +41,7 @@
 - [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
 
 ### 更新日志（[more](./docs/change_log.md)）
-### 🎈2023-01-29 v1.1.10 update:
+#### 🎈2023-01-29 v1.1.10 update:
 - 修复帧索引转时间戳时，索引为空错误
 
 #### 🧨2023-01-28 v1.1.9 update:
@@ -52,7 +52,11 @@
    - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/)
    - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168)
 2. 使用该软件抽取关键字幕帧图像 → 得到`RGBImages`目录。一般会在软件安装目录下。
-3. 使用RapidVideOCR工具
+3. 安装rapid_videocr
+   ```bash
+   pip install rapid_videocr -i https://pypi.douban.com/simple/
+   ```
+4. 使用RapidVideOCR工具
    - 脚本运行：
         ```python
         from rapid_videocr import RapidVideOCR
@@ -82,7 +86,7 @@
          ```bash
          $ rapid_videocr -i RGBImages -s Results -o srt
          ```
-4. 查看结果
+5. 查看结果
    - 前往`save_dir`目录下即可查看结果。
    - 值得注意的是，如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。
 
