@@ -19,35 +19,28 @@ from rapid_videocr import RapidVideOCR
 
 extractor = RapidVideOCR()
 
-mp4_path = '2.mp4'
-ocr_result = extractor(mp4_path, out_format='srt')
-print(ocr_result)
+rgb_dir = 'RGBImages'
+save_dir = 'result'
+extractor(rgb_dir, save_dir)
+
 ```
 
 ### 3. Run by command line.
 - Usage:
     ```bash
     $ rapid_videocr -h
-    usage: rapid_videocr [-h] [-mp4 MP4_PATH] [-o {srt,txt,all}]
+    usage: rapid_videocr [-h] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}]
 
     optional arguments:
     -h, --help            show this help message and exit
-    -mp4 MP4_PATH, --mp4_path MP4_PATH
+    -i IMG_DIR, --img_dir IMG_DIR
                             The full path of mp4 video.
+    -s SAVE_DIR, --save_dir SAVE_DIR
+                            The path of saving the recognition result.
     -o {srt,txt,all}, --out_format {srt,txt,all}
                             Output file format. Default is "all"
     ```
 - Example:
   ```bash
-  $ rapid_videocr -o srt -mp4 2.mp4
+  $ rapid_videocr -i RGBImages -s Results -o srt
   ```
-
-### 4. Result.
-- Return value.
-    ```text
-    [
-        [0, '00:00:00,041', '00:00:00,416', '空间里面他绝对赢不了的'],
-        [10, '00:00:00,458', '00:00:01,166', '我进去帮他'],
-        [37, '00:00:01,583', '00:00:02,541', '你们接着善后']
-    ]
-    ```

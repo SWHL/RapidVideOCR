@@ -52,14 +52,35 @@
    - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168)
 2. 使用该软件抽取关键字幕帧图像 → 得到`RGBImages`目录。一般会在软件安装目录下。
 3. 使用RapidVideOCR工具
-   ```python
-    from rapid_videocr import RapidVideOCR
+   - 脚本运行：
+        ```python
+        from rapid_videocr import RapidVideOCR
 
-    extractor = RapidVideOCR()
+        extractor = RapidVideOCR()
 
-    rgb_dir = 'test_files/RGBImages'
-    save_dir = 'result'
-    result = extractor(rgb_dir, save_dir)
-   ```
-4. 查看结果 → 前往`save_dir`目录下即可查看结果。
+        rgb_dir = 'test_files/RGBImages'
+        save_dir = 'result'
+        extractor(rgb_dir, save_dir)
+        ```
+    - 命令行运行：
+      - Usage:
+         ```bash
+         $ rapid_videocr -h
+         usage: rapid_videocr [-h] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}]
+
+         optional arguments:
+         -h, --help            show this help message and exit
+         -i IMG_DIR, --img_dir IMG_DIR
+                                 The full path of mp4 video.
+         -s SAVE_DIR, --save_dir SAVE_DIR
+                                 The path of saving the recognition result.
+         -o {srt,txt,all}, --out_format {srt,txt,all}
+                                 Output file format. Default is "all"
+         ```
+       - Example:
+         ```bash
+         $ rapid_videocr -i RGBImages -s Results -o srt
+         ```
+4. 查看结果
+   - 前往`save_dir`目录下即可查看结果。
    - 值得注意的是，如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。
