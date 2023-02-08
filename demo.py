@@ -1,17 +1,13 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-import time
 
 from rapid_videocr import RapidVideOCR
 
 extractor = RapidVideOCR()
 
-mp4_path = 'assets/test_video/2.mp4'
+rgb_dir = r'G:\ProgramFiles\_self\VideoSubFinder\VideoSubFinder_5.60_x64\clean\RGBImages'
+save_dir = 'result'
+result = extractor(rgb_dir, save_dir)
 
-start_time = time.time()
-
-ocr_result = extractor(mp4_path)
-print(ocr_result)
-
-print(f'elapse: {time.time() - start_time}s')
+print('ok')

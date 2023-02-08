@@ -3,8 +3,6 @@
 </div>
 <br/>
 
-👀 招募可以帮打包为exe的小伙伴，感兴趣的话，可以邮件私我: liekkaskono@163.com.
-
 简体中文 | [English](./docs/README_en.md)
 
 <p align="left">
@@ -23,15 +21,7 @@
 - [更新日志（more）](#更新日志more)
 - [🎈2023-01-29 v1.1.10 update:](#2023-01-29-v1110-update)
   - [🧨2023-01-28 v1.1.9 update:](#2023-01-28-v119-update)
-  - [👊 2023-01-15 v1.1.4 update:](#-2023-01-15-v114-update)
-- [使用步骤](#使用步骤)
-- [`config_videocr.yaml`中相关参数](#config_videocryaml中相关参数)
-- [整体框架](#整体框架)
-- [常见问题 FAQ](#常见问题-faq)
-- [视频OCR动态](#视频ocr动态)
-- [未来的应用场景探索](#未来的应用场景探索)
-- [耗时基准](#耗时基准)
-- [仓库分支说明](#仓库分支说明)
+  - [使用步骤](#使用步骤)
 
 </details>
 
@@ -39,14 +29,14 @@
 - 视频硬字幕提取，自动生成对应`srt`文件。
 - 支持字幕语言：中文 | 英文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
 - 可加入QQ群：**706807542**
-- 更快更准确地提取视频硬字幕，并提供`srt`三种格式的输出：
-  - **更快**：~~采用[decord](https://github.com/dmlc/decord)作为读取视频的库，更快;~~ 改用OpenCV实现，低内存占用。对于输入视频，只提取字幕关键帧。
+- 更快更准确地提取视频硬字幕，并提供`srt| txt`l两种格式的输出：
+  - **更快**：与VideoSubFinder软件结合使用，提取关键字幕帧更快。
   - **更准**：采用[RapidOCR](https://github.com/RapidAI/RapidOCR)作为识别库。
   - **更方便**：pip直接安装即可使用。
 - **该工具处于发展中。在使用过程中，如果遇到任何问题，欢迎提issue或者入群反馈。如果不愿意用的话，不用就好，不要影响自己心情。**
 
 ### TODO
-- [ ] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
+- [x] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
 - [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
 
 ### 更新日志（[more](./docs/change_log.md)）
@@ -56,121 +46,20 @@
 #### 🧨2023-01-28 v1.1.9 update:
 - 修复时间轴对不齐问题
 
-#### 👊 2023-01-15 v1.1.4 update:
-- 添加输出txt格式的选项，目前v1.1.4版本默认输出srt和txt两种格式
-- 添加根据运行程序屏幕大小，调节选择字幕的框大小
+#### 使用步骤
+1. 安装使用VideoSubFinder软件
+   - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/)
+   - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168)
+2. 使用该软件抽取关键字幕帧图像 → 得到`RGBImages`目录。一般会在软件安装目录下。
+3. 使用RapidVideOCR工具
+   ```python
+    from rapid_videocr import RapidVideOCR
 
-### 使用步骤
-1. 安装`rapid_videocr`包
-   ```bash
-   $ pip install rapid_videocr
+    extractor = RapidVideOCR()
+
+    rgb_dir = 'test_files/RGBImages'
+    save_dir = 'result'
+    result = extractor(rgb_dir, save_dir)
    ```
-
-2. 运行
-    - 脚本执行
-        ```python
-        from rapid_videocr import RapidVideOCR
-
-        extractor = RapidVideOCR()
-
-        mp4_path = 'assets/test_video/2.mp4'
-
-        # out_format: ['srt', 'txt', 'all']，默认是all
-        ocr_result = extractor(mp4_path, out_format='srt')
-        print(ocr_result)
-
-        # output:
-        # [
-        #     [0, '00:00:00,041', '00:00:00,416', '空间里面他绝对赢不了的'],
-        #     [10, '00:00:00,458', '00:00:01,166', '我进去帮他'],
-        #     [37, '00:00:01,583', '00:00:02,541', '你们接着善后']
-        # ]
-        ```
-    - 命令行执行
-      - Usage:
-        ```bash
-        $ rapid_videocr -h
-        usage: rapid_videocr [-h] [-mp4 MP4_PATH] [-o {srt,txt,all}]
-
-        optional arguments:
-        -h, --help            show this help message and exit
-        -mp4 MP4_PATH, --mp4_path MP4_PATH
-                                The full path of mp4 video.
-        -o {srt,txt,all}, --out_format {srt,txt,all}
-                                Output file format. Default is "all"
-        ```
-      - 示例：
-        ```bash
-        $ rapid_videocr -o srt -mp4 assets/test_video/2.mp4
-        ```
-
-3. 选择字幕区域，鼠标按住左键框选字幕所在区域，不要只框选文字，尽量框选文字所在的行区域
-   <div align="center">
-        <img src="./assets/demo_of_select_ROI.gif"  width="75%" height="75%">
-   </div>
-
-4. 选择合适的二值化阈值，左右滑动滑块，使得下面图中文字清晰显示，按`Enter`确认，需要选择三次。具体操作如下GIF所示：
-
-    ![interactive_select_threshold](./assets/interactive_select_threshold.gif)
-5. 输出日志如下：
-   ```text
-    Select a ROI and then press SPACE or ENTER button!
-    Cancel the selection process by pressing c button!
-    Select a ROI and then press SPACE or ENTER button!
-    Cancel the selection process by pressing c button!
-    Select a ROI and then press SPACE or ENTER button!
-    Cancel the selection process by pressing c button!
-    Obtain key frame: 100%|██████████████████| 71/71 [00:03<00:00, 19.19frame/s]
-    OCR: 100%|███████████████████████████| 5/5 [00:03<00:00,  1.40frame/s]
-    The file has been saved in the assets\test_video\2.txt
-    [[0, '00:00:00,041', '00:00:00,416', '空间里面他绝对赢不了的'], [10, '00:00:00,458', '00:00:01,166', '我进去帮他'], [37, '00:00:01,583', '00:00:02,541', '你们接着善后']]
-    elapse: 16.00002384185791s
-   ```
-
-6. 可以去**video所在目录**查看输出的文件
-
-
-### [`config_videocr.yaml`](./rapid_videocr/config_videocr.yaml)中相关参数
-|参数名称|默认值|取值范围|含义|
-|:---|:---|:---|:---|
-|`is_dilate`|`True`|`bool`|是否腐蚀字幕所在背景图像|
-|`error_thr`|`0.005`|`[0, 1]`， default:0.005|值越小，两张图之间差异点会更敏感|
-|`time_start`|`00:00:00`|开始提取字幕的起始时间点|开始提取字幕的起始时间点, 示例：'00:00:00'|
-|`time_end`|`-1`|开始提取字幕的起始时间点|需要大于`time_start`，`-1`表示到最后， 示例：'-1'|
-
-### 整体框架
-```mermaid
-flowchart LR
-	subgraph Step
-	direction TB
-	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
-	end
-
-	A[/Video file/] --> Step --> M(Output) --> H(SRT)
-```
-
-### 常见问题 [FAQ](./docs/FAQ.md)
-
-### 视频OCR动态
-- [(ICCV 2021) STRIVE: Scene Text Replacement In videos.](https://openaccess.thecvf.com/content/ICCV2021/papers/G_STRIVE_Scene_Text_Replacement_in_Videos_ICCV_2021_paper.pdf)
-	- 使用时空转换网络将所有帧中的文字矫正
-	- 使用图片中文字编辑的方法替换单一参考帧中的文字，并且使用时空转换网络还原矫正的文字
-	- 提供了一个视频文本编辑的数据集
-- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888) | [博客解读](https://blog.csdn.net/shiwanghualuo/article/details/122712872?spm=1001.2014.3001.5501)
-- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
-
-### 未来的应用场景探索
-- [ ] 基于视频文本OCR的视频内容理解，结合图像特征+图像中文本特征
-- [ ] 视频字幕自动翻译 → 接入百度翻译API，直接做视频字幕转译，参考[论文](https://mp.weixin.qq.com/s/2CZvwqiR8Mg5T7r4P67BRw) → 这个经过调研，目前市场相关软件已经很多，无力再造轮子
-- [ ] 基于视频文本特征的视频检索
-- [ ] 自动擦除指定字幕/擦除指定文本内容
-
-### 耗时基准
-|配置|测试MP4|总帧数|每帧大小|耗时(s)|
-|:---|:---|:---|:---|:---|
-|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|15s|
-
-### 仓库分支说明
-- `add_remove_bg_module`:
-  - 基于图像分割UNet算法来去除字幕图像背景图，只剩下文字内容，训练对应代码为[pytorch-unet](https://github.com/SWHL/pytorch-unet)
-  - 没有并入主仓库原因：模型较大，处理速度较慢，同时泛化性能不是太好，有提升空间，可自行探索。
+4. 查看结果 → 前往`save_dir`目录下即可查看结果。
+   - 值得注意的是，如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。
