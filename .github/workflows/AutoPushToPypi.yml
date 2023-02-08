@@ -19,7 +19,7 @@ jobs:
       - name: Run setup.py
         run: |
           python -m pip install --upgrade pip
-          python setup.py bdist_wheel
+          python setup.py bdist_wheel ${{ github.event.head_commit.message }}
 
       # - name: Publish distribution 📦 to Test PyPI
       #   uses: pypa/gh-action-pypi-publish@v1.5.0
