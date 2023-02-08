@@ -43,6 +43,7 @@
   - **更快**：~~采用[decord](https://github.com/dmlc/decord)作为读取视频的库，更快;~~ 改用OpenCV实现，低内存占用。对于输入视频，只提取字幕关键帧。
   - **更准**：采用[RapidOCR](https://github.com/RapidAI/RapidOCR)作为识别库。
   - **更方便**：pip直接安装即可使用。
+- **该工具处于发展中。在使用过程中，如果遇到任何问题，欢迎提issue或者入群反馈。如果不愿意用的话，不用就好，不要影响自己心情。**
 
 ### TODO
 - [ ] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
