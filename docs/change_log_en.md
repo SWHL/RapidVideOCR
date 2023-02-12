@@ -1,3 +1,6 @@
+#### 🎇2023-02-12 v2.0.1 update:
+- Fix the bug that the subtitle frame time becomes 0 when the video duration is longer than 1 hour.
+
 #### 🧨2023-01-28 v1.1.9 update:
 - Fix the misalignment of the time axis.
 

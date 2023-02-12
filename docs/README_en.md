@@ -19,107 +19,84 @@
     <summary>Contents</summary>
 
 - [Introduction](#introduction)
+- [Overall framework](#overall-framework)
 - [Change log (more)](#change-log-more)
-  - [🧨2023-01-28 v1.1.9 update:](#2023-01-28-v119-update)
-  - [👊 2023-01-15 v1.1.4 update:](#-2023-01-15-v114-update)
-  - [🌈2023-01-10 v1.0.3 update:](#2023-01-10-v103-update)
-- [Use](#use)
-- [`config_videocr.yaml` in the relevant parameters](#config_videocryaml-in-the-relevant-parameters)
-- [Overall Framework](#overall-framework)
-- [FAQ](#faq)
-- [Video OCR Research](#video-ocr-research)
-- [The benchmark of costing time](#the-benchmark-of-costing-time)
-- [Other branch description](#other-branch-description)
+  - [🎇2023-02-12 v2.0.1 update:](#2023-02-12-v201-update)
+  - [Steps for usage](#steps-for-usage)
+  - [Announce](#announce)
 
 </details>
 
 ### Introduction
-- Video hard subtitle extraction, automatically generating corresponding `srt` file.
-- Support subtitle language: Chinese | English
-- Extract subtitles embedded in the video faster and more accurately, and provide three formats of `srt`:
-  - **Faster**: ~~adapted the [decord](https://github.com/dmlc/decord), which is dedicated to processing videos.~~ Use OpenCV instead, low memory consumption. For input video, only subtitle key frames are extracted.
-  - **More accurately**: adapted [RapidOCR](https://github.com/RapidAI/RapidOCR).
-  - **More convenient**: use by installing the package with pip tool.
+- Video hard subtitle extraction, automatically generate the corresponding `srt` file.
+- Supported subtitle languages: Chinese | English (For other supported languages, see: [List of supported languages](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
+- You can join the QQ group: **706807542**
+- Extract video hard subtitles faster and more accurately, and provide output in two formats `srt|txt`l:
+   - **FASTER**: Combined with VideoSubFinder software, extraction of key subtitle frames is faster.
+   - **More accurate**: [RapidOCR](https://github.com/RapidAI/RapidOCR) is used as the recognition library.
+   - **More convenient**: pip can be used directly after installation.
+- **This tool is under development. During use, if you encounter any problems, please submit an issue or join the group for feedback. If you don't want to use it, just don't use it, don't affect your mood.**
 
-### Change log ([more](./change_log_en.md))
-#### 🧨2023-01-28 v1.1.9 update:
-- Fix the misalignment of the time axis.
-
-#### 👊 2023-01-15 v1.1.4 update:
-- Add the option to output txt format, currently the v1.1.4 version outputs srt and txt by default.
-- Added to adjust the size of the box for selecting subtitles according to the screen size of the running program.
-
-#### 🌈2023-01-10 v1.0.3 update:
-- Replace decord with OpenCV because there is a memory leak when decord processes MP4. For details, see [#208](https://github.com/dmlc/decord/issues/208).
-
-### Use
-1. Install the `rapid_videocr` package.
-   ```bash
-   $ pip install rapid_videocr
-   ```
-
-2. Run
-   1. Run the code:
-      ```bash
-      $ python demo.py
-
-      # or
-      $ rapid_videocr --mp4_path assets/test_video/2.mp4
-      ```
-   2. Select the subtitle area, press the main left button of the mouse to frame the area where the subtitle is located, don't just select the text, try to select the row area where the text is located:<br/>
-      <div align="center">
-           <img src="../assets/demo_of_select_ROI.gif"  width="75%" height="75%">
-      </div>
-
-   3. Select an appropriate binarization threshold, slide the slider left and right, so that the text in the figure below is clearly displayed, press `Enter` to confirm, you need to select three times. The specific operation is shown in the following GIF:
-        ![interactive_select_threshold](../assets/interactive_select_threshold.gif)
-   4. The output log is as follows：
-        ```text
-        Loading assets/test_video/2.mp4
-        Get the key point: 100%|██████| 71/71 [00:03<00:00, 23.46it/s]
-        Extract content: 100%|██████| 4/4 [00:03<00:00,  1.32it/s]
-        The srt has been saved in the assets\test_video\2.srt.
-        The txt has been saved in the assets\test_video\2.txt.
-        The docx has been saved in the assets\test_video\2.docx.
-        ```
-
-3. Look the output files where the video is located.
-
-### [`config_videocr.yaml`](../rapid_videocr/config_videocr.yaml) in the relevant parameters
-|Parameter Name|Default|Value Range|Note|
-|:---|:---|:---|:---|
-|`is_dilate`|`True`|`bool`|Whether to erode the background image of the caption|
-|`error_thr`|`0.005`|`[0, 1]`, default:0.005|The smaller the value, the more sensitive the difference between the two graphs|
-|`time_start`|`00:00:00`|start extracting the start time of the subtitle|start extracting the start time of the subtitle, example: '00:00:00'|
-|`time_end`|`-1`|the start point of the subtitle extraction| needs to be greater than `time_start`, `-1` means to the end, example: '-1'|
+###TODO
+- [x] Add the processing interface for [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software to extract subtitle frame results
+- [ ] Try to integrate the core functions of VideoSubFinder into this project, through its open CLI mode
 
 
-### Overall Framework
+### Overall framework
 ```mermaid
 flowchart LR
-	subgraph Step
-	direction TB
-	B(1.Read each frame) --> C(2.Obtain the key frame) --> D(3.RapidOCR) --> E(4.Merge duplicate frames) --> F(5.Convert)
-	end
-
-	A[/Video file/] --> Step --> M(Output) --> H(SRT)
+     A(VideoSubFinder) --Extract subtitle key frame--> B(RapidVideOCR) --OCR--> C(SRT)
 ```
 
-### [FAQ](../docs/FAQ.md)
+
+### Change log ([more](../docs/change_log_en.md))
+#### 🎇2023-02-12 v2.0.1 update:
+- Fix the bug that the subtitle frame time becomes 0 when the video duration is longer than 1 hour.
 
 
-### Video OCR Research
-- [【NeurIPS2021】A Bilingual, OpenWorld Video Text Dataset and End-to-end Video Text Spotter with Transformer](https://arxiv.org/abs/2112.04888)
-- [【ACM MM 2019】You only recognize once: Towards fast video text spotting](https://arxiv.org/pdf/1903.03299)
+#### Steps for usage
+1. Install and use VideoSubFinder software
+    - Download link: [videosubfinder](https://sourceforge.net/projects/videosubfinder/)
+    - Tutorial: [\[Subtitle Learning Tutorial\] Use VideoSubFinder/esrXP to extract hard subtitles](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168)
+2. Use this software to extract key subtitle frame images → get the `RGBImages` directory. Usually in the software installation directory.
+3. Install rapid_videocr
+    ```bash
+    pip install rapid_videocr
+    ```
+4. Use the RapidVideOCR tool
+    - The script runs:
+         ```python
+         from rapid_videocr import RapidVideOCR
+
+         extractor = RapidVideOCR()
+
+         rgb_dir = 'test_files/RGBImages'
+         save_dir = 'result'
+         extractor(rgb_dir, save_dir)
+         ```
+     - Command line run:
+       - Usage:
+          ```bash
+          $ rapid_videocr -h
+          usage: rapid_videocr [-h] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}]
+
+          optional arguments:
+          -h, --help show this help message and exit
+          -i IMG_DIR, --img_dir IMG_DIR
+                                  The full path of mp4 video.
+          -s SAVE_DIR, --save_dir SAVE_DIR
+                                  The path of saving the recognition result.
+          -o {srt,txt,all}, --out_format {srt,txt,all}
+                                  Output file format. Default is "all"
+          ```
+        - Example:
+          ```bash
+          $ rapid_videocr -i RGBImages -s Results -o srt
+          ```
+5. View the results
+    - Go to the `save_dir` directory to view the results.
+    - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
 
 
-### The benchmark of costing time
-
-|Env|Test MP4| Total Frames | Frame Size|Cost(s/f)|
-|:---|:---|:---|:---|:---|
-|`Intel(R) Core(TM) i7-6700 CPU @3.40GHz 3.41 GHz`|`assets/test_video/2.mp4`|71|1920x800|15s|
-
-### Other branch description
-- `add_remove_bg_module`:
-   - Based on the image segmentation UNet algorithm to remove the background image of the subtitle image, leaving only the text content, the corresponding training code is [pytorch-unet](https://github.com/SWHL/pytorch-unet)
-   - The reason for not merging into the main warehouse: the model is large, the processing speed is slow, and the generalization performance is not very good, there is room for improvement, and you can explore by yourself.
+#### Announce
+- The release of this warehouse follows the semantic version number naming, for details, refer to [Semantic version number 2.0](https://semver.org/lang/zh-CN/).
