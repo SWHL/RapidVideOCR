@@ -23,7 +23,7 @@
 - [Overall framework](#overall-framework)
 - [Change log (more)](#change-log-more)
   - [🎇2023-02-12 v2.0.1 update:](#2023-02-12-v201-update)
-  - [Steps for usage](#steps-for-usage)
+- [Steps for usage](#steps-for-usage)
   - [Announce](#announce)
 
 </details>
@@ -55,7 +55,7 @@ flowchart LR
 - Fix the bug that the subtitle frame time becomes 0 when the video duration is longer than 1 hour.
 
 
-#### Steps for usage
+### Steps for usage
 1. Install and use VideoSubFinder software
     - Download link: [videosubfinder](https://sourceforge.net/projects/videosubfinder/)
     - Tutorial: [\[Subtitle Learning Tutorial\] Use VideoSubFinder/esrXP to extract hard subtitles](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168)

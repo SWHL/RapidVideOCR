@@ -21,7 +21,7 @@
 - [整体框架](#整体框架)
 - [更新日志（more）](#更新日志more)
   - [🎇2023-02-12 v2.0.1 update:](#2023-02-12-v201-update)
-  - [使用步骤](#使用步骤)
+- [使用步骤](#使用步骤)
   - [写在最后](#写在最后)
 
 </details>
@@ -53,7 +53,7 @@ flowchart LR
 - 修复视频时长大于1个小时，字幕帧时间变为0的bug.
 
 
-#### 使用步骤
+### 使用步骤
 1. 安装使用VideoSubFinder软件
    - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/)
    - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168)
