@@ -10,7 +10,7 @@
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
     <a href="https://pypi.org/project/rapid-videocr/"><img alt="PyPI" src="https://img.shields.io/pypi/v/rapid_videocr"></a>
     <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
-    <a href="https://pypi.org/project/rapid-videocr/"><img src="https://img.shields.io/pypi/dm/rapid-videocr?color=9cf"></a>
+    <a href="https://pepy.tech/project/rapid-videocr"><img src="https://static.pepy.tech/personalized-badge/rapid-videocr?period=total&units=abbreviation&left_color=grey&right_color=blue&left_text=Downloads"></a>
 </p>
 
 <details>
@@ -55,8 +55,8 @@ flowchart LR
 
 ### 使用步骤
 1. 安装使用VideoSubFinder软件
-   - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/) | [【教程】VideoSubFinder操作手册](https://docs.qq.com/doc/DRk9HWWlXdkRFa05o)
-   - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168)
+   - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件
+   - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168) | [【教程】VideoSubFinder操作手册](https://docs.qq.com/doc/DRk9HWWlXdkRFa05o)
 2. 使用该软件抽取关键字幕帧图像 → 得到`RGBImages`目录。一般会在软件安装目录下。
 3. 安装rapid_videocr
    ```bash
@@ -99,3 +99,7 @@ flowchart LR
 
 #### 写在最后
 - 本仓库发版遵循语义化版本号命名，详情参考[语义化版本号2.0](https://semver.org/lang/zh-CN/)
+- 扫码加入组织：
+    <div align="center">
+        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.jpg" width="25%" height="25%" align="center">
+    </div>
