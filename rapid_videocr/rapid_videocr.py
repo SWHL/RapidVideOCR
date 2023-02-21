@@ -31,7 +31,7 @@ class RapidVideOCR():
             time_str = self.get_time(img_path)
 
             img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
-            ocr_res = self.run_ocr(img, int(img.shape[1] / 2))
+            ocr_res = self.run_ocr(img, int(img.shape[1] / 3))
             if ocr_res:
                 srt_result.append(f'{time_str}\n{ocr_res}\n')
                 txt_result.append(f'{ocr_res}\n')
@@ -73,13 +73,30 @@ class RapidVideOCR():
 
         frame = padding_img(img, padding_pixel)
         ocr_result, _ = self.rapid_ocr(frame)
-        if ocr_result:
-            _, rec_res, _ = list(zip(*ocr_result))
+        if ocr_result[0] is None:
+            return None
 
-            if not rec_res:
-                return None
-            return '\n'.join(rec_res)
-        return None
+        dt_boxes, rec_res, _ = list(zip(*ocr_result))
+
+        dt_boxes_centroids = [self._compute_centroid(np.array(v))
+                              for v in dt_boxes]
+        y_centroids = np.array(dt_boxes_centroids)[:, 1].tolist()
+
+        bool_res = self.is_same_line(y_centroids)
+
+        if not rec_res:
+            return None
+
+        if not bool_res:
+            return rec_res
+
+        final_res = ''
+        for i, is_same_line in enumerate(bool_res):
+            if is_same_line:
+                final_res += ' '.join(rec_res[i:i+2])
+            else:
+                final_res += '\n'.join(rec_res[i:i+2])
+        return final_res
 
     @staticmethod
     def save_file(save_path: Union[str, Path],
@@ -95,6 +112,29 @@ class RapidVideOCR():
             for value in content:
                 f.write(f'{value}\n')
         print(f'The file has been saved in the {save_path}')
+
+    @staticmethod
+    def _compute_centroid(points: np.ndarray) -> List:
+        """计算所给框的质心坐标
+
+        :param points ([type]): (4, 2)
+        :return: [description]
+        """
+        x_min, x_max = np.min(points[:, 0]), np.max(points[:, 0])
+        y_min, y_max = np.min(points[:, 1]), np.max(points[:, 1])
+        return [(x_min + x_max) / 2, (y_min + y_max) / 2]
+
+    @staticmethod
+    def is_same_line(points: List) -> List[bool]:
+        threshold = 5
+
+        align_points = list(zip(points, points[1:]))
+        bool_res = [False] * len(align_points)
+        for i, point in enumerate(align_points):
+            y0, y1 = point
+            if abs(y0 - y1) <= threshold:
+                bool_res[i] = True
+        return bool_res
 
 
 def main() -> None:
