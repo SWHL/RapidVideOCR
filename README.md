@@ -61,7 +61,9 @@ flowchart LR
 1. 安装使用VideoSubFinder软件
    - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件
    - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168) | [【教程】VideoSubFinder操作手册](https://docs.qq.com/doc/DRk9HWWlXdkRFa05o)
-2. 使用该软件抽取关键字幕帧图像 → 得到`RGBImages`目录。一般会在软件安装目录下。
+2. 使用该软件抽取关键字幕帧图像
+   - 最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
+   - 推荐用`TXTImages`目录中图像，会更加准确
 3. 安装rapid_videocr
    ```bash
    pip install rapid_videocr -i https://pypi.douban.com/simple/
@@ -73,7 +75,7 @@ flowchart LR
 
         extractor = RapidVideOCR()
 
-        rgb_dir = 'test_files/RGBImages'
+        rgb_dir = 'test_files/TXTImages'
         save_dir = 'result'
         extractor(rgb_dir, save_dir)
         ```
