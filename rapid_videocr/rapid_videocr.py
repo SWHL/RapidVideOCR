@@ -51,6 +51,14 @@ class RapidVideOCR():
 
     @staticmethod
     def get_time(file_path: Path) -> str:
+        """根据文件名称解析对应时间戳
+
+        Args:
+            file_path (Path): 字幕关键帧图像路径
+
+        Returns:
+            str: 字幕开始和截止时间戳字符串
+        """
         split_paths = file_path.stem.split('_')
         start_time = split_paths[:4]
         start_str = ':'.join(start_time[:3]) + f',{start_time[3]}'
@@ -73,22 +81,18 @@ class RapidVideOCR():
 
         frame = padding_img(img, padding_pixel)
         ocr_result, _ = self.rapid_ocr(frame)
-        if ocr_result[0] is None:
+        if ocr_result is None:
             return None
 
         dt_boxes, rec_res, _ = list(zip(*ocr_result))
+        if len(rec_res) == 1:
+            return rec_res[0]
 
         dt_boxes_centroids = [self._compute_centroid(np.array(v))
                               for v in dt_boxes]
         y_centroids = np.array(dt_boxes_centroids)[:, 1].tolist()
 
         bool_res = self.is_same_line(y_centroids)
-
-        if not rec_res:
-            return None
-
-        if not bool_res:
-            return rec_res
 
         final_res = ''
         for i, is_same_line in enumerate(bool_res):
