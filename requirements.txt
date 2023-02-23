@@ -1,2 +1,2 @@
 tqdm>=4.52.0
-rapidocr_onnxruntime>=1.1.28
+rapidocr_onnxruntime>=1.1.29
