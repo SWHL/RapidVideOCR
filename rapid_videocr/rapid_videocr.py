@@ -10,17 +10,23 @@ import numpy as np
 from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
+from .utils import CropByProject
+
 CUR_DIR = Path(__file__).resolve().parent
 
 
 class RapidVideOCR():
     def __init__(self):
         self.rapid_ocr = RapidOCR()
+        self.cropper = CropByProject()
 
     def __call__(self,
                  video_sub_finder_dir: str,
                  save_dir: str,
                  out_format: str = 'all') -> None:
+        dir_name = Path(video_sub_finder_dir).name
+        self.is_txt_dir = True if dir_name == 'TXTImages' else False
+
         img_list = list(Path(video_sub_finder_dir).iterdir())
 
         save_dir = Path(save_dir)
@@ -31,7 +37,7 @@ class RapidVideOCR():
             time_str = self.get_time(img_path)
 
             img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
-            ocr_res = self.run_ocr(img, int(img.shape[1] / 3))
+            ocr_res = self.run_ocr(img, img.shape[0])
             if ocr_res:
                 srt_result.append(f'{time_str}\n{ocr_res}\n')
                 txt_result.append(f'{ocr_res}\n')
@@ -70,16 +76,27 @@ class RapidVideOCR():
     def run_ocr(self,
                 img: np.ndarray,
                 padding_pixel: int) -> Tuple[List, List]:
-        def padding_img(img: np.ndarray, padding_pixel: int) -> np.ndarray:
+        def padding_img(img: np.ndarray,
+                        padding_value: Tuple[int],
+                        padding_color: Tuple = (0, 0, 0)) -> np.ndarray:
             padded_img = cv2.copyMakeBorder(img,
-                                            padding_pixel,
-                                            padding_pixel,
-                                            0, 0,
+                                            padding_value[0],
+                                            padding_value[1],
+                                            padding_value[2],
+                                            padding_value[3],
                                             cv2.BORDER_CONSTANT,
-                                            value=(0, 0))
+                                            value=padding_color)
             return padded_img
 
-        frame = padding_img(img, padding_pixel)
+        if self.is_txt_dir:
+            img = self.cropper(img)
+            padding_value = 0, 0, int(img.shape[0] / 2), int(img.shape[0] / 2)
+            padding_color = 255, 255, 255
+        else:
+            padding_value = padding_pixel, padding_pixel, 0, 0
+            padding_color = 0, 0, 0
+
+        frame = padding_img(img, padding_value, padding_color)
         ocr_result, _ = self.rapid_ocr(frame)
         if ocr_result is None:
             return None

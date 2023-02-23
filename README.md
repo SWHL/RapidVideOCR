@@ -11,6 +11,7 @@
     <a href="https://pypi.org/project/rapid-videocr/"><img alt="PyPI" src="https://img.shields.io/pypi/v/rapid_videocr"></a>
     <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
     <a href="https://pepy.tech/project/rapid-videocr"><img src="https://static.pepy.tech/personalized-badge/rapid-videocr?period=total&units=abbreviation&left_color=grey&right_color=blue&left_text=Downloads"></a>
+    <a href="https://semver.org/"><img alt="SemVer2.0" src="https://img.shields.io/badge/SemVer-2.0-brightgreen"></a>
 </p>
 
 <details>
@@ -20,6 +21,7 @@
 - [TODO](#todo)
 - [整体框架](#整体框架)
 - [更新日志（more）](#更新日志more)
+  - [🎫2023-02-17 v2.0.4 update:](#2023-02-17-v204-update)
   - [💎2023-02-17 v2.0.2 update:](#2023-02-17-v202-update)
   - [🎇2023-02-12 v2.0.1 update:](#2023-02-12-v201-update)
 - [使用步骤](#使用步骤)
@@ -52,6 +54,9 @@ flowchart LR
 
 
 ### 更新日志（[more](./docs/change_log.md)）
+#### 🎫2023-02-17 v2.0.4 update:
+- 针对传入的`TXTImages`目录，作了优化处理。相比于传入`RGBImages`，会更快和更准。推荐传入`TXTImages`目录
+
 #### 💎2023-02-17 v2.0.2 update:
 - 修复同行字幕识别丢失空格问题
 
@@ -62,15 +67,14 @@ flowchart LR
 ### 使用步骤
 1. 安装使用VideoSubFinder软件
    - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件
-   - 使用教程：[【字幕学习教程】使用VideoSubFinder/esrXP提取硬字幕](https://www.bilibili.com/video/BV12z4y1D7qC/?share_source=copy_web&vd_source=345b117e20ba7c605f01cdf5a1cda168) | [【教程】VideoSubFinder操作手册](https://docs.qq.com/doc/DRk9HWWlXdkRFa05o)
-2. 使用该软件抽取关键字幕帧图像
+   - 使用教程：[VideoSubFinder提取字幕关键帧教程](http://t.csdn.cn/sy2Or)
    - 最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
-   - 推荐用`TXTImages`目录中图像，会更加准确
-3. 安装rapid_videocr
+   - ✧✧✧ 推荐用`TXTImages`目录中图像，会更加准确
+2. 安装rapid_videocr
    ```bash
-   pip install rapid_videocr -i https://pypi.douban.com/simple/
+   pip install rapid_videocr
    ```
-4. 使用RapidVideOCR工具
+3. 使用RapidVideOCR工具
    - 脚本运行：
         ```python
         from rapid_videocr import RapidVideOCR
@@ -100,7 +104,7 @@ flowchart LR
          ```bash
          $ rapid_videocr -i RGBImages -s Results -o srt
          ```
-5. 查看结果
+4. 查看结果
    - 前往`save_dir`目录下即可查看结果。
    - 值得注意的是，如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。
 
