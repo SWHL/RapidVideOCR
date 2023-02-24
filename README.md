@@ -67,7 +67,7 @@ flowchart LR
 ### 使用步骤
 1. 安装使用VideoSubFinder软件
    - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件
-   - 使用教程：[VideoSubFinder提取字幕关键帧教程](http://t.csdn.cn/sy2Or)
+   - 使用教程：[VideoSubFinder提取字幕关键帧教程](https://juejin.cn/post/7203362527082053691)
    - 最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
    - ✧✧✧ 推荐用`TXTImages`目录中图像，会更加准确
 2. 安装rapid_videocr
