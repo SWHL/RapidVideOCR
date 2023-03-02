@@ -1,3 +1,12 @@
+#### 🎈2023-03-02 v2.0.5~7 update:
+- Fix format error in generated srt file, [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
+
+#### 🎫2023-02-17 v2.0.4 update:
+- Optimized processing for incoming `TXTImages` directory. Will be faster and more accurate than passing `RGBImages`. It is recommended to pass in the `TXTImages` directory
+
+#### 💎2023-02-17 v2.0.2 update:
+- Fixed the problem of missing spaces in peer subtitle recognition
+
 #### 🎇2023-02-12 v2.0.1 update:
 - Fix the bug that the subtitle frame time becomes 0 when the video duration is longer than 1 hour.
 
