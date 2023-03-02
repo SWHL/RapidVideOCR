@@ -33,13 +33,13 @@ class RapidVideOCR():
         save_dir.mkdir(parents=True, exist_ok=True)
 
         srt_result, txt_result = [], []
-        for img_path in tqdm(img_list, desc='OCR'):
+        for i, img_path in enumerate(tqdm(img_list, desc='OCR')):
             time_str = self.get_time(img_path)
 
             img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
             ocr_res = self.run_ocr(img, img.shape[0])
             if ocr_res:
-                srt_result.append(f'{time_str}\n{ocr_res}\n')
+                srt_result.append(f'{i+1}\n{time_str}\n{ocr_res}\n')
                 txt_result.append(f'{ocr_res}\n')
 
         srt_path = save_dir / 'result.srt'
