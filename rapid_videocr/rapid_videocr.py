@@ -67,9 +67,11 @@ class RapidVideOCR():
         """
         split_paths = file_path.stem.split('_')
         start_time = split_paths[:4]
+        start_time[0] = start_time[0].ljust(2, '0')
         start_str = ':'.join(start_time[:3]) + f',{start_time[3]}'
 
         end_time = split_paths[5:9]
+        end_time[0] = end_time[0].ljust(2, '0')
         end_str = ':'.join(end_time[:3]) + f',{end_time[3]}'
         return f'{start_str} --> {end_str}'
 
