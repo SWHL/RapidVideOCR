@@ -62,8 +62,8 @@ flowchart LR
 1. Install and use VideoSubFinder software
     - Download link: [videosubfinder](https://sourceforge.net/projects/videosubfinder/)
     - Tutorial: [VideoSubFinder use documents](https://juejin.cn/post/7203362527082053691)
-   - The final generated `RGBImages` and `TXTImages` directories will generally be in the software installation directory
-    - ✧✧✧ It is recommended to use the images in the `TXTImages` directory, which will be more accurate.
+    - The final generated `RGBImages` and `TXTImages` directories will generally be in the software installation directory
+    - ✧ It is recommended to use the images in the `RGBImages` directory (thanks to feedback from [dyphire](https://github.com/dyphire) in [#21](https://github.com/SWHL/RapidVideOCR/issues/21))
 
 2. Install rapid_videocr
     ```bash
@@ -71,7 +71,7 @@ flowchart LR
     ```
 
 3. Use the RapidVideOCR tool
-    - The script runs:
+    - Run by scripts:
          ```python
          from rapid_videocr import RapidVideOCR
 
@@ -81,7 +81,7 @@ flowchart LR
          save_dir = 'result'
          extractor(rgb_dir, save_dir)
          ```
-     - Command line run:
+     - Run by command line:
        - Usage:
           ```bash
           $ rapid_videocr -h
