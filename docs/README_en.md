@@ -21,11 +21,9 @@ English | [简体中文](../README.md)
 - [Introduction](#introduction)
 - [TODO](#todo)
 - [Overall framework](#overall-framework)
-- [Change log (more)](#change-log-more)
-  - [🎈2023-03-02 v2.0.5~7 update:](#2023-03-02-v2057-update)
-  - [🎫2023-02-17 v2.0.4 update:](#2023-02-17-v204-update)
 - [Steps for usage](#steps-for-usage)
-  - [Announce](#announce)
+- [Change log (more)](#change-log-more)
+- [Announce](#announce)
 
 </details>
 
@@ -49,14 +47,6 @@ English | [简体中文](../README.md)
 flowchart LR
      A(VideoSubFinder) --Extract subtitle key frame--> B(RapidVideOCR) --OCR--> C(SRT)
 ```
-
-### Change log ([more](../docs/change_log_en.md))
-#### 🎈2023-03-02 v2.0.5~7 update:
-- Fix format error in generated srt file, [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
-
-#### 🎫2023-02-17 v2.0.4 update:
-- Optimized processing for incoming `TXTImages` directory. Will be faster and more accurate than passing `RGBImages`. It is recommended to pass in the `TXTImages` directory
-
 
 ### Steps for usage
 1. Install and use VideoSubFinder software
@@ -105,5 +95,9 @@ flowchart LR
     - Go to the `save_dir` directory to view the results.
     - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
 
-#### Announce
+### Change log ([more](../docs/change_log_en.md))
+- 🎈2023-03-02 v2.0.5~7 update:
+    - Fix format error in generated srt file, [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
+
+### Announce
 For international developers, we regard [Discussions](https://github.com/SWHL/RapidVideOCR/discussions) as our international community platform. All ideas and questions can be discussed here in English.
