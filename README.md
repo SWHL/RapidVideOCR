@@ -65,7 +65,7 @@ flowchart LR
    - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件
    - 使用教程：[VideoSubFinder提取字幕关键帧教程](https://juejin.cn/post/7203362527082053691)
    - 最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
-   - ✧✧✧ 推荐用`TXTImages`目录中图像，会更加准确
+   - ✧ 推荐用`RGBImages`目录中图像（感谢小伙伴[dyphire](https://github.com/dyphire)在[#21](https://github.com/SWHL/RapidVideOCR/issues/21)的反馈）
 2. 安装rapid_videocr
    ```bash
    pip install rapid_videocr
