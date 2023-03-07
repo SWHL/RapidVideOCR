@@ -20,11 +20,9 @@
 - [简介](#简介)
 - [TODO](#todo)
 - [整体框架](#整体框架)
-- [更新日志（more）](#更新日志more)
-  - [🎈2023-03-02 v2.0.5~7 update:](#2023-03-02-v2057-update)
-  - [🎫2023-02-17 v2.0.4 update:](#2023-02-17-v204-update)
 - [使用步骤](#使用步骤)
-  - [写在最后](#写在最后)
+- [更新日志（more）](#更新日志more)
+- [写在最后](#写在最后)
 
 </details>
 
@@ -43,6 +41,7 @@
 ### TODO
 - [x] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
 - [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
+- [ ] 叠字识别功能
 
 
 ### 整体框架
@@ -50,15 +49,6 @@
 flowchart LR
     A(VideoSubFinder) --提取字幕关键帧--> B(RapidVideOCR)  --OCR--> C(SRT)
 ```
-
-
-### 更新日志（[more](./docs/change_log.md)）
-#### 🎈2023-03-02 v2.0.5~7 update:
-- 修复生成的srt文件中的格式错误， [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
-
-#### 🎫2023-02-17 v2.0.4 update:
-- 针对传入的`TXTImages`目录，作了优化处理。相比于传入`RGBImages`，会更快和更准。推荐传入`TXTImages`目录
-
 
 ### 使用步骤
 1. 安装使用VideoSubFinder软件
@@ -105,7 +95,12 @@ flowchart LR
    - 值得注意的是，如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。
 
 
-#### 写在最后
+### 更新日志（[more](./docs/change_log.md)）
+- 🎈2023-03-02 v2.0.5~7 update:
+    - 修复生成的srt文件中的格式错误， [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
+
+
+### 写在最后
 - 扫码加入组织：
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.jpg" width="25%" height="25%" align="center">
