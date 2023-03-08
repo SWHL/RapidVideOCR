@@ -6,6 +6,6 @@ from rapid_videocr import RapidVideOCR
 
 extractor = RapidVideOCR()
 
-rgb_dir = 'test_files/TXTImages'
+rgb_dir = 'test_files/RGBImages'
 save_dir = 'result'
 extractor(rgb_dir, save_dir)

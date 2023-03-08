@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+from pathlib import Path
+
 import cv2
 import numpy as np
 
@@ -51,3 +53,7 @@ class CropByProject(object):
         loc_range = np.argwhere(loc_sum > 0)
         i0, i1 = loc_range[0][0], loc_range[-1][0]
         return i0, i1
+
+
+def mkdir(dir_path):
+    Path(dir_path).mkdir(parents=True, exist_ok=True)

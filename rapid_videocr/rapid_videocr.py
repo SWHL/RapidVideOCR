@@ -10,7 +10,7 @@ import numpy as np
 from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
-from .utils import CropByProject
+from .utils import CropByProject, mkdir
 
 CUR_DIR = Path(__file__).resolve().parent
 
@@ -27,20 +27,11 @@ class RapidVideOCR():
         dir_name = Path(video_sub_finder_dir).name
         self.is_txt_dir = True if dir_name == 'TXTImages' else False
 
-        img_list = list(Path(video_sub_finder_dir).iterdir())
-
         save_dir = Path(save_dir)
-        save_dir.mkdir(parents=True, exist_ok=True)
+        mkdir(save_dir)
 
-        srt_result, txt_result = [], []
-        for i, img_path in enumerate(tqdm(img_list, desc='OCR')):
-            time_str = self.get_time(img_path)
-
-            img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
-            ocr_res = self.run_ocr(img, img.shape[0])
-            if ocr_res:
-                srt_result.append(f'{i+1}\n{time_str}\n{ocr_res}\n')
-                txt_result.append(f'{ocr_res}\n')
+        img_list = list(Path(video_sub_finder_dir).iterdir())
+        srt_result, txt_result = self.concat_rec(img_list)
 
         srt_path = save_dir / 'result.srt'
         txt_path = save_dir / 'result.txt'
@@ -54,6 +45,69 @@ class RapidVideOCR():
         else:
             raise ValueError(f'The {out_format} dost not support.')
         print(f'The result has been saved to {save_dir} directory.')
+
+    def single_rec(self, img_list: List[np.ndarray]) -> Tuple[List, List]:
+        srt_result, txt_result = [], []
+        for i, img_path in enumerate(tqdm(img_list, desc='OCR')):
+            time_str = self.get_time(img_path)
+            img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
+            dt_boxes, rec_res = self.run_ocr(img, img.shape[0])
+            if rec_res:
+                txts = self.process_same_line(dt_boxes, rec_res)
+                srt_result.append(f'{i+1}\n{time_str}\n{txts}\n')
+                txt_result.append(f'{txts}\n')
+        return srt_result, txt_result
+
+    def concat_rec(self, img_list: List[np.ndarray]) -> Tuple[List, List]:
+        batch_size = 10
+        srt_result, txt_result = [], []
+        img_nums = len(img_list)
+        for start_i in range(0, img_nums, batch_size):
+            end_i = min(img_nums, start_i + batch_size)
+            select_imgs = img_list[start_i: end_i]
+
+            concat_imgs, points, batch_img_paths = [], [], []
+            for i, img_path in enumerate(select_imgs):
+                batch_img_paths.append(img_path)
+
+                img = cv2.imread(str(img_path))
+                h, w = img.shape[:2]
+
+                concat_imgs.append(img)
+                points.append([(0, i * h), (w, (i + 1) * h)])
+            result = np.vstack(concat_imgs)
+
+            dt_boxes, rec_res = self.run_ocr(result, padding_pixel=0)
+            if not rec_res:
+                continue
+
+            y_points = np.array(points)[:, :, 1]
+            left_top_boxes = np.array(dt_boxes)[:, 0, :]
+
+            match_dict = {}
+            for i, one_left in enumerate(left_top_boxes):
+                y = one_left[1]
+                condition = (y >= y_points[:, 0]) & (y <= y_points[:, 1])
+                index = np.argwhere(condition)
+                if not index.size:
+                    match_dict[i] = ''
+
+                match_index = index.squeeze().tolist()
+
+                cur_img_path = batch_img_paths[i]
+                match_dict.setdefault(match_index, []).append([cur_img_path,
+                                                               dt_boxes[i],
+                                                               rec_res[i]])
+
+            # 还原为srt格式
+            for k, v in match_dict.items():
+                cur_frame_idx = start_i * batch_size + k
+                img_path, one_dt_boxes, one_rec_res = v[0]
+                time_str = self.get_time(img_path)
+                txts = self.process_same_line([one_dt_boxes], [one_rec_res])
+                srt_result.append(f'{cur_frame_idx+1}\n{time_str}\n{txts}\n')
+                txt_result.append(f'{txts}\n')
+        return srt_result, txt_result
 
     @staticmethod
     def get_time(file_path: Path) -> str:
@@ -101,16 +155,18 @@ class RapidVideOCR():
         frame = padding_img(img, padding_value, padding_color)
         ocr_result, _ = self.rapid_ocr(frame)
         if ocr_result is None:
-            return None
+            return None, None
 
         dt_boxes, rec_res, _ = list(zip(*ocr_result))
+        return dt_boxes, rec_res
+
+    def process_same_line(self, dt_boxes, rec_res):
         if len(rec_res) == 1:
             return rec_res[0]
 
         dt_boxes_centroids = [self._compute_centroid(np.array(v))
                               for v in dt_boxes]
         y_centroids = np.array(dt_boxes_centroids)[:, 1].tolist()
-
         bool_res = self.is_same_line(y_centroids)
 
         final_res = ''
