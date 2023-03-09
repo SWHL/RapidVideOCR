@@ -11,7 +11,7 @@ import time
 s = time.time()
 rgb_dir = 'test_files/RGBImages'
 save_dir = 'result'
-extractor(rgb_dir, save_dir)
+extractor(rgb_dir, save_dir, is_single_res=True)
 
 elapse = time.time() - s
 print(elapse)

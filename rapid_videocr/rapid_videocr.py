@@ -16,10 +16,11 @@ CUR_DIR = Path(__file__).resolve().parent
 
 
 class RapidVideOCR():
-    def __init__(self):
+    def __init__(self, is_single_res: bool = False):
         self.rapid_ocr = RapidOCR()
         self.cropper = CropByProject()
         self.batch_size = 10
+        self.is_single_res = is_single_res
 
     def __call__(self,
                  video_sub_finder_dir: str,
@@ -33,9 +34,14 @@ class RapidVideOCR():
 
         img_list = list(Path(video_sub_finder_dir).glob('*.jpeg'))
 
-        srt_result, txt_result = self.single_rec(img_list, is_txt_dir)
+        if self.is_single_res:
+            print('Running with single recognition.')
+            srt_result, txt_result = self.single_rec(img_list, is_txt_dir)
+        else:
+            print('Running with concat recognition.')
+            srt_result, txt_result = self.concat_rec(img_list, is_txt_dir)
 
-        srt_path = save_dir / 'result_single.srt'
+        srt_path = save_dir / 'result.srt'
         txt_path = save_dir / 'result.txt'
         if out_format == 'txt':
             self.save_file(txt_path, txt_result)
@@ -71,44 +77,26 @@ class RapidVideOCR():
         for start_i in tqdm(range(0, img_nums, self.batch_size), desc='OCR'):
             end_i = min(img_nums, start_i + self.batch_size)
 
-            concat_img, points, img_paths = self.get_batch(img_list,
-                                                           start_i,
-                                                           end_i)
-
+            concat_img, img_coordinates, img_paths = self.get_batch(img_list,
+                                                                    start_i,
+                                                                    end_i)
             dt_boxes, rec_res = self.run_ocr(concat_img,
                                              padding_pixel=0,
                                              is_txt_dir=is_txt_dir)
             if not rec_res:
                 continue
 
-            y_points = np.array(points)[:, :, 1]
-            left_top_boxes = np.array(dt_boxes)[:, 0, :]
-
-            match_dict = {}
-            for i, one_left in enumerate(left_top_boxes):
-                y = one_left[1]
-                condition = (y >= y_points[:, 0]) & (y <= y_points[:, 1])
-                index = np.argwhere(condition)
-                if not index.size:
-                    match_dict[i] = ''
-
-                match_index = index.squeeze().tolist()
-                cur_img_path = img_paths[match_index]
-                match_dict.setdefault(match_index, []).append([cur_img_path,
-                                                               dt_boxes[i],
-                                                               rec_res[i]])
-
-            for k, v in match_dict.items():
-                cur_frame_idx = start_i + k
-                img_path, boxes, recs = list(zip(*v))
-                time_str = self.get_time(img_path[0])
-                txts = self.process_same_line(boxes, recs)
-                srt_result.append(f'{cur_frame_idx+1}\n{time_str}\n{txts}\n')
-                txt_result.append(f'{txts}\n')
+            srt_part, txt_part = self.get_match_results(start_i,
+                                                        img_coordinates,
+                                                        dt_boxes,
+                                                        rec_res,
+                                                        img_paths)
+            srt_result.extend(srt_part)
+            txt_result.extend(txt_part)
         return srt_result, txt_result
 
     def get_batch(self, img_list: List[str],
-                  start: int, end: int) -> Tuple[np.ndarray, List, List]:
+                  start: int, end: int) -> Tuple[np.ndarray, np.ndarray, List]:
         select_imgs = img_list[start: end]
 
         img_list, img_coordinates, batch_img_paths = [], [], []
@@ -123,7 +111,40 @@ class RapidVideOCR():
             img_coordinates.append([(0, i * h), (w, (i + 1) * h)])
 
         concat_img = np.vstack(img_list)
-        return concat_img, img_coordinates, batch_img_paths
+        return concat_img, np.array(img_coordinates), batch_img_paths
+
+    def get_match_results(self, start_i: int,
+                          img_coordinates: np.ndarray,
+                          dt_boxes: np.ndarray,
+                          rec_res: List,
+                          img_paths: list) -> Tuple[List, List]:
+        srt_result_part, txt_result_part = [], []
+
+        match_dict = {}
+        y_points = img_coordinates[:, :, 1]
+        left_top_boxes = dt_boxes[:, 0, :]
+        for i, one_left in enumerate(left_top_boxes):
+            y = one_left[1]
+            condition = (y >= y_points[:, 0]) & (y <= y_points[:, 1])
+            index = np.argwhere(condition)
+            if not index.size:
+                match_dict[i] = ''
+                continue
+
+            matched_index = index.squeeze().tolist()
+            matched_path = img_paths[matched_index]
+            match_dict.setdefault(matched_index, []).append([matched_path,
+                                                             dt_boxes[i],
+                                                             rec_res[i]])
+
+        for k, v in match_dict.items():
+            cur_frame_idx = start_i + k
+            img_path, boxes, recs = list(zip(*v))
+            time_str = self.get_time(img_path[0])
+            txts = self.process_same_line(boxes, recs)
+            srt_result_part.append(f'{cur_frame_idx+1}\n{time_str}\n{txts}\n')
+            txt_result_part.append(f'{txts}\n')
+        return srt_result_part, txt_result_part
 
     @staticmethod
     def get_time(file_path: Path) -> str:
@@ -145,10 +166,8 @@ class RapidVideOCR():
         end_str = ':'.join(end_time[:3]) + f',{end_time[3]}'
         return f'{start_str} --> {end_str}'
 
-    def run_ocr(self,
-                img: np.ndarray,
-                padding_pixel: int,
-                is_txt_dir: bool) -> Tuple[List, List]:
+    def run_ocr(self, img: np.ndarray, padding_pixel: int,
+                is_txt_dir: bool) -> Tuple[np.ndarray, List]:
         def padding_img(img: np.ndarray,
                         padding_value: Tuple[int],
                         padding_color: Tuple = (0, 0, 0)) -> np.ndarray:
@@ -175,7 +194,7 @@ class RapidVideOCR():
             return None, None
 
         dt_boxes, rec_res, _ = list(zip(*ocr_result))
-        return dt_boxes, rec_res
+        return np.array(dt_boxes), rec_res
 
     def process_same_line(self, dt_boxes, rec_res):
         rec_len = len(rec_res)
@@ -245,15 +264,19 @@ class RapidVideOCR():
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--img_dir', type=str,
-                        help='The full path of mp4 video.')
+                        help='The full path of RGBImages or TXTImages.')
     parser.add_argument('-s', '--save_dir', type=str,
                         help='The path of saving the recognition result.')
     parser.add_argument('-o', '--out_format', type=str, default='all',
                         choices=['srt', 'txt', 'all'],
                         help='Output file format. Default is "all"')
+    parser.add_argument('-m', '--mode', type=str, default='concat',
+                        choices=['single', 'concat'],
+                        help='Which mode to run, default is "concat"')
     args = parser.parse_args()
 
-    extractor = RapidVideOCR()
+    is_single_res = 'single' in args.mode
+    extractor = RapidVideOCR(is_single_res=is_single_res)
     extractor(args.img_dir, args.save_dir, args.out_format)
 
 
