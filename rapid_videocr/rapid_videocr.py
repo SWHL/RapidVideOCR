@@ -19,6 +19,7 @@ class RapidVideOCR():
     def __init__(self):
         self.rapid_ocr = RapidOCR()
         self.cropper = CropByProject()
+        self.batch_size = 10
 
     def __call__(self,
                  video_sub_finder_dir: str,
@@ -30,7 +31,8 @@ class RapidVideOCR():
         save_dir = Path(save_dir)
         mkdir(save_dir)
 
-        img_list = list(Path(video_sub_finder_dir).iterdir())
+        img_list = list(Path(video_sub_finder_dir).glob('*.jpeg'))
+
         srt_result, txt_result = self.single_rec(img_list, is_txt_dir)
 
         srt_path = save_dir / 'result_single.srt'
@@ -51,34 +53,31 @@ class RapidVideOCR():
         srt_result, txt_result = [], []
         for i, img_path in enumerate(tqdm(img_list, desc='OCR')):
             time_str = self.get_time(img_path)
+
             img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
             dt_boxes, rec_res = self.run_ocr(img, img.shape[0], is_txt_dir)
             if rec_res:
                 txts = self.process_same_line(dt_boxes, rec_res)
+
                 srt_result.append(f'{i+1}\n{time_str}\n{txts}\n')
                 txt_result.append(f'{txts}\n')
         return srt_result, txt_result
 
     def concat_rec(self, img_list: List[np.ndarray],
                    is_txt_dir: bool) -> Tuple[List, List]:
-        batch_size = 10
         srt_result, txt_result = [], []
+
         img_nums = len(img_list)
-        for start_i in tqdm(range(0, img_nums, batch_size), desc='OCR'):
-            end_i = min(img_nums, start_i + batch_size)
-            select_imgs = img_list[start_i: end_i]
+        for start_i in tqdm(range(0, img_nums, self.batch_size), desc='OCR'):
+            end_i = min(img_nums, start_i + self.batch_size)
 
-            concat_imgs, points, batch_img_paths = [], [], []
-            for i, img_path in enumerate(select_imgs):
-                batch_img_paths.append(img_path)
-                img = cv2.imread(str(img_path))
-                h, w = img.shape[:2]
+            concat_img, points, img_paths = self.get_batch(img_list,
+                                                           start_i,
+                                                           end_i)
 
-                concat_imgs.append(img)
-                points.append([(0, i * h), (w, (i + 1) * h)])
-            result = np.vstack(concat_imgs)
-
-            dt_boxes, rec_res = self.run_ocr(result, 0, is_txt_dir=is_txt_dir)
+            dt_boxes, rec_res = self.run_ocr(concat_img,
+                                             padding_pixel=0,
+                                             is_txt_dir=is_txt_dir)
             if not rec_res:
                 continue
 
@@ -94,7 +93,7 @@ class RapidVideOCR():
                     match_dict[i] = ''
 
                 match_index = index.squeeze().tolist()
-                cur_img_path = batch_img_paths[match_index]
+                cur_img_path = img_paths[match_index]
                 match_dict.setdefault(match_index, []).append([cur_img_path,
                                                                dt_boxes[i],
                                                                rec_res[i]])
@@ -102,11 +101,29 @@ class RapidVideOCR():
             for k, v in match_dict.items():
                 cur_frame_idx = start_i + k
                 img_path, boxes, recs = list(zip(*v))
-                time_str = self.get_time(v[0][0])
+                time_str = self.get_time(img_path[0])
                 txts = self.process_same_line(boxes, recs)
                 srt_result.append(f'{cur_frame_idx+1}\n{time_str}\n{txts}\n')
                 txt_result.append(f'{txts}\n')
         return srt_result, txt_result
+
+    def get_batch(self, img_list: List[str],
+                  start: int, end: int) -> Tuple[np.ndarray, List, List]:
+        select_imgs = img_list[start: end]
+
+        img_list, img_coordinates, batch_img_paths = [], [], []
+        for i, img_path in enumerate(select_imgs):
+            batch_img_paths.append(img_path)
+
+            img = cv2.imread(str(img_path))
+
+            img_list.append(img)
+
+            h, w = img.shape[:2]
+            img_coordinates.append([(0, i * h), (w, (i + 1) * h)])
+
+        concat_img = np.vstack(img_list)
+        return concat_img, img_coordinates, batch_img_paths
 
     @staticmethod
     def get_time(file_path: Path) -> str:
