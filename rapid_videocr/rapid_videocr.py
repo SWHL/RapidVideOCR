@@ -25,15 +25,15 @@ class RapidVideOCR():
                  save_dir: str,
                  out_format: str = 'all') -> None:
         dir_name = Path(video_sub_finder_dir).name
-        self.is_txt_dir = True if dir_name == 'TXTImages' else False
+        is_txt_dir = 'TXTImages' in dir_name
 
         save_dir = Path(save_dir)
         mkdir(save_dir)
 
         img_list = list(Path(video_sub_finder_dir).iterdir())
-        srt_result, txt_result = self.concat_rec(img_list)
+        srt_result, txt_result = self.single_rec(img_list, is_txt_dir)
 
-        srt_path = save_dir / 'result.srt'
+        srt_path = save_dir / 'result_single.srt'
         txt_path = save_dir / 'result.txt'
         if out_format == 'txt':
             self.save_file(txt_path, txt_result)
@@ -46,30 +46,31 @@ class RapidVideOCR():
             raise ValueError(f'The {out_format} dost not support.')
         print(f'The result has been saved to {save_dir} directory.')
 
-    def single_rec(self, img_list: List[np.ndarray]) -> Tuple[List, List]:
+    def single_rec(self, img_list: List[np.ndarray],
+                   is_txt_dir: bool) -> Tuple[List, List]:
         srt_result, txt_result = [], []
         for i, img_path in enumerate(tqdm(img_list, desc='OCR')):
             time_str = self.get_time(img_path)
             img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
-            dt_boxes, rec_res = self.run_ocr(img, img.shape[0])
+            dt_boxes, rec_res = self.run_ocr(img, img.shape[0], is_txt_dir)
             if rec_res:
                 txts = self.process_same_line(dt_boxes, rec_res)
                 srt_result.append(f'{i+1}\n{time_str}\n{txts}\n')
                 txt_result.append(f'{txts}\n')
         return srt_result, txt_result
 
-    def concat_rec(self, img_list: List[np.ndarray]) -> Tuple[List, List]:
+    def concat_rec(self, img_list: List[np.ndarray],
+                   is_txt_dir: bool) -> Tuple[List, List]:
         batch_size = 10
         srt_result, txt_result = [], []
         img_nums = len(img_list)
-        for start_i in range(0, img_nums, batch_size):
+        for start_i in tqdm(range(0, img_nums, batch_size), desc='OCR'):
             end_i = min(img_nums, start_i + batch_size)
             select_imgs = img_list[start_i: end_i]
 
             concat_imgs, points, batch_img_paths = [], [], []
             for i, img_path in enumerate(select_imgs):
                 batch_img_paths.append(img_path)
-
                 img = cv2.imread(str(img_path))
                 h, w = img.shape[:2]
 
@@ -77,7 +78,7 @@ class RapidVideOCR():
                 points.append([(0, i * h), (w, (i + 1) * h)])
             result = np.vstack(concat_imgs)
 
-            dt_boxes, rec_res = self.run_ocr(result, padding_pixel=0)
+            dt_boxes, rec_res = self.run_ocr(result, 0, is_txt_dir=is_txt_dir)
             if not rec_res:
                 continue
 
@@ -93,18 +94,16 @@ class RapidVideOCR():
                     match_dict[i] = ''
 
                 match_index = index.squeeze().tolist()
-
-                cur_img_path = batch_img_paths[i]
+                cur_img_path = batch_img_paths[match_index]
                 match_dict.setdefault(match_index, []).append([cur_img_path,
                                                                dt_boxes[i],
                                                                rec_res[i]])
 
-            # 还原为srt格式
             for k, v in match_dict.items():
-                cur_frame_idx = start_i * batch_size + k
-                img_path, one_dt_boxes, one_rec_res = v[0]
-                time_str = self.get_time(img_path)
-                txts = self.process_same_line([one_dt_boxes], [one_rec_res])
+                cur_frame_idx = start_i + k
+                img_path, boxes, recs = list(zip(*v))
+                time_str = self.get_time(v[0][0])
+                txts = self.process_same_line(boxes, recs)
                 srt_result.append(f'{cur_frame_idx+1}\n{time_str}\n{txts}\n')
                 txt_result.append(f'{txts}\n')
         return srt_result, txt_result
@@ -131,7 +130,8 @@ class RapidVideOCR():
 
     def run_ocr(self,
                 img: np.ndarray,
-                padding_pixel: int) -> Tuple[List, List]:
+                padding_pixel: int,
+                is_txt_dir: bool) -> Tuple[List, List]:
         def padding_img(img: np.ndarray,
                         padding_value: Tuple[int],
                         padding_color: Tuple = (0, 0, 0)) -> np.ndarray:
@@ -144,7 +144,7 @@ class RapidVideOCR():
                                             value=padding_color)
             return padded_img
 
-        if self.is_txt_dir:
+        if is_txt_dir:
             img = self.cropper(img)
             padding_value = 0, 0, int(img.shape[0] / 2), int(img.shape[0] / 2)
             padding_color = 255, 255, 255
@@ -161,7 +161,8 @@ class RapidVideOCR():
         return dt_boxes, rec_res
 
     def process_same_line(self, dt_boxes, rec_res):
-        if len(rec_res) == 1:
+        rec_len = len(rec_res)
+        if rec_len == 1:
             return rec_res[0]
 
         dt_boxes_centroids = [self._compute_centroid(np.array(v))
@@ -169,13 +170,21 @@ class RapidVideOCR():
         y_centroids = np.array(dt_boxes_centroids)[:, 1].tolist()
         bool_res = self.is_same_line(y_centroids)
 
-        final_res = ''
-        for i, is_same_line in enumerate(bool_res):
+        pair_points = list(zip(range(rec_len), range(1, rec_len)))
+
+        final_res, used = [], [False] * rec_len
+        for is_same_line, pair_point in zip(bool_res, pair_points):
             if is_same_line:
-                final_res += ' '.join(rec_res[i:i+2])
+                concat_str = []
+                for v in pair_point:
+                    used[v] = True
+                    concat_str.append(rec_res[v])
+                final_res.append(' '.join(concat_str))
             else:
-                final_res += '\n'.join(rec_res[i:i+2])
-        return final_res
+                for v in pair_point:
+                    if not used[v]:
+                        final_res.append(rec_res[v])
+        return '\n'.join(final_res)
 
     @staticmethod
     def save_file(save_path: Union[str, Path],
