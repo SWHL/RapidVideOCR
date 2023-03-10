@@ -3,6 +3,8 @@
 # @Contact: liekkaskono@163.com
 from pathlib import Path
 
+import shutil
+
 import sys
 import pytest
 
@@ -29,6 +31,9 @@ def test_single_rec():
     srt_data = read_txt(srt_path)
     txt_data = read_txt(txt_path)
 
+    print(srt_data)
+    print(txt_data)
+
     assert len(srt_data) == 12
     assert srt_data[2] == '空间里面他绝对赢不了的'
     assert srt_data[-2] == '你们接着善后'
@@ -48,6 +53,9 @@ def test_concat_rec():
     srt_data = read_txt(srt_path)
     txt_data = read_txt(txt_path)
 
+    print(srt_data)
+    print(txt_data)
+
     assert len(srt_data) == 12
     assert srt_data[2] == '空间里面他绝对赢不了的'
     assert srt_data[-2] == '你们接着善后'
@@ -62,9 +70,13 @@ def test_concat_rec():
 def test_empty_dir():
     extractor = RapidVideOCR(is_single_res=False)
     img_dir = test_file_dir / 'RGBImage'
+    mkdir(img_dir)
+
     with pytest.raises(RapidVideOCRError) as exc_info:
         extractor(img_dir, test_file_dir)
     assert exc_info.type is RapidVideOCRError
+
+    shutil.rmtree(img_dir)
 
 
 def test_nothing_dir():
@@ -74,3 +86,5 @@ def test_nothing_dir():
     with pytest.raises(RapidVideOCRError) as exc_info:
         extractor(img_dir, test_file_dir)
     assert exc_info.type is RapidVideOCRError
+
+    shutil.rmtree(img_dir)

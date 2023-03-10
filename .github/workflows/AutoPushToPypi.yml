@@ -27,7 +27,7 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
           pip install six
-          pytest tests/test_*.py
+          pytest -s tests/test_*.py
 
   GenerateWHL_PushPyPi:
     needs: UnitTesting
@@ -42,13 +42,6 @@ jobs:
 
           python -m pip install --upgrade pip
           python setup.py bdist_wheel ${{ github.event.head_commit.message }}
-
-      # - name: Publish distribution 📦 to Test PyPI
-      #   uses: pypa/gh-action-pypi-publish@v1.5.0
-      #   with:
-      #     password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-      #     repository_url: https://test.pypi.org/legacy/
-      #     packages_dir: dist/
 
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@v1.5.0
