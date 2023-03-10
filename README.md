@@ -40,8 +40,8 @@
 
 ### TODO
 - [x] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
-- [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
 - [x] 叠字识别功能
+- [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
 - [ ] API docs
 
 
