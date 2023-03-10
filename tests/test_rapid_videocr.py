@@ -31,9 +31,6 @@ def test_single_rec():
     srt_data = read_txt(srt_path)
     txt_data = read_txt(txt_path)
 
-    print(srt_data)
-    print(txt_data)
-
     assert len(srt_data) == 12
     assert srt_data[2] == '空间里面他绝对赢不了的'
     assert srt_data[-2] == '你们接着善后'
@@ -52,9 +49,6 @@ def test_concat_rec():
 
     srt_data = read_txt(srt_path)
     txt_data = read_txt(txt_path)
-
-    print(srt_data)
-    print(txt_data)
 
     assert len(srt_data) == 12
     assert srt_data[2] == '空间里面他绝对赢不了的'

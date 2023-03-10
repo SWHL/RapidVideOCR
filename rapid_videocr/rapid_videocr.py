@@ -54,6 +54,7 @@ class RapidVideOCR():
         mkdir(save_dir)
 
         img_list = list(Path(video_sub_finder_dir).glob('*.jpeg'))
+        img_list = sorted(img_list, key=lambda x: self.get_sort_key(x))
         if not img_list:
             raise RapidVideOCRError(
                 f'{video_sub_finder_dir} has not images with jpeg as suffix.')
@@ -66,6 +67,10 @@ class RapidVideOCR():
             srt_result, txt_result = self.concat_rec(img_list, is_txt_dir)
 
         self.export_file(save_dir, srt_result, txt_result, out_format)
+
+    @staticmethod
+    def get_sort_key(x):
+        return int(''.join(str(x.stem).split('_')[:4]))
 
     def single_rec(self, img_list: List[str],
                    is_txt_dir: bool) -> Tuple[List, List]:
