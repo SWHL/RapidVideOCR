@@ -1,3 +1,6 @@
+#### 🥇2023-03-10 v2.1.0 update:
+- Added overlap recognition function, faster speed, the default is concat recognition mode.
+
 #### 🎈2023-03-02 v2.0.5~7 update:
 - Fix format error in generated srt file, [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
 

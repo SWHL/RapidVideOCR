@@ -1,6 +1,9 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+from pathlib import Path
+from typing import List
+
 import cv2
 import numpy as np
 
@@ -51,3 +54,16 @@ class CropByProject(object):
         loc_range = np.argwhere(loc_sum > 0)
         i0, i1 = loc_range[0][0], loc_range[-1][0]
         return i0, i1
+
+
+def mkdir(dir_path):
+    Path(dir_path).mkdir(parents=True, exist_ok=True)
+
+
+def read_txt(txt_path: str) -> List:
+    if not isinstance(txt_path, str):
+        txt_path = str(txt_path)
+
+    with open(txt_path, 'r', encoding='utf-8') as f:
+        data = list(map(lambda x: x.rstrip('\n'), f))
+    return data
