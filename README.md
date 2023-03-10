@@ -41,7 +41,8 @@
 ### TODO
 - [x] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
 - [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
-- [ ] 叠字识别功能
+- [x] 叠字识别功能
+- [ ] API docs
 
 
 ### 整体框架
@@ -65,6 +66,9 @@ flowchart LR
         ```python
         from rapid_videocr import RapidVideOCR
 
+        # RapidVideOCR有两个初始化参数
+        # is_single_res: 是否用单张图识别，默认是False，也就是默认用叠图识别
+        # concat_batch: 叠图识别的图像张数，默认10，可自行调节
         extractor = RapidVideOCR()
 
         rgb_dir = 'test_files/TXTImages'
@@ -74,21 +78,28 @@ flowchart LR
     - 命令行运行：
       - Usage:
          ```bash
-         $ rapid_videocr -h
-         usage: rapid_videocr [-h] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}]
+        $ rapid_videocr -h
+        usage: rapid_videocr [-h] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}]
+                            [-m {single,concat}]
 
-         optional arguments:
-         -h, --help            show this help message and exit
-         -i IMG_DIR, --img_dir IMG_DIR
-                                 The full path of mp4 video.
-         -s SAVE_DIR, --save_dir SAVE_DIR
-                                 The path of saving the recognition result.
-         -o {srt,txt,all}, --out_format {srt,txt,all}
-                                 Output file format. Default is "all"
-         ```
+        optional arguments:
+        -h, --help            show this help message and exit
+        -i IMG_DIR, --img_dir IMG_DIR
+                                The full path of RGBImages or TXTImages.
+        -s SAVE_DIR, --save_dir SAVE_DIR
+                                The path of saving the recognition result.
+        -o {srt,txt,all}, --out_format {srt,txt,all}
+                                Output file format. Default is "all"
+        -m {single,concat}, --mode {single,concat}
+                                Which mode to run (concat recognition or single
+                                recognition), default is "concat"
+        -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
+                                The batch of concating image nums in concat
+                                recognition mode. Default is 10.
+        ```
        - Example:
          ```bash
-         $ rapid_videocr -i RGBImages -s Results -o srt
+         $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10
          ```
 4. 查看结果
    - 前往`save_dir`目录下即可查看结果。
@@ -96,6 +107,9 @@ flowchart LR
 
 
 ### 更新日志（[more](./docs/change_log.md)）
+- 🥇2023-03-10 v2.1.0 update:
+  - 添加叠字识别功能，速度更快，默认是叠字识别功能
+
 - 🎈2023-03-02 v2.0.5~7 update:
     - 修复生成的srt文件中的格式错误， [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
 
