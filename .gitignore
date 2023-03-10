@@ -10,7 +10,6 @@ test_files/
 .DS_Store
 
 *.bin
-./rapid_ocr
 
 .mypy_cache
 
