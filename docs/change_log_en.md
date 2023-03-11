@@ -1,3 +1,7 @@
+#### 🎢2023-03-11 v2.1.1 update:
+- Fix the difference between single image recognition and the previous version.
+- The default recognition mode is changed to single image recognition, please decide whether to use overlapping image recognition.
+
 #### 🥇2023-03-10 v2.1.0 update:
 - Added overlap recognition function, faster speed, the default is concat recognition mode.
 

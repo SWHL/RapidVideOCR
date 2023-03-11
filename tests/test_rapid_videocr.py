@@ -24,7 +24,7 @@ txt_path = test_file_dir / 'result.txt'
 
 
 def test_single_rec():
-    extractor = RapidVideOCR(is_single_res=True)
+    extractor = RapidVideOCR(is_concat_rec=False)
     img_dir = test_file_dir / 'RGBImages'
     extractor(img_dir, test_file_dir)
 
@@ -43,7 +43,7 @@ def test_single_rec():
 
 
 def test_concat_rec():
-    extractor = RapidVideOCR(is_single_res=False)
+    extractor = RapidVideOCR(is_concat_rec=True)
     img_dir = test_file_dir / 'RGBImages'
     extractor(img_dir, test_file_dir)
 
@@ -62,7 +62,7 @@ def test_concat_rec():
 
 
 def test_empty_dir():
-    extractor = RapidVideOCR(is_single_res=False)
+    extractor = RapidVideOCR(is_concat_rec=False)
     img_dir = test_file_dir / 'RGBImage'
     mkdir(img_dir)
 
@@ -74,7 +74,7 @@ def test_empty_dir():
 
 
 def test_nothing_dir():
-    extractor = RapidVideOCR(is_single_res=False)
+    extractor = RapidVideOCR(is_concat_rec=False)
     img_dir = test_file_dir / 'RGBImage'
     mkdir(img_dir)
     with pytest.raises(RapidVideOCRError) as exc_info:

@@ -70,7 +70,7 @@ setuptools.setup(
     url="https://github.com/SWHL/RapidVideOCR.git",
     license='Apache-2.0',
     include_package_data=True,
-    install_requires=["tqdm>=4.52.0", "rapidocr_onnxruntime>=1.1.29"],
+    install_requires=["tqdm>=4.52.0", "rapidocr_onnxruntime>=1.2.2"],
     packages=[MODULE_NAME],
     package_data={'': ['*.yaml']},
     keywords=['rapidocr,videocr,subtitle'],

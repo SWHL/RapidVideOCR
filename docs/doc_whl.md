@@ -18,7 +18,7 @@ pip install rapid_videocr
     ```python
     # __init__
     Args:
-       is_single_res (bool, optional): Whether to single recognition. Defaults to False.
+       is_concat_rec (bool, optional): Whether to single recognition. Defaults to False.
        concat_batch (int, optional): The batch of concating image nums in concat recognition mode. Defaults to 10.
 
     # __call__
@@ -35,7 +35,7 @@ pip install rapid_videocr
     ```python
     from rapid_videocr import RapidVideOCR
 
-    extractor = RapidVideOCR(is_single_res=True, concat_batch=10)
+    extractor = RapidVideOCR(is_concat_rec=True, concat_batch=10)
 
     rgb_dir = 'RGBImages'
     save_dir = 'result'
@@ -59,7 +59,7 @@ pip install rapid_videocr
                             Output file format. Default is "all"
     -m {single,concat}, --mode {single,concat}
                             Which mode to run (concat recognition or single
-                            recognition), default is "concat"
+                            recognition), default is "single"
     -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
                             The batch of concating image nums in concat
                             recognition mode. Default is 10.

@@ -16,18 +16,18 @@ CUR_DIR = Path(__file__).resolve().parent
 
 
 class RapidVideOCR():
-    def __init__(self, is_single_res: bool = False, concat_batch: int = 10):
+    def __init__(self, is_concat_rec: bool = False, concat_batch: int = 10):
         """Init
 
         Args:
-            is_single_res (bool, optional): Whether to single recognition. Defaults to False.
+            is_concat_rec (bool, optional): Whether to single recognition. Defaults to False.
             concat_batch (int, optional): The batch of concating image nums in concat recognition mode. Defaults to 10.
         """
-        self.rapid_ocr = RapidOCR()
+        self.rapid_ocr = RapidOCR(width_height_ratio=-1)
         self.cropper = CropByProject()
 
         self.batch_size = concat_batch
-        self.is_single_res = is_single_res
+        self.is_concat_rec = is_concat_rec
 
     def __call__(self,
                  video_sub_finder_dir: Union[str, Path],
@@ -59,12 +59,12 @@ class RapidVideOCR():
             raise RapidVideOCRError(
                 f'{video_sub_finder_dir} has not images with jpeg as suffix.')
 
-        if self.is_single_res:
-            print('Running with single recognition.')
-            srt_result, txt_result = self.single_rec(img_list, is_txt_dir)
-        else:
+        if self.is_concat_rec:
             print('Running with concat recognition.')
             srt_result, txt_result = self.concat_rec(img_list, is_txt_dir)
+        else:
+            print('Running with single recognition.')
+            srt_result, txt_result = self.single_rec(img_list, is_txt_dir)
 
         self.export_file(save_dir, srt_result, txt_result, out_format)
 
@@ -79,11 +79,10 @@ class RapidVideOCR():
             time_str = self.get_time(img_path)
 
             img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
-            dt_boxes, rec_res = self.run_ocr(img, int(img.shape[1] / 3),
+            dt_boxes, rec_res = self.run_ocr(img, img.shape[0],
                                              is_txt_dir)
             if rec_res:
                 txts = self.process_same_line(dt_boxes, rec_res)
-
                 srt_result.append(f'{i+1}\n{time_str}\n{txts}\n')
                 txt_result.append(f'{txts}\n')
         return srt_result, txt_result
@@ -314,15 +313,15 @@ def main() -> None:
     parser.add_argument('-o', '--out_format', type=str, default='all',
                         choices=['srt', 'txt', 'all'],
                         help='Output file format. Default is "all"')
-    parser.add_argument('-m', '--mode', type=str, default='concat',
+    parser.add_argument('-m', '--mode', type=str, default='single',
                         choices=['single', 'concat'],
-                        help='Which mode to run (concat recognition or single recognition), default is "concat"')
+                        help='Which mode to run (concat recognition or single recognition), default is "single"')
     parser.add_argument('-b', '--concat_batch', type=int, default=10,
                         help='The batch of concating image nums in concat recognition mode. Default is 10.')
     args = parser.parse_args()
 
-    is_single_res = 'single' in args.mode
-    extractor = RapidVideOCR(is_single_res=is_single_res,
+    is_concat_rec = 'concat' in args.mode
+    extractor = RapidVideOCR(is_concat_rec=is_concat_rec,
                              concat_batch=args.concat_batch)
     extractor(args.img_dir, args.save_dir, args.out_format)
 

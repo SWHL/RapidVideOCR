@@ -67,7 +67,7 @@ flowchart LR
             ```python
             # __init__
             Args:
-               is_single_res (bool, optional): Whether to single recognition. Defaults to False.
+               is_concat_rec (bool, optional): Whether to single recognition. Defaults to False.
                concat_batch (int, optional): The batch of concating image nums in concat recognition mode. Defaults to 10.
 
             # __call__
@@ -84,7 +84,7 @@ flowchart LR
             ```python
             from rapid_videocr import RapidVideOCR
 
-            extractor = RapidVideOCR(is_single_res=True, concat_batch=10)
+            extractor = RapidVideOCR(is_concat_rec=True, concat_batch=10)
 
             rgb_dir = 'RGBImages'
             save_dir = 'result'
@@ -107,7 +107,7 @@ flowchart LR
                                     Output file format. Default is "all"
             -m {single,concat}, --mode {single,concat}
                                     Which mode to run (concat recognition or single
-                                    recognition), default is "concat"
+                                    recognition), default is "single"
             -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
                                     The batch of concating image nums in concat
                                     recognition mode. Default is 10.
@@ -122,6 +122,10 @@ flowchart LR
     - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
 
 ### Change log ([more](../docs/change_log_en.md))
+- 🎢2023-03-11 v2.1.1 update:
+   - Fix the difference between single image recognition and the previous version.
+   - The default recognition mode is changed to single image recognition, please decide whether to use overlapping image recognition.
+
 - 🥇2023-03-10 v2.1.0 update:
   - Added overlap recognition function, faster speed, the default is concat recognition mode.
 

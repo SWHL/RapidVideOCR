@@ -67,7 +67,7 @@ flowchart LR
         from rapid_videocr import RapidVideOCR
 
         # RapidVideOCR有两个初始化参数
-        # is_single_res: 是否用单张图识别，默认是False，也就是默认用叠图识别
+        # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
         # concat_batch: 叠图识别的图像张数，默认10，可自行调节
         extractor = RapidVideOCR()
 
@@ -92,7 +92,7 @@ flowchart LR
                                 Output file format. Default is "all"
         -m {single,concat}, --mode {single,concat}
                                 Which mode to run (concat recognition or single
-                                recognition), default is "concat"
+                                recognition), default is "single"
         -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
                                 The batch of concating image nums in concat
                                 recognition mode. Default is 10.
@@ -107,11 +107,12 @@ flowchart LR
 
 
 ### 更新日志（[more](./docs/change_log.md)）
+- 🎢2023-03-11 v2.1.1 update:
+  - 修复单图识别与之前版本差异问题
+  - 默认识别模式更改为单图识别，是否使用叠图识别，请自行决定
+
 - 🥇2023-03-10 v2.1.0 update:
   - 添加叠字识别功能，速度更快，默认是叠字识别功能
-
-- 🎈2023-03-02 v2.0.5~7 update:
-    - 修复生成的srt文件中的格式错误， [#19](https://github.com/SWHL/RapidVideOCR/issues/19)
 
 
 ### 写在最后
