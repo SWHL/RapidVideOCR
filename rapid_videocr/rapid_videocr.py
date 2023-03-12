@@ -143,7 +143,7 @@ class RapidVideOCR():
         left_top_boxes = dt_boxes[:, 0, :]
         for i, one_left in enumerate(left_top_boxes):
             y = one_left[1]
-            condition = (y >= y_points[:, 0]) & (y <= y_points[:, 1])
+            condition = (y >= y_points[:, 0]) & (y < y_points[:, 1])
             index = np.argwhere(condition)
             if not index.size:
                 match_dict[i] = ''
