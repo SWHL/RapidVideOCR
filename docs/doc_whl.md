@@ -56,10 +56,10 @@ pip install rapid_videocr
     -s SAVE_DIR, --save_dir SAVE_DIR
                             The path of saving the recognition result.
     -o {srt,txt,all}, --out_format {srt,txt,all}
-                            Output file format. Default is "all"
+                            Output file format. Default is "all".
     -m {single,concat}, --mode {single,concat}
                             Which mode to run (concat recognition or single
-                            recognition), default is "single"
+                            recognition), default is "single".
     -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
                             The batch of concating image nums in concat
                             recognition mode. Default is 10.
