@@ -122,12 +122,11 @@ flowchart LR
     - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
 
 ### Change log ([more](../docs/change_log_en.md))
+- 😀2023-03-14 v2.1.3 update:
+  - Fix the error when inputting the `TXtImages` directory and recognizing the overlap.
+
 - 😜2023-03-12 v2.1.2 update:
   - Fix index error in issue [#22](https://github.com/SWHL/RapidVideOCR/issues/22)
-
-- 🎢2023-03-11 v2.1.1 update:
-   - Fix the difference between single image recognition and the previous version.
-   - The default recognition mode is changed to single image recognition, please decide whether to use overlapping image recognition.
 
 ### Announce
 For international developers, we regard [Discussions](https://github.com/SWHL/RapidVideOCR/discussions) as our international community platform. All ideas and questions can be discussed here in English.

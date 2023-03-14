@@ -64,7 +64,7 @@ class RapidVideOCR():
             srt_result, txt_result = self.concat_rec(img_list, is_txt_dir)
         else:
             print('Running with single recognition.')
-            srt_result, txt_result = self.single_rec(img_list, is_txt_dir)
+            srt_result, txt_result = self.single_rec(img_list)
 
         self.export_file(save_dir, srt_result, txt_result, out_format)
 
@@ -72,15 +72,14 @@ class RapidVideOCR():
     def get_sort_key(x):
         return int(''.join(str(x.stem).split('_')[:4]))
 
-    def single_rec(self, img_list: List[str],
-                   is_txt_dir: bool) -> Tuple[List, List]:
+    def single_rec(self, img_list: List[str]) -> Tuple[List, List]:
         srt_result, txt_result = [], []
         for i, img_path in enumerate(tqdm(img_list, desc='OCR')):
             time_str = self.get_time(img_path)
 
             img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), 1)
-            dt_boxes, rec_res = self.run_ocr(img, img.shape[0],
-                                             is_txt_dir)
+            img = self.padding_img(img, (img.shape[0], img.shape[0], 0, 0))
+            dt_boxes, rec_res = self.run_ocr(img)
             if rec_res:
                 txts = self.process_same_line(dt_boxes, rec_res)
                 srt_result.append(f'{i+1}\n{time_str}\n{txts}\n')
@@ -97,10 +96,9 @@ class RapidVideOCR():
 
             concat_img, img_coordinates, img_paths = self.get_batch(img_list,
                                                                     start_i,
-                                                                    end_i)
-            dt_boxes, rec_res = self.run_ocr(concat_img,
-                                             padding_pixel=0,
-                                             is_txt_dir=is_txt_dir)
+                                                                    end_i,
+                                                                    is_txt_dir)
+            dt_boxes, rec_res = self.run_ocr(concat_img)
             if not rec_res:
                 continue
 
@@ -114,7 +112,8 @@ class RapidVideOCR():
         return srt_result, txt_result
 
     def get_batch(self, img_list: List[str],
-                  start: int, end: int) -> Tuple[np.ndarray, np.ndarray, List]:
+                  start: int, end: int,
+                  is_txt_dir: bool) -> Tuple[np.ndarray, np.ndarray, List]:
         select_imgs = img_list[start: end]
 
         img_list, img_coordinates, batch_img_paths = [], [], []
@@ -122,6 +121,9 @@ class RapidVideOCR():
             batch_img_paths.append(img_path)
 
             img = cv2.imread(str(img_path))
+
+            if is_txt_dir:
+                img = cv2.resize(img, None, fx=0.25, fy=0.25)
 
             img_list.append(img)
 
@@ -185,35 +187,26 @@ class RapidVideOCR():
         end_str = ':'.join(end_time[:3]) + f',{end_time[3]}'
         return f'{start_str} --> {end_str}'
 
-    def run_ocr(self, img: np.ndarray, padding_pixel: int,
-                is_txt_dir: bool) -> Tuple[np.ndarray, List]:
-
-        def padding_img(img: np.ndarray,
-                        padding_value: Tuple[int, int, int, int],
-                        padding_color: Tuple = (0, 0, 0)) -> np.ndarray:
-            padded_img = cv2.copyMakeBorder(img,
-                                            padding_value[0],
-                                            padding_value[1],
-                                            padding_value[2],
-                                            padding_value[3],
-                                            cv2.BORDER_CONSTANT,
-                                            value=padding_color)
-            return padded_img
-
-        padding_value = padding_pixel, padding_pixel, 0, 0
-        padding_color = 0, 0, 0
-        if is_txt_dir:
-            img = self.cropper(img)
-            padding_value = 0, 0, int(img.shape[0] / 2), int(img.shape[0] / 2)
-            padding_color = 255, 255, 255
-
-        frame = padding_img(img, padding_value, padding_color)
-        ocr_result, _ = self.rapid_ocr(frame)
+    def run_ocr(self, img: np.ndarray) -> Tuple[np.ndarray, List]:
+        ocr_result, _ = self.rapid_ocr(img)
         if ocr_result is None:
             return None, None
 
         dt_boxes, rec_res, _ = list(zip(*ocr_result))
         return np.array(dt_boxes), rec_res
+
+    @staticmethod
+    def padding_img(img: np.ndarray,
+                    padding_value: Tuple[int, int, int, int],
+                    padding_color: Tuple = (0, 0, 0)) -> np.ndarray:
+        padded_img = cv2.copyMakeBorder(img,
+                                        padding_value[0],
+                                        padding_value[1],
+                                        padding_value[2],
+                                        padding_value[3],
+                                        cv2.BORDER_CONSTANT,
+                                        value=padding_color)
+        return padded_img
 
     def process_same_line(self, dt_boxes, rec_res):
         rec_len = len(rec_res)

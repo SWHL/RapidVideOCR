@@ -23,9 +23,15 @@ srt_path = test_file_dir / 'result.srt'
 txt_path = test_file_dir / 'result.txt'
 
 
-def test_single_rec():
+@pytest.mark.parametrize(
+    'img_dir',
+    [
+        test_file_dir / 'RGBImages',
+        test_file_dir / 'TXTImages',
+    ]
+)
+def test_single_rec(img_dir):
     extractor = RapidVideOCR(is_concat_rec=False)
-    img_dir = test_file_dir / 'RGBImages'
     extractor(img_dir, test_file_dir)
 
     srt_data = read_txt(srt_path)
@@ -42,9 +48,14 @@ def test_single_rec():
     txt_path.unlink()
 
 
-def test_concat_rec():
+@pytest.mark.parametrize(
+    'img_dir',
+    [
+        test_file_dir / 'RGBImages',
+    ]
+)
+def test_concat_rec(img_dir):
     extractor = RapidVideOCR(is_concat_rec=True)
-    img_dir = test_file_dir / 'RGBImages'
     extractor(img_dir, test_file_dir)
 
     srt_data = read_txt(srt_path)
@@ -61,9 +72,15 @@ def test_concat_rec():
     txt_path.unlink()
 
 
-def test_empty_dir():
+@pytest.mark.parametrize(
+    'img_dir',
+    [
+        test_file_dir / 'RGBImage',
+        test_file_dir / 'TXTImage',
+    ]
+)
+def test_empty_dir(img_dir):
     extractor = RapidVideOCR(is_concat_rec=False)
-    img_dir = test_file_dir / 'RGBImage'
     mkdir(img_dir)
 
     with pytest.raises(RapidVideOCRError) as exc_info:
@@ -73,9 +90,15 @@ def test_empty_dir():
     shutil.rmtree(img_dir)
 
 
-def test_nothing_dir():
+@pytest.mark.parametrize(
+    'img_dir',
+    [
+        test_file_dir / 'RGBImage',
+        test_file_dir / 'TXTImage',
+    ]
+)
+def test_nothing_dir(img_dir):
     extractor = RapidVideOCR(is_concat_rec=False)
-    img_dir = test_file_dir / 'RGBImage'
     mkdir(img_dir)
     with pytest.raises(RapidVideOCRError) as exc_info:
         extractor(img_dir, test_file_dir)

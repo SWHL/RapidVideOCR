@@ -107,12 +107,11 @@ flowchart LR
 
 
 ### 更新日志（[more](./docs/change_log.md)）
+- 😀2023-03-14 v2.1.3 update:
+  - 修复输入`TXTImages`目录且叠字识别时错误
+
 - 😜2023-03-12 v2.1.2 update:
   - 修复索引错误，[#22](https://github.com/SWHL/RapidVideOCR/issues/22)
-
-- 🎢2023-03-11 v2.1.1 update:
-  - 修复单图识别与之前版本差异问题
-  - 默认识别模式更改为单图识别，是否使用叠图识别，请自行决定
 
 
 ### 写在最后

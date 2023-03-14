@@ -1,3 +1,6 @@
+#### 😀2023-03-14 v2.1.3 update:
+- Fix the error when inputting the `TXtImages` directory and recognizing the overlap
+
 #### 😜2023-03-12 v2.1.2 update:
   - Fix index error in issue [#22](https://github.com/SWHL/RapidVideOCR/issues/22)
 
