@@ -39,6 +39,9 @@ English | [简体中文](../README.md)
 
 ### TODO
 - [x] Add the processing interface for [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software to extract subtitle frame results
+- [x] Overlapping recognition function
+- [ ] Package the program as an executable
+- [ ] Write a cross-platform interface
 - [ ] Try to integrate the core functions of VideoSubFinder into this project, through its open CLI mode
 - [ ] API docs
 
