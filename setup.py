@@ -80,6 +80,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
+    python_requires='>=3.7,<=3.10',
     entry_points={
         'console_scripts': [f'{MODULE_NAME}={MODULE_NAME}.{MODULE_NAME}:main'],
     }
