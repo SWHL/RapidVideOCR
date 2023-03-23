@@ -14,6 +14,7 @@ def get_latest_version(package_name) -> str:
     output = subprocess.run(["pip", "index", "versions", package_name],
                             capture_output=True)
     output = output.stdout.decode('utf-8')
+    print(output)
     if output:
         return extract_version(output)
     return ''
@@ -48,6 +49,8 @@ def extract_version(message: str) -> str:
 
 MODULE_NAME = 'rapid_videocr'
 latest_version = get_latest_version(MODULE_NAME)
+
+print(latest_version)
 VERSION_NUM = version_add_one(latest_version)
 
 # 优先提取commit message中的语义化版本号，如无，则自动加1
