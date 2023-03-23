@@ -75,3 +75,5 @@ pip install rapid_videocr
     ```bash
     $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10 -p 1
     ```
+
+See details for [RapidVideOCR](https://github.com/SWHL/RapidVideOCR).
