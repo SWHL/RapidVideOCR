@@ -1,8 +1,12 @@
+#### 👽2023-03-23 v2.1.5 update:
+- Added print to screen control parameter `is_print_console`
+- Adjust the position of the `out_format` parameter to when initializing the class.
+
 #### 😀2023-03-14 v2.1.3 update:
 - Fix the error when inputting the `TXtImages` directory and recognizing the overlap
 
 #### 😜2023-03-12 v2.1.2 update:
-  - Fix index error in issue [#22](https://github.com/SWHL/RapidVideOCR/issues/22)
+- Fix index error in issue [#22](https://github.com/SWHL/RapidVideOCR/issues/22)
 
 #### 🎢2023-03-11 v2.1.1 update:
 - Fix the difference between single image recognition and the previous version.

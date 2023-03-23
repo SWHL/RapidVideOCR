@@ -72,12 +72,13 @@ flowchart LR
             Args:
                is_concat_rec (bool, optional): Whether to single recognition. Defaults to False.
                concat_batch (int, optional): The batch of concating image nums in concat recognition mode. Defaults to 10.
+               out_format (str, optional): Output format of subtitle(srt, txt, all). Defaults to 'all'.
+               is_print_console (bool, optional): Whether to print the subtitle results to console. 1 means to print results to console. Default is 0.
 
             # __call__
             Args:
                  video_sub_finder_dir (Union[str, Path]): RGBImages or TXTImages from VideoSubFinder app.
                  save_dir (Union[str, Path]): The directory of saving the srt/txt file.
-                 out_format (str, optional): Output format of subtitle(srt, txt, all). Defaults to 'all'.
 
             Raises:
                 RapidVideOCRError: meet some error.
@@ -87,37 +88,44 @@ flowchart LR
             ```python
             from rapid_videocr import RapidVideOCR
 
-            extractor = RapidVideOCR(is_concat_rec=True, concat_batch=10)
+            extractor = RapidVideOCR(is_concat_rec=True,
+                                     concat_batch=10,
+                                     out_format='srt',
+                                     is_print_console=False)
 
             rgb_dir = 'RGBImages'
             save_dir = 'result'
-            extractor(video_sub_finder_dir=rgb_dir, save_dir=save_dir, out_format='srt')
+            extractor(video_sub_finder_dir=rgb_dir, save_dir=save_dir)
             ```
      - Run by command line:
         - Usage:
             ```bash
             $ rapid_videocr -h
-            usage: rapid_videocr [-h] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}]
-                                [-m {single,concat}]
+            usage: rapid_videocr [-h] -i IMG_DIR [-s SAVE_DIR] [-o {srt,txt,all}]
+                                [-m {single,concat}] [-b CONCAT_BATCH] [-p {0,1}]
 
             optional arguments:
             -h, --help            show this help message and exit
             -i IMG_DIR, --img_dir IMG_DIR
                                     The full path of RGBImages or TXTImages.
             -s SAVE_DIR, --save_dir SAVE_DIR
-                                    The path of saving the recognition result.
+                                    The path of saving the recognition result. Default is
+                                    "results" under the current directory.
             -o {srt,txt,all}, --out_format {srt,txt,all}
-                                    Output file format. Default is "all"
+                                    Output file format. Default is "all".
             -m {single,concat}, --mode {single,concat}
                                     Which mode to run (concat recognition or single
-                                    recognition), default is "single"
+                                    recognition). Default is "single".
             -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
                                     The batch of concating image nums in concat
                                     recognition mode. Default is 10.
+            -p {0,1}, --print_console {0,1}
+                                    Whether to print the subtitle results to console. 1
+                                    means to print results to console. Default is 0.
             ```
         - Example:
             ```bash
-            $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10
+            $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10 -p 1
             ```
 
 4. View the results
@@ -125,11 +133,11 @@ flowchart LR
     - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
 
 ### Change log ([more](../docs/change_log_en.md))
+- 👽2023-03-23 v2.1.5 update:
+   - Added print to screen control parameter `is_print_console`
+   - Adjust the position of the `out_format` parameter to when initializing the class.
 - 😀2023-03-14 v2.1.3 update:
   - Fix the error when inputting the `TXtImages` directory and recognizing the overlap.
-
-- 😜2023-03-12 v2.1.2 update:
-  - Fix index error in issue [#22](https://github.com/SWHL/RapidVideOCR/issues/22)
 
 ### Announce
 For international developers, we regard [Discussions](https://github.com/SWHL/RapidVideOCR/discussions) as our international community platform. All ideas and questions can be discussed here in English.

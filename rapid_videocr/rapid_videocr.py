@@ -16,29 +16,34 @@ CUR_DIR = Path(__file__).resolve().parent
 
 
 class RapidVideOCR():
-    def __init__(self, is_concat_rec: bool = False, concat_batch: int = 10):
+    def __init__(self, is_concat_rec: bool = False,
+                 concat_batch: int = 10,
+                 out_format: str = 'all',
+                 is_print_console: bool = False) -> None:
         """Init
 
         Args:
             is_concat_rec (bool, optional): Whether to single recognition. Defaults to False.
             concat_batch (int, optional): The batch of concating image nums in concat recognition mode. Defaults to 10.
+            out_format (str, optional): Output format of subtitle(srt, txt, all). Defaults to 'all'.
+            is_print_console (bool, optional): Whether to print the subtitle results to console. 1 means to print results to console. Default is 0.
         """
         self.rapid_ocr = RapidOCR(width_height_ratio=-1)
         self.cropper = CropByProject()
 
         self.batch_size = concat_batch
         self.is_concat_rec = is_concat_rec
+        self.out_format = out_format
+        self.is_print_console = is_print_console
 
     def __call__(self,
                  video_sub_finder_dir: Union[str, Path],
-                 save_dir: Union[str, Path],
-                 out_format: str = 'all') -> None:
+                 save_dir: Union[str, Path]) -> None:
         """call
 
         Args:
             video_sub_finder_dir (Union[str, Path]): RGBImages or TXTImages from VideoSubFinder app.
             save_dir (Union[str, Path]): The directory of saving the srt/txt file.
-            out_format (str, optional): Output format of subtitle(srt, txt, all). Defaults to 'all'.
 
         Raises:
             RapidVideOCRError: meet some error.
@@ -66,7 +71,10 @@ class RapidVideOCR():
             print('Running with single recognition.')
             srt_result, txt_result = self.single_rec(img_list)
 
-        self.export_file(save_dir, srt_result, txt_result, out_format)
+        self.export_file(save_dir, srt_result, txt_result)
+
+        if self.is_print_console:
+            self.print_console(txt_result)
 
     @staticmethod
     def get_sort_key(x):
@@ -235,24 +243,26 @@ class RapidVideOCR():
         return '\n'.join(final_res)
 
     def export_file(self, save_dir: Union[str, Path],
-                    srt_result: List,
-                    txt_result: List,
-                    out_format: str) -> None:
+                    srt_result: List, txt_result: List) -> None:
         if isinstance(save_dir, str):
             save_dir = Path(save_dir)
 
         srt_path = save_dir / 'result.srt'
         txt_path = save_dir / 'result.txt'
-        if out_format == 'txt':
+        if self.out_format == 'txt':
             self.save_file(txt_path, txt_result)
-        elif out_format == 'srt':
+        elif self.out_format == 'srt':
             self.save_file(srt_path, srt_result)
-        elif out_format == 'all':
+        elif self.out_format == 'all':
             self.save_file(txt_path, txt_result)
             self.save_file(srt_path, srt_result)
         else:
-            raise ValueError(f'The {out_format} dost not support.')
+            raise ValueError(f'The {self.out_format} dost not support.')
         print(f'The result has been saved to {save_dir} directory.')
+
+    def print_console(self, txt_result: List) -> None:
+        for v in txt_result:
+            print(v.strip())
 
     @staticmethod
     def save_file(save_path: Union[str, Path],
@@ -299,24 +309,29 @@ class RapidVideOCRError(Exception):
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--img_dir', type=str,
+    parser.add_argument('-i', '--img_dir', type=str, required=True,
                         help='The full path of RGBImages or TXTImages.')
-    parser.add_argument('-s', '--save_dir', type=str,
-                        help='The path of saving the recognition result.')
+    parser.add_argument('-s', '--save_dir', type=str, default='results',
+                        help='The path of saving the recognition result. Default is "results" under the current directory.')
     parser.add_argument('-o', '--out_format', type=str, default='all',
                         choices=['srt', 'txt', 'all'],
-                        help='Output file format. Default is "all"')
+                        help='Output file format. Default is "all".')
     parser.add_argument('-m', '--mode', type=str, default='single',
                         choices=['single', 'concat'],
-                        help='Which mode to run (concat recognition or single recognition), default is "single"')
+                        help='Which mode to run (concat recognition or single recognition). Default is "single".')
     parser.add_argument('-b', '--concat_batch', type=int, default=10,
                         help='The batch of concating image nums in concat recognition mode. Default is 10.')
+    parser.add_argument('-p', '--print_console', type=bool,
+                        default=0, choices=[0, 1],
+                        help='Whether to print the subtitle results to console. 1 means to print results to console. Default is 0.')
     args = parser.parse_args()
 
     is_concat_rec = 'concat' in args.mode
     extractor = RapidVideOCR(is_concat_rec=is_concat_rec,
-                             concat_batch=args.concat_batch)
-    extractor(args.img_dir, args.save_dir, args.out_format)
+                             concat_batch=args.concat_batch,
+                             out_format=args.out_format,
+                             is_print_console=args.print_console)
+    extractor(args.img_dir, args.save_dir)
 
 
 if __name__ == '__main__':

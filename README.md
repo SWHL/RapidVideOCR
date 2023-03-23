@@ -71,7 +71,11 @@ flowchart LR
         # RapidVideOCR有两个初始化参数
         # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
         # concat_batch: 叠图识别的图像张数，默认10，可自行调节
-        extractor = RapidVideOCR()
+        # out_format: 输出格式选择，[srt, txt, all], 默认是 all
+        # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
+        extractor = RapidVideOCR(is_concat=False,
+                                 out_format='all',
+                                 is_print_console=False)
 
         rgb_dir = 'test_files/TXTImages'
         save_dir = 'result'
@@ -81,27 +85,31 @@ flowchart LR
       - Usage:
          ```bash
         $ rapid_videocr -h
-        usage: rapid_videocr [-h] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}]
-                            [-m {single,concat}]
+        usage: rapid_videocr [-h] -i IMG_DIR [-s SAVE_DIR] [-o {srt,txt,all}]
+                            [-m {single,concat}] [-b CONCAT_BATCH] [-p {0,1}]
 
         optional arguments:
         -h, --help            show this help message and exit
         -i IMG_DIR, --img_dir IMG_DIR
                                 The full path of RGBImages or TXTImages.
         -s SAVE_DIR, --save_dir SAVE_DIR
-                                The path of saving the recognition result.
+                                The path of saving the recognition result. Default is
+                                "results" under the current directory.
         -o {srt,txt,all}, --out_format {srt,txt,all}
-                                Output file format. Default is "all"
+                                Output file format. Default is "all".
         -m {single,concat}, --mode {single,concat}
                                 Which mode to run (concat recognition or single
-                                recognition), default is "single"
+                                recognition). Default is "single".
         -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
                                 The batch of concating image nums in concat
                                 recognition mode. Default is 10.
+        -p {0,1}, --print_console {0,1}
+                                Whether to print the subtitle results to console. 1
+                                means to print results to console. Default is 0.
         ```
        - Example:
          ```bash
-         $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10
+         $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10 -p 1
          ```
 4. 查看结果
    - 前往`save_dir`目录下即可查看结果。
@@ -109,11 +117,12 @@ flowchart LR
 
 
 ### 更新日志（[more](./docs/change_log.md)）
+- 👽2023-03-23 v2.1.5 update:
+  - 添加打印到屏幕的控制参数`is_print_console`
+  - 调整`out_format`参数位置到初始化类时
+
 - 😀2023-03-14 v2.1.3 update:
   - 修复输入`TXTImages`目录且叠字识别时错误
-
-- 😜2023-03-12 v2.1.2 update:
-  - 修复索引错误，[#22](https://github.com/SWHL/RapidVideOCR/issues/22)
 
 
 ### 写在最后

@@ -4,7 +4,7 @@
 from rapid_videocr import RapidVideOCR
 
 
-extractor = RapidVideOCR(is_concat_rec=True)
+extractor = RapidVideOCR(is_concat_rec=True, is_print_console=False)
 
 rgb_dir = 'tests/test_files/RGBImages'
 save_dir = 'result'

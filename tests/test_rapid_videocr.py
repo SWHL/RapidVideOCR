@@ -105,3 +105,30 @@ def test_nothing_dir(img_dir):
     assert exc_info.type is RapidVideOCRError
 
     shutil.rmtree(img_dir)
+
+
+def test_out_only_srt():
+    img_dir = test_file_dir / 'RGBImages'
+    extractor = RapidVideOCR(is_concat_rec=True, out_format='srt')
+    extractor(img_dir, test_file_dir)
+
+    srt_data = read_txt(srt_path)
+
+    assert len(srt_data) == 12
+    assert srt_data[2] == '空间里面他绝对赢不了的'
+    assert srt_data[-2] == '你们接着善后'
+
+    srt_path.unlink()
+
+
+def test_out_only_txt():
+    img_dir = test_file_dir / 'RGBImages'
+    extractor = RapidVideOCR(is_concat_rec=True, out_format='txt')
+    extractor(img_dir, test_file_dir)
+
+    txt_data = read_txt(txt_path)
+
+    assert len(txt_data) == 6
+    assert txt_data[-2] == '你们接着善后'
+
+    txt_path.unlink()
