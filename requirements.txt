@@ -1,2 +1,3 @@
 tqdm
 rapidocr_onnxruntime
+get_pypi_latest_version

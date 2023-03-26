@@ -1,34 +1,11 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-import re
-import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
 
 import setuptools
-
-
-def get_latest_version(package_name) -> str:
-    output = subprocess.run(["pip", "index", "versions", package_name],
-                            capture_output=True)
-    output = output.stdout.decode('utf-8')
-    print(output)
-    if output:
-        return extract_version(output)
-    return ''
-
-
-def version_add_one(version: Optional[str], add_loc: int = -1) -> str:
-    if not version:
-        return '1.0.0'
-
-    version_list = version.split('.')
-    mini_version = str(int(version_list[add_loc]) + 1)
-    version_list[add_loc] = mini_version
-    new_version = '.'.join(version_list)
-    return new_version
+from get_pypi_latest_version import GetPyPiLatestVersion
 
 
 def get_readme() -> str:
@@ -39,24 +16,16 @@ def get_readme() -> str:
     return readme
 
 
-def extract_version(message: str) -> str:
-    pattern = r'\d+\.(?:\d+\.)*\d+'
-    matched_versions = re.findall(pattern, message)
-    if matched_versions:
-        return matched_versions[0]
-    return ''
-
-
 MODULE_NAME = 'rapid_videocr'
-latest_version = get_latest_version(MODULE_NAME)
 
-print(latest_version)
-VERSION_NUM = version_add_one(latest_version)
+obtainer = GetPyPiLatestVersion()
+latest_version = obtainer(MODULE_NAME)
+VERSION_NUM = obtainer.version_add_one(latest_version)
 
 # 优先提取commit message中的语义化版本号，如无，则自动加1
 if len(sys.argv) > 2:
     match_str = ' '.join(sys.argv[2:])
-    matched_versions = extract_version(match_str)
+    matched_versions = obtainer.extract_version(match_str)
     if matched_versions:
         VERSION_NUM = matched_versions
 sys.argv = sys.argv[:2]
