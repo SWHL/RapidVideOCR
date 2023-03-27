@@ -121,6 +121,9 @@ flowchart LR
 
 
 ### 更新日志（[more](./docs/change_log.md)）
+- 🐱‍🏍2023-03-27 v2.1.6 update:
+  - 修复时间轴对不齐问题，详情参见[issue 23](https://github.com/SWHL/RapidVideOCR/issues/23)
+
 - 👽2023-03-23 v2.1.5 update:
   - 添加打印到屏幕的控制参数`is_print_console`
   - 调整`out_format`参数位置到初始化类时

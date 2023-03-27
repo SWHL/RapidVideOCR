@@ -133,11 +133,13 @@ flowchart LR
     - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
 
 ### Change log ([more](../docs/change_log_en.md))
+- 🏍 2023-03-27 v2.1.6 update:
+    - Fix the problem of timeline misalignment. For details, see [issue 23](https://github.com/SWHL/RapidVideOCR/issues/23)
 - 👽2023-03-23 v2.1.5 update:
-   - Added print to screen control parameter `is_print_console`
-   - Adjust the position of the `out_format` parameter to when initializing the class.
+    - Added print to screen control parameter `is_print_console`
+    - Adjust the position of the `out_format` parameter to when initializing the class.
 - 😀2023-03-14 v2.1.3 update:
-  - Fix the error when inputting the `TXtImages` directory and recognizing the overlap.
+    - Fix the error when inputting the `TXtImages` directory and recognizing the overlap.
 
 ### Announce
 For international developers, we regard [Discussions](https://github.com/SWHL/RapidVideOCR/discussions) as our international community platform. All ideas and questions can be discussed here in English.
