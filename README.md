@@ -20,7 +20,8 @@
 - [简介](#简介)
 - [TODO](#todo)
 - [整体框架](#整体框架)
-- [使用步骤](#使用步骤)
+- [保姆级使用步骤（小白）](#保姆级使用步骤小白)
+- [使用步骤（有python基础）](#使用步骤有python基础)
 - [更新日志（more）](#更新日志more)
 - [写在最后](#写在最后)
 
@@ -53,7 +54,10 @@ flowchart LR
     A(VideoSubFinder) --提取字幕关键帧--> B(RapidVideOCR)  --OCR--> C(SRT)
 ```
 
-### 使用步骤
+### 保姆级使用步骤（小白）
+- 请移步[[RapidVideOCR周边] RapidVideOCR保姆级教程（从小白到上手使用）](https://blog.csdn.net/shiwanghualuo/article/details/129788386?spm=1001.2014.3001.5501)
+
+### 使用步骤（有python基础）
 1. 安装使用VideoSubFinder软件
    - 下载地址：[videosubfinder](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件
    - 使用教程：[VideoSubFinder提取字幕关键帧教程](https://juejin.cn/post/7203362527082053691)
