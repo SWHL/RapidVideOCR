@@ -37,7 +37,7 @@ jobs:
 
       - name: Run setup.py
         run: |
-          pip install wheel
+          pip install wheel get_pypi_latest_version
 
           python -m pip install --upgrade pip
           python setup.py bdist_wheel ${{ github.event.head_commit.message }}
