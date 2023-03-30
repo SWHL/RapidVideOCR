@@ -54,6 +54,8 @@ jobs:
           echo ${SUBMMIT_BRANCH}
           ls
           cp -r ../${PACKAGE_NAME} .
+
+          sed -i 's/mermaid/{mermaid}/g' ../README.md
           cp ../README.md source/
 
           pip install sphinx
