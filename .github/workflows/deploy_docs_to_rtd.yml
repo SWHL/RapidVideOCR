@@ -52,7 +52,6 @@ jobs:
 
           echo "====================="
           echo ${SUBMMIT_BRANCH}
-          ls
           cp -r ../${PACKAGE_NAME} .
 
           echo "Update requirements and add packages needed by sphinx"
