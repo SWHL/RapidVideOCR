@@ -55,13 +55,19 @@ jobs:
           ls
           cp -r ../${PACKAGE_NAME} .
 
+          echo "Update requirements and add packages needed by sphinx"
+          echo -e 'sphinx_rtd_theme\nsphinxcontrib.mermaid\nmyst-parser\nsphinx_copybutton\nget_pypi_latest_version' >> ../requirements.txt
+          rm requirements.txt
+          cp ../requirements.txt .
+
+          echo "replace mermaid to {mermaid}"
           sed -i 's/mermaid/{mermaid}/g' ../README.md
+
           cp ../README.md source/
 
+          echo "Generate the api doc"
           pip install sphinx
-
           sphinx-apidoc -o source/API/ ./${PACKAGE_NAME} -f -E -M
-
           sed -i '1d' source/API/modules.rst
           sed -i '1i\API' source/API/modules.rst
 
