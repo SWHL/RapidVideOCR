@@ -1,9 +1,9 @@
 <div align="center">
-   <img src="assets/logo.png"  width="75%" height="75%">
+   <img src="https://raw.githubusercontent.com/SWHL/RapidVideOCR/main/assets/logo.png"  width="75%" height="75%">
 </div>
 <br/>
 
-简体中文 | [English](./docs/README_en.md)
+简体中文 | [English](https://github.com/SWHL/RapidVideOCR/blob/main/docs/README_en.md)
 
 <p align="left">
     <a href=""><img src="https://img.shields.io/badge/Python->=3.7,<=3.10-aff.svg"></a>
