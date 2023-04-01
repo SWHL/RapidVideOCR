@@ -1,10 +1,10 @@
 <div align="center">
-   <img src="../assets/logo.png"  width="75%" height="75%">
+   <img src="https://raw.githubusercontent.com/SWHL/RapidVideOCR/main/assets/logo.png"  width="75%" height="75%">
 </div>
 <br/>
 
 
-English | [简体中文](../README.md)
+English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.md)
 
 <p align="left">
     <a href=""><img src="https://img.shields.io/badge/Python->=3.7,<=3.10-aff.svg"></a>
@@ -132,8 +132,8 @@ flowchart LR
     - Go to the `save_dir` directory to view the results.
     - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
 
-### Change log ([more](../docs/change_log_en.md))
-- 🏍 2023-03-27 v2.1.6 update:
+### Change log ([more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log_en.md))
+- 🐱2023-03-27 v2.1.6 update:
     - Fix the problem of timeline misalignment. For details, see [issue 23](https://github.com/SWHL/RapidVideOCR/issues/23)
 - 👽2023-03-23 v2.1.5 update:
     - Added print to screen control parameter `is_print_console`
