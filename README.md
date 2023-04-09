@@ -51,7 +51,7 @@
 - [ ] 将程序打包为可执行文件
 - [ ] 编写跨平台的界面
 - [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
-- [ ] API docs
+- [x] API docs
 
 
 ### 整体框架

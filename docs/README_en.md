@@ -44,7 +44,7 @@ English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.m
 - [ ] Package the program as an executable
 - [ ] Write a cross-platform interface
 - [ ] Try to integrate the core functions of VideoSubFinder into this project, through its open CLI mode
-- [ ] API docs
+- [x] API docs
 
 
 ### Overall framework
