@@ -87,6 +87,8 @@ flowchart LR
                                  out_format='all',
                                  is_print_console=False)
 
+        # Windows端，需要这样写： rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
+        # Linux / Mac 下面这样写
         rgb_dir = 'test_files/TXTImages'
         save_dir = 'result'
         extractor(rgb_dir, save_dir)
