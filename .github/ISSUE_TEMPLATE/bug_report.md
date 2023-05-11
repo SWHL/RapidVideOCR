@@ -1,7 +1,7 @@
 ---
 name: 🐛Bug Report
 about: 我要报告一个Bug
-title: 'Bug'
+title: ''
 labels: 'bug'
 assignees: ''
 

@@ -1,7 +1,7 @@
 ---
 name: 🙌Feature Request
 about: 我想要添加一个新功能
-title: 'Feature Request'
+title: ''
 labels: 'feature_request'
 assignees: ''
 
