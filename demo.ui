@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
-    <height>188</height>
+    <width>694</width>
+    <height>237</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,8 +98,8 @@
   <widget class="QDialogButtonBox" name="btn_dialog_ok_cancel">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>140</y>
+     <x>410</x>
+     <y>170</y>
      <width>156</width>
      <height>23</height>
     </rect>
@@ -109,6 +109,70 @@
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="radioButton">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>150</y>
+     <width>89</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>叠图识别</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_mode">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>是否叠图识别：</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_batch">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>180</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>叠图个数：</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="le_batch">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>180</y>
+     <width>113</width>
+     <height>20</height>
+    </rect>
    </property>
   </widget>
  </widget>
