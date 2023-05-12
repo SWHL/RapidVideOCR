@@ -4,7 +4,7 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
-from Ui_demo import RapidVideOCRUI
+from RapidVideOCR_ui import RapidVideOCRUI
 
 
 if __name__ == '__main__':
