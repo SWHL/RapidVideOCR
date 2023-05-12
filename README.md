@@ -129,16 +129,14 @@ flowchart LR
 
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log.md)）
+- 😀2023-05-12 v2.1.7 update:
+  - 优化代码
+  - 添加`save_name`参数，可以灵活指定保存的`srt | txt`文件名称，默认是`result`
 - 🐱2023-03-27 v2.1.6 update:
   - 修复时间轴对不齐问题，详情参见[issue 23](https://github.com/SWHL/RapidVideOCR/issues/23)
-
 - 👽2023-03-23 v2.1.5 update:
   - 添加打印到屏幕的控制参数`is_print_console`
   - 调整`out_format`参数位置到初始化类时
-
-- 😀2023-03-14 v2.1.3 update:
-  - 修复输入`TXTImages`目录且叠字识别时错误
-
 
 ### 写在最后
 - 扫码加入组织：

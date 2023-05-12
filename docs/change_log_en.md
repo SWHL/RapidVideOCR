@@ -1,3 +1,6 @@
+#### 😀2023-05-12 v2.1.7 update:
+- Optimize code
+- Add `save_name` parameter, you can flexibly specify the saved `srt | txt` file name, the default is `result`
 #### 🐱2023-03-27 v2.1.6 update:
 - Fix the problem of timeline misalignment. For details, see [issue 23](https://github.com/SWHL/RapidVideOCR/issues/23)
 

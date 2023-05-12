@@ -38,7 +38,8 @@ class RapidVideOCR():
 
     def __call__(self,
                  video_sub_finder_dir: Union[str, Path],
-                 save_dir: Union[str, Path]) -> None:
+                 save_dir: Union[str, Path],
+                 save_name: str = 'result') -> None:
         """call
 
         Args:
@@ -59,7 +60,7 @@ class RapidVideOCR():
         mkdir(save_dir)
 
         img_list = list(Path(video_sub_finder_dir).glob('*.jpeg'))
-        img_list = sorted(img_list, key=lambda x: self.get_sort_key(x))
+        img_list = sorted(img_list, key=self.get_sort_key)
         if not img_list:
             raise RapidVideOCRError(
                 f'{video_sub_finder_dir} has not images with jpeg as suffix.')
@@ -71,7 +72,7 @@ class RapidVideOCR():
             print('Running with single recognition.')
             srt_result, txt_result = self.single_rec(img_list)
 
-        self.export_file(save_dir, srt_result, txt_result)
+        self.export_file(save_dir, save_name, srt_result, txt_result)
 
         if self.is_print_console:
             self.print_console(txt_result)
@@ -242,13 +243,14 @@ class RapidVideOCR():
                         final_res.append(rec_res[v])
         return '\n'.join(final_res)
 
-    def export_file(self, save_dir: Union[str, Path],
+    def export_file(self, save_dir: Union[str, Path], save_name: str,
                     srt_result: List, txt_result: List) -> None:
         if isinstance(save_dir, str):
             save_dir = Path(save_dir)
 
-        srt_path = save_dir / 'result.srt'
-        txt_path = save_dir / 'result.txt'
+        srt_path = save_dir / f'{save_name}.srt'
+        txt_path = save_dir / f'{save_name}.txt'
+
         if self.out_format == 'txt':
             self.save_file(txt_path, txt_result)
         elif self.out_format == 'srt':
