@@ -1,4 +1,4 @@
-name: [Windows] Auto generate exe
+name: Windows Auto generate exe
 
 on:
   push:
