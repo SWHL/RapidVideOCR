@@ -27,7 +27,7 @@ jobs:
       shell : bash
       run: |
         mv ui/* .
-        pyinstaller RapidVideOCR_ui.spec
+        pyinstaller RapidVideOCR.spec
         echo "VERSION=$(get_pypi_latest_version rapid_videocr)" >> $GITHUB_OUTPUT
 
     - name: create release
