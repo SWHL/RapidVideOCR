@@ -21,7 +21,7 @@ jobs:
     - name: Install env
       shell: powershell
       run: |
-        pip install pyqt5, pyinstaller, tqdm, rapidocr_onnxruntime
+        pip install pyqt5, pyinstaller, tqdm, rapidocr_onnxruntime, get_pypi_latest_version
 
     - name: Run pyinstaller
       shell : bash
