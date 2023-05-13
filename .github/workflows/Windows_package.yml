@@ -45,7 +45,7 @@ jobs:
 
     - name: zip the artifect dir into a zip
       run: |
-        powershell Compress-Archive D:\a\test\test\dist\RapidVideOCR D:\a\test\test\dist\RapidVideOCR.zip
+        powershell Compress-Archive D:\a\RapidVideOCR\RapidVideOCR\dist\RapidVideOCR D:\a\RapidVideOCR\RapidVideOCR\dist\RapidVideOCR.zip
 
     - name: Upload release asset
       id: upload-release-asset
