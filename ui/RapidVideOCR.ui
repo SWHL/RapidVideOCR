@@ -6,9 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>694</width>
-    <height>237</height>
+    <width>654</width>
+    <height>265</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>11</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -98,8 +103,8 @@
   <widget class="QDialogButtonBox" name="btn_dialog_ok_cancel">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>170</y>
+     <x>360</x>
+     <y>220</y>
      <width>156</width>
      <height>23</height>
     </rect>
@@ -111,70 +116,122 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QRadioButton" name="radioButton">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>150</y>
-     <width>89</width>
-     <height>16</height>
+     <x>20</x>
+     <y>130</y>
+     <width>271</width>
+     <height>121</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
+     <weight>75</weight>
+     <italic>false</italic>
+     <bold>true</bold>
     </font>
    </property>
-   <property name="text">
-    <string>叠图识别</string>
+   <property name="title">
+    <string>调节参数</string>
    </property>
+   <widget class="QLineEdit" name="le_batch">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>70</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_mode">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>是否叠图识别：</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_batch">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>70</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>叠图个数：</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButton">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>40</y>
+      <width>89</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>叠图识别</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QLabel" name="label_mode">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>140</y>
-     <width>111</width>
+     <x>350</x>
+     <y>150</y>
+     <width>231</width>
      <height>31</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
-   </property>
    <property name="text">
-    <string>是否叠图识别：</string>
+    <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_batch">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>180</y>
-     <width>71</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>11</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>叠图个数：</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="le_batch">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>180</y>
-     <width>113</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
+  <zorder>groupBox</zorder>
+  <zorder>label_img_dir</zorder>
+  <zorder>le_display_img_dir</zorder>
+  <zorder>btn_select_img_dir</zorder>
+  <zorder>lable_save_name</zorder>
+  <zorder>le_save_path</zorder>
+  <zorder>btn_save_result</zorder>
+  <zorder>btn_dialog_ok_cancel</zorder>
+  <zorder>label</zorder>
  </widget>
  <resources/>
  <connections/>

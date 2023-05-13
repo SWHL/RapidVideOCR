@@ -1,0 +1,60 @@
+name: [Windows] Auto generate exe
+
+on:
+  push:
+    branches: main
+    paths:
+      - 'rapid_videocr/**'
+      - 'docs/doc_whl.md'
+      - 'setup.py'
+      - '.github/workflows/Windows_package.yml'
+
+jobs:
+  build:
+    name: build src
+    runs-on: windows-latest
+
+    steps:
+    - name: Pull latest code
+      uses: actions/checkout@v3
+
+    - name: Install env
+      shell: powershell
+      run: |
+        pip install pyqt5, pyinstaller, tqdm, rapidocr_onnxruntime
+
+    - name: Run pyinstaller
+      shell : bash
+      run: |
+        mv ui/* .
+        pyinstaller RapidVideOCR_ui.spec
+        echo "VERSION=$(get_pypi_latest_version rapid_videocr)" >> $GITHUB_OUTPUT
+
+    - name: create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
+        body: |
+          Test Release
+        draft: true
+        prerelease: false
+
+    - name: zip the artifect dir into a zip
+      run: |
+        powershell Compress-Archive D:\a\test\test\dist\RapidVideOCR D:\a\test\test\dist\RapidVideOCR.zip
+
+    - name: Upload release asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ZIP_NAME: RapidVideOCR_${{ steps.run_pyinstaller.outputs.VERSION }}.zip
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/RapidVideOCR.zip
+          asset_name: ${{ env.ZIP_NAME }}
+          asset_content_type: application/zip
