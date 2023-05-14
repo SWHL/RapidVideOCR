@@ -48,10 +48,9 @@
 ### TODO
 - [x] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
 - [x] 叠字识别功能
-- [ ] 将程序打包为可执行文件
-- [ ] 编写跨平台的界面
-- [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
+- [x] 编写跨平台的界面, 将程序打包为可执行文件
 - [x] API docs
+- [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
 
 
 ### 整体框架
@@ -129,6 +128,8 @@ flowchart LR
 
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log.md)）
+- 🎉2023-05-14 update:
+  - 采用pyqt5简单写了界面程序，可直接下载对应平台，双击执行程序运行。
 - 😀2023-05-12 v2.1.7 update:
   - 优化代码
   - 添加`save_name`参数，可以灵活指定保存的`srt | txt`文件名称，默认是`result`

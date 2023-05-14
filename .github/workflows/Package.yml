@@ -3,6 +3,8 @@ name: Auto generate exe
 on:
   push:
     branches: main
+    # paths:
+    #   - 'rapid_videocr/**'
 
 jobs:
   create_release:
@@ -25,7 +27,7 @@ jobs:
     needs: create_release
     strategy:
       matrix:
-        os: ['macos-12', 'ubuntu-22.04', 'windows-2022']
+        os: ['macos-12', 'macos-13', 'ubuntu-22.04', 'windows-2022']
 
     steps:
       - name: Pull latest code
