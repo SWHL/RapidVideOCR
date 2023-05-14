@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            ZIP_NAME: RapidVideOCR-${{ steps.run_pyinstaller.outputs.VERSION }}-${{ runner.os }}-${{ runner.arch }}-no-installer.zip
+            ZIP_NAME: RapidVideOCR-${{ steps.run_pyinstaller.outputs.VERSION }}-${{ matrix.os }}-${{ runner.arch }}-no-installer.zip
         with:
             upload_url: ${{ needs.create_release.outputs.upload_url }}
             asset_path: dist/RapidVideOCR.zip
