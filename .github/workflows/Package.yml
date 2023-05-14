@@ -1,0 +1,74 @@
+name: Auto generate exe
+
+on:
+  push:
+    branches: main
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: create_release
+        id: create_release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: "latest"
+          prerelease: false
+          draft: true
+
+  build:
+    name: build
+    runs-on: ${{ matrix.os }}
+    needs: create_release
+    strategy:
+      matrix:
+        os: ['macos-12', 'ubuntu-22.04', 'windows-2022']
+
+    steps:
+      - name: Pull latest code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.7'
+          architecture: 'x64'
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install env
+        run: |
+          pip3 install pyqt5 pyinstaller tqdm rapidocr_onnxruntime get_pypi_latest_version
+
+      - name: Run pyinstaller
+        id: run_pyinstaller
+        shell: bash
+        run: |
+          mv ui/* .
+          pyinstaller RapidVideOCR.spec
+          echo "VERSION=$(get_pypi_latest_version rapid_videocr)" >> $GITHUB_OUTPUT
+
+      - if: matrix.os == 'windows-2022'
+        name: zip the artifact dir into a zip
+        run: |
+          powershell Compress-Archive ${{ github.workspace }}\dist\RapidVideOCR ${{ github.workspace }}\dist\RapidVideOCR.zip
+
+      - if: matrix.os != 'windows-2022'
+        run: |
+          zip -r $GITHUB_WORKSPACE/dist/RapidVideOCR.zip $GITHUB_WORKSPACE/dist/RapidVideOCR
+
+      - name: Upload release asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ZIP_NAME: RapidVideOCR-${{ steps.run_pyinstaller.outputs.VERSION }}-${{ runner.os }}-${{ runner.arch }}-no-installer.zip
+        with:
+            upload_url: ${{ needs.create_release.outputs.upload_url }}
+            asset_path: dist/RapidVideOCR.zip
+            asset_name: ${{ env.ZIP_NAME }}
+            asset_content_type: application/zip
