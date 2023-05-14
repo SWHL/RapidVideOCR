@@ -26,6 +26,7 @@
 - [简介](#简介)
 - [TODO](#todo)
 - [整体框架](#整体框架)
+- [打包界面版程序下载](#打包界面版程序下载)
 - [保姆级使用步骤（小白）](#保姆级使用步骤小白)
 - [使用步骤（有python基础）](#使用步骤有python基础)
 - [更新日志（more）](#更新日志more)
@@ -58,6 +59,9 @@
 flowchart LR
     A(VideoSubFinder) --提取字幕关键帧--> B(RapidVideOCR)  --OCR--> C(SRT)
 ```
+
+### 打包界面版程序下载
+- [link](https://github.com/SWHL/RapidVideOCR/releases/tag/latest)
 
 ### 保姆级使用步骤（小白）
 - 请移步[[RapidVideOCR周边] RapidVideOCR保姆级教程（从小白到上手使用）](https://blog.csdn.net/shiwanghualuo/article/details/129788386?spm=1001.2014.3001.5501)
@@ -130,6 +134,7 @@ flowchart LR
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log.md)）
 - 🎉2023-05-14 update:
   - 采用pyqt5简单写了界面程序，可直接下载对应平台，双击执行程序运行。
+  - 下载地址为：[link](https://github.com/SWHL/RapidVideOCR/releases/tag/latest)
 - 😀2023-05-12 v2.1.7 update:
   - 优化代码
   - 添加`save_name`参数，可以灵活指定保存的`srt | txt`文件名称，默认是`result`
