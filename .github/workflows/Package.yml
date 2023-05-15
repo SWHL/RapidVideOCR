@@ -3,8 +3,8 @@ name: Auto generate exe
 on:
   push:
     branches: main
-    paths:
-      - 'rapid_videocr/**'
+    # paths:
+    #   - 'rapid_videocr/**'
 
 jobs:
   create_release:
@@ -12,12 +12,17 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+      - name: get_cur_time
+        uses: srfrnk/current-time@master
+        id:  get_cur_time
+        with:
+            format: YYYY-MM-DD-HH-mm-ss
       - name: create_release
         id: create_release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: "latest"
+          automatic_release_tag: Draft-${{ steps.get_cur_time.outputs.formattedTime }}
           prerelease: false
           draft: true
 
@@ -44,7 +49,7 @@ jobs:
 
       - name: Install env
         run: |
-          pip3 install pyqt5 pyinstaller tqdm rapidocr_onnxruntime get_pypi_latest_version
+          pip3 install pyqt5 pyinstaller tqdm rapidocr_onnxruntime>=1.2.8 get_pypi_latest_version
 
       - name: Run pyinstaller
         id: run_pyinstaller
@@ -56,12 +61,16 @@ jobs:
 
       - if: matrix.os == 'windows-2022'
         name: zip the artifact dir into a zip
+        env:
+            ZIP_NAME: RapidVideOCR-${{ steps.run_pyinstaller.outputs.VERSION }}-${{ matrix.os }}-${{ runner.arch }}-no-installer.zip
         run: |
-          powershell Compress-Archive ${{ github.workspace }}\dist\RapidVideOCR ${{ github.workspace }}\dist\RapidVideOCR.zip
+          powershell Compress-Archive ${{ github.workspace }}\dist\RapidVideOCR ${{ github.workspace }}\dist\${{ env.ZIP_NAME }}
 
       - if: matrix.os != 'windows-2022'
+        env:
+            ZIP_NAME: RapidVideOCR-${{ steps.run_pyinstaller.outputs.VERSION }}-${{ matrix.os }}-${{ runner.arch }}-no-installer.zip
         run: |
-          zip -r $GITHUB_WORKSPACE/dist/RapidVideOCR.zip $GITHUB_WORKSPACE/dist/RapidVideOCR
+          zip -r $GITHUB_WORKSPACE/dist/${{ env.ZIP_NAME }} $GITHUB_WORKSPACE/dist/RapidVideOCR
 
       - name: Upload release asset
         id: upload-release-asset
@@ -71,6 +80,6 @@ jobs:
             ZIP_NAME: RapidVideOCR-${{ steps.run_pyinstaller.outputs.VERSION }}-${{ matrix.os }}-${{ runner.arch }}-no-installer.zip
         with:
             upload_url: ${{ needs.create_release.outputs.upload_url }}
-            asset_path: dist/RapidVideOCR.zip
+            asset_path: dist/${{ env.ZIP_NAME }}
             asset_name: ${{ env.ZIP_NAME }}
             asset_content_type: application/zip
