@@ -60,9 +60,6 @@ flowchart LR
     A(VideoSubFinder) --提取字幕关键帧--> B(RapidVideOCR)  --OCR--> C(SRT)
 ```
 
-### 打包界面版程序下载
-- [link](https://github.com/SWHL/RapidVideOCR/releases/tag/latest)
-
 ### 保姆级使用步骤（小白）
 - 请移步[[RapidVideOCR周边] RapidVideOCR保姆级教程（从小白到上手使用）](https://blog.csdn.net/shiwanghualuo/article/details/129788386?spm=1001.2014.3001.5501)
 
