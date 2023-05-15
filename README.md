@@ -26,9 +26,7 @@
 - [简介](#简介)
 - [TODO](#todo)
 - [整体框架](#整体框架)
-- [打包界面版程序下载](#打包界面版程序下载)
-- [保姆级使用步骤（小白）](#保姆级使用步骤小白)
-- [使用步骤（有python基础）](#使用步骤有python基础)
+- [使用教程](#使用教程)
 - [更新日志（more）](#更新日志more)
 - [写在最后](#写在最后)
 
@@ -53,85 +51,21 @@
 - [x] API docs
 - [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
 
-
 ### 整体框架
 ```mermaid
 flowchart LR
     A(VideoSubFinder) --提取字幕关键帧--> B(RapidVideOCR)  --OCR--> C(SRT)
 ```
 
-### 保姆级使用步骤（小白）
-- 请移步[[RapidVideOCR周边] RapidVideOCR保姆级教程（从小白到上手使用）](https://blog.csdn.net/shiwanghualuo/article/details/129788386?spm=1001.2014.3001.5501)
-
-### 使用步骤（有python基础）
-1. 安装使用VideoSubFinder软件
-   - 下载地址：Windows & Linux ([videosubfinder官网](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件) | [Mac版](https://github.com/eritpchy/videosubfinder-cli)
-   - 使用教程：[VideoSubFinder提取字幕关键帧教程](https://juejin.cn/post/7203362527082053691)
-   - 最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
-   - ✧ 推荐用`RGBImages`目录中图像（感谢小伙伴[dyphire](https://github.com/dyphire)在[#21](https://github.com/SWHL/RapidVideOCR/issues/21)的反馈）
-2. 安装rapid_videocr
-   ```bash
-   pip install rapid_videocr
-   ```
-3. 使用RapidVideOCR工具
-   - 脚本运行：
-        ```python
-        from rapid_videocr import RapidVideOCR
-
-        # RapidVideOCR有两个初始化参数
-        # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
-        # concat_batch: 叠图识别的图像张数，默认10，可自行调节
-        # out_format: 输出格式选择，[srt, txt, all], 默认是 all
-        # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
-        extractor = RapidVideOCR(is_concat=False,
-                                 out_format='all',
-                                 is_print_console=False)
-
-        # Windows端，需要这样写： rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
-        # Linux / Mac 下面这样写
-        rgb_dir = 'test_files/TXTImages'
-        save_dir = 'result'
-        extractor(rgb_dir, save_dir)
-        ```
-    - 命令行运行：
-      - Usage:
-         ```bash
-        $ rapid_videocr -h
-        usage: rapid_videocr [-h] -i IMG_DIR [-s SAVE_DIR] [-o {srt,txt,all}]
-                            [-m {single,concat}] [-b CONCAT_BATCH] [-p {0,1}]
-
-        optional arguments:
-        -h, --help            show this help message and exit
-        -i IMG_DIR, --img_dir IMG_DIR
-                                The full path of RGBImages or TXTImages.
-        -s SAVE_DIR, --save_dir SAVE_DIR
-                                The path of saving the recognition result. Default is
-                                "results" under the current directory.
-        -o {srt,txt,all}, --out_format {srt,txt,all}
-                                Output file format. Default is "all".
-        -m {single,concat}, --mode {single,concat}
-                                Which mode to run (concat recognition or single
-                                recognition). Default is "single".
-        -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
-                                The batch of concating image nums in concat
-                                recognition mode. Default is 10.
-        -p {0,1}, --print_console {0,1}
-                                Whether to print the subtitle results to console. 1
-                                means to print results to console. Default is 0.
-        ```
-       - Example:
-         ```bash
-         $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10 -p 1
-         ```
-4. 查看结果
-   - 前往`save_dir`目录下即可查看结果。
-   - 值得注意的是，如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。
-
+### 使用教程
+- [RapidVideOCR初级教程（界面版 下载解压使用）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E5%88%9D%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E7%95%8C%E9%9D%A2%E7%89%88-%E4%B8%8B%E8%BD%BD%E8%A7%A3%E5%8E%8B%E4%BD%BF%E7%94%A8%EF%BC%89)
+- [RapidVideOCR中级教程（python小白）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E4%B8%AD%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88python%E5%B0%8F%E7%99%BD%EF%BC%89)
+- [RapidVideOCR高级教程（有python基础的小伙伴）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log.md)）
 - 🎉2023-05-14 update:
   - 采用pyqt5简单写了界面程序，可直接下载对应平台，双击执行程序运行。
-  - 下载地址为：[link](https://github.com/SWHL/RapidVideOCR/releases/tag/latest)
+  - 下载地址为：[link](https://github.com/SWHL/RapidVideOCR/releases/tag/v2.1.7)
 - 😀2023-05-12 v2.1.7 update:
   - 优化代码
   - 添加`save_name`参数，可以灵活指定保存的`srt | txt`文件名称，默认是`result`

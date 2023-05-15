@@ -22,7 +22,7 @@ English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.m
 - [Introduction](#introduction)
 - [TODO](#todo)
 - [Overall framework](#overall-framework)
-- [Steps for usage](#steps-for-usage)
+- [Use](#use)
 - [Change log (more)](#change-log-more)
 - [Announce](#announce)
 
@@ -53,85 +53,10 @@ flowchart LR
      A(VideoSubFinder) --Extract subtitle key frame--> B(RapidVideOCR) --OCR--> C(SRT)
 ```
 
-### Steps for usage
-1. Install and use VideoSubFinder software
-    - Download link: [videosubfinder](https://sourceforge.net/projects/videosubfinder/)
-    - Tutorial: [VideoSubFinder use documents](https://juejin.cn/post/7203362527082053691)
-    - The final generated `RGBImages` and `TXTImages` directories will generally be in the software installation directory
-    - ✧ It is recommended to use the images in the `RGBImages` directory (thanks to feedback from [dyphire](https://github.com/dyphire) in [#21](https://github.com/SWHL/RapidVideOCR/issues/21))
-
-2. Install rapid_videocr
-    ```bash
-    pip install rapid_videocr
-    ```
-
-3. Use the RapidVideOCR tool
-    - Run by scripts:
-        - RapidVideOCR API
-            ```python
-            # __init__
-            Args:
-               is_concat_rec (bool, optional): Whether to single recognition. Defaults to False.
-               concat_batch (int, optional): The batch of concating image nums in concat recognition mode. Defaults to 10.
-               out_format (str, optional): Output format of subtitle(srt, txt, all). Defaults to 'all'.
-               is_print_console (bool, optional): Whether to print the subtitle results to console. 1 means to print results to console. Default is 0.
-
-            # __call__
-            Args:
-                 video_sub_finder_dir (Union[str, Path]): RGBImages or TXTImages from VideoSubFinder app.
-                 save_dir (Union[str, Path]): The directory of saving the srt/txt file.
-
-            Raises:
-                RapidVideOCRError: meet some error.
-            ```
-
-        - Example:
-            ```python
-            from rapid_videocr import RapidVideOCR
-
-            extractor = RapidVideOCR(is_concat_rec=True,
-                                     concat_batch=10,
-                                     out_format='srt',
-                                     is_print_console=False)
-
-            rgb_dir = 'RGBImages'
-            save_dir = 'result'
-            extractor(video_sub_finder_dir=rgb_dir, save_dir=save_dir)
-            ```
-     - Run by command line:
-        - Usage:
-            ```bash
-            $ rapid_videocr -h
-            usage: rapid_videocr [-h] -i IMG_DIR [-s SAVE_DIR] [-o {srt,txt,all}]
-                                [-m {single,concat}] [-b CONCAT_BATCH] [-p {0,1}]
-
-            optional arguments:
-            -h, --help            show this help message and exit
-            -i IMG_DIR, --img_dir IMG_DIR
-                                    The full path of RGBImages or TXTImages.
-            -s SAVE_DIR, --save_dir SAVE_DIR
-                                    The path of saving the recognition result. Default is
-                                    "results" under the current directory.
-            -o {srt,txt,all}, --out_format {srt,txt,all}
-                                    Output file format. Default is "all".
-            -m {single,concat}, --mode {single,concat}
-                                    Which mode to run (concat recognition or single
-                                    recognition). Default is "single".
-            -b CONCAT_BATCH, --concat_batch CONCAT_BATCH
-                                    The batch of concating image nums in concat
-                                    recognition mode. Default is 10.
-            -p {0,1}, --print_console {0,1}
-                                    Whether to print the subtitle results to console. 1
-                                    means to print results to console. Default is 0.
-            ```
-        - Example:
-            ```bash
-            $ rapid_videocr -i RGBImages -s Results -o srt -m concat -b 10 -p 1
-            ```
-
-4. View the results
-    - Go to the `save_dir` directory to view the results.
-    - It is worth noting that if you want the video playback software to automatically mount the srt file, you need to change the name of the srt file to the name of the video file, and put it in the same directory, or manually specify the loading.
+### Use
+- [☆ RapidVideOCR Primary Tutorial (Interface version, download and decompress)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E5%88%9D%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E7%95%8C%E9%9D%A2%E7%89%88-%E4%B8%8B%E8%BD%BD%E8%A7%A3%E5%8E%8B%E4%BD%BF%E7%94%A8%EF%BC%89)
+- [☆☆ RapidVideOCR Intermediate Tutorial (Python Xiaobai)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E4%B8%AD%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88python%E5%B0%8F%E7%99%BD%EF%BC%89)
+- [☆☆☆ RapidVideOCR Advanced Tutorial (Partners with python foundation)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### Change log ([more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log_en.md))
 - 😀2023-05-12 v2.1.7 update:
