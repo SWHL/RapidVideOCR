@@ -3,8 +3,8 @@ name: Auto generate exe
 on:
   push:
     branches: main
-    # paths:
-    #   - 'rapid_videocr/**'
+    paths:
+        - 'rapid_videocr/**'
 
 jobs:
   create_release:
