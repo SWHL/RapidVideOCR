@@ -24,7 +24,6 @@
     <summary>目录</summary>
 
 - [简介](#简介)
-- [TODO](#todo)
 - [整体框架](#整体框架)
 - [使用教程](#使用教程)
 - [更新日志（more）](#更新日志more)
@@ -44,13 +43,6 @@
 - **如果不愿意用的话，不用就好，不要影响自己心情。**
 - 如果有帮助到您的话，请给个小星星⭐或者赞助一杯咖啡（点击页面最上面的Sponsor中链接）。
 
-### TODO
-- [x] 增加对[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件提取字幕帧结果的处理接口
-- [x] 叠字识别功能
-- [x] 编写跨平台的界面, 将程序打包为可执行文件
-- [x] API docs
-- [ ] 尝试将VideoSubFinder核心功能整合到本项目中，通过其开放的CLI mode
-
 ### 整体框架
 ```mermaid
 flowchart LR
@@ -62,7 +54,7 @@ flowchart LR
 - [RapidVideOCR中级教程（python小白）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E4%B8%AD%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88python%E5%B0%8F%E7%99%BD%EF%BC%89)
 - [RapidVideOCR高级教程（有python基础的小伙伴）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
-### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log.md)）
+### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)）
 - 🎉2023-05-14 update:
   - 采用pyqt5简单写了界面程序，可直接下载对应平台，双击执行程序运行。
   - 下载地址为：[link](https://github.com/SWHL/RapidVideOCR/releases/tag/v2.1.7)

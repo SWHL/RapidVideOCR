@@ -20,7 +20,6 @@ English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.m
     <summary>Contents</summary>
 
 - [Introduction](#introduction)
-- [TODO](#todo)
 - [Overall framework](#overall-framework)
 - [Use](#use)
 - [Change log (more)](#change-log-more)
@@ -38,14 +37,6 @@ English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.m
    - **More convenient**: pip can be used directly after installation.
 - **This tool is under development. During use, if you encounter any problems, please submit an issue or join the group for feedback. If you don't want to use it, just don't use it, don't affect your mood.**
 
-### TODO
-- [x] Add the processing interface for [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software to extract subtitle frame results
-- [x] Overlapping recognition function
-- [x] Package the program as an executable
-- [x] Write a cross-platform interface
-- [x] API docs
-- [ ] Try to integrate the core functions of VideoSubFinder into this project, through its open CLI mode
-
 
 ### Overall framework
 ```mermaid
@@ -58,7 +49,7 @@ flowchart LR
 - [☆☆ RapidVideOCR Intermediate Tutorial (Python Xiaobai)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E4%B8%AD%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88python%E5%B0%8F%E7%99%BD%EF%BC%89)
 - [☆☆☆ RapidVideOCR Advanced Tutorial (Partners with python foundation)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
-### Change log ([more](https://github.com/SWHL/RapidVideOCR/blob/main/docs/change_log_en.md))
+### Change log ([more](https://github.com/SWHL/RapidVideOCR/wiki/Changelog))
 - 😀2023-05-12 v2.1.7 update:
    - Optimize code
    - Add `save_name` parameter, you can flexibly specify the saved `srt | txt` file name, the default is `result`
