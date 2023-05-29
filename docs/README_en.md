@@ -1,10 +1,9 @@
+English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.md)
+
 <div align="center">
    <img src="https://raw.githubusercontent.com/SWHL/RapidVideOCR/main/assets/logo.png"  width="75%" height="75%">
 </div>
 <br/>
-
-
-English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.md)
 
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/75dae6e9804dec6e61bef98334601908dc9ec9fb/assets/RapidVideOCRDemo.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
@@ -14,6 +13,9 @@ English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.m
     <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
     <a href="https://pepy.tech/project/rapid-videocr"><img src="https://static.pepy.tech/personalized-badge/rapid-videocr?period=total&units=abbreviation&left_color=grey&right_color=blue&left_text=Downloads"></a>
     <a href="https://semver.org/"><img alt="SemVer2.0" src="https://img.shields.io/badge/SemVer-2.0-brightgreen"></a>
+    <a href='https://rapidvideocr.readthedocs.io/en/latest/?badge=latest'>
+        <img src='https://readthedocs.org/projects/rapidvideocr/badge/?version=latest' alt='Documentation Status'/>
+    </a>
 </p>
 
 <details>

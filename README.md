@@ -1,9 +1,9 @@
+简体中文 | [English](https://github.com/SWHL/RapidVideOCR/blob/main/docs/README_en.md)
+
 <div align="center">
    <img src="https://raw.githubusercontent.com/SWHL/RapidVideOCR/main/assets/logo.png"  width="75%" height="75%">
 </div>
 <br/>
-
-简体中文 | [English](https://github.com/SWHL/RapidVideOCR/blob/main/docs/README_en.md)
 
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/75dae6e9804dec6e61bef98334601908dc9ec9fb/assets/RapidVideOCRDemo.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
@@ -39,8 +39,8 @@
   - **更快**：与[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件结合使用，提取关键字幕帧更快。
   - **更准**：采用[RapidOCR](https://github.com/RapidAI/RapidOCR)作为识别库。
   - **更方便**：pip直接安装即可使用。
+- 如果遇到问题，首先推荐阅读：[如何向开源社区提问题](https://mp.weixin.qq.com/s/4IZqIqE2Qf7mziQvjSP_aw)，之后再做决定。
 - **该工具处于发展中。在使用过程中，如果遇到任何问题，欢迎提issue或者入群反馈。**
-- **如果不愿意用的话，不用就好，不要影响自己心情。**
 - 如果有帮助到您的话，请给个小星星⭐或者赞助一杯咖啡（点击页面最上面的Sponsor中链接）。
 
 ### 整体框架
