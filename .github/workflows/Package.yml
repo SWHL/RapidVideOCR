@@ -5,6 +5,7 @@ on:
     branches: main
     paths:
         - 'rapid_videocr/**'
+        - 'ui/**'
 
 jobs:
   create_release:
@@ -70,7 +71,8 @@ jobs:
         env:
             ZIP_NAME: RapidVideOCR-${{ steps.run_pyinstaller.outputs.VERSION }}-${{ matrix.os }}-${{ runner.arch }}-no-installer.zip
         run: |
-          zip -r $GITHUB_WORKSPACE/dist/${{ env.ZIP_NAME }} $GITHUB_WORKSPACE/dist/RapidVideOCR
+          cd $GITHUB_WORKSPACE/dist/
+          zip -r ${{ env.ZIP_NAME }} RapidVideOCR
 
       - name: Upload release asset
         id: upload-release-asset

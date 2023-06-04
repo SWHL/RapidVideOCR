@@ -4,7 +4,7 @@
 import sys
 from pathlib import Path
 
-from PyQt5.QtCore import QRect
+from PyQt5.QtCore import QRect, QSettings
 from PyQt5.QtGui import QFont, QIntValidator
 from PyQt5.QtWidgets import (QApplication, QDialogButtonBox, QFileDialog,
                              QGroupBox, QLabel, QLineEdit, QMessageBox,
@@ -18,7 +18,7 @@ class RapidVideOCRUI(QWidget):
         super(RapidVideOCRUI, self).__init__()
 
         self.main_name = 'RapidVideOCR'
-        self.version = 'v0.0.1'
+        self.version = 'v0.0.2'
 
         self.setWindowTitle(f'{self.main_name} {self.version}')
         self.resize(654, 265)
@@ -119,20 +119,41 @@ class RapidVideOCRUI(QWidget):
         # 选择保存srt路径
         self.btn_save_result.clicked.connect(self.select_save_name)
 
-    def select_directory(self, ):
+        # 基本config
+        self.setting = QSettings('./config', QSettings.IniFormat)
+        self.setting.setIniCodec('UTF-8')
+
+    def get_last_dir(self, dir_name: str) -> str:
+        last_dir = self.setting.value(dir_name)
+        if last_dir is None:
+            last_dir = './'
+        return last_dir
+
+    def set_last_dir(self, dir_name: str, dir_path: str):
+        self.setting.setValue(dir_name, dir_path)
+
+    def select_directory(self, ) -> None:
         """选择RGBImages目录
         """
-        file_name = QFileDialog.getExistingDirectory(None, '选择目录', "./")
-        self.le_display_img_dir.setText(file_name)
+        dir_key = 'LastDir'
+        directory = self.get_last_dir(dir_key)
+        select_dir = QFileDialog.getExistingDirectory(None,
+                                                      caption='选择目录',
+                                                      directory=directory)
+        self.le_display_img_dir.setText(select_dir)
+        self.set_last_dir(dir_key, str(Path(select_dir).parent))
 
-    def select_save_name(self, ):
+    def select_save_name(self, ) -> None:
+        srt_key = 'SRTDir'
+        save_srt_dir = self.get_last_dir(srt_key)
         file_path, _ = QFileDialog.getSaveFileName(None,
                                                    '选择保存路径',
-                                                   './result.srt',
+                                                   f'{save_srt_dir}/result.srt',
                                                    'srt(*.srt)')
         self.le_save_path.setText(file_path)
+        self.set_last_dir(srt_key, str(Path(file_path).parent))
 
-    def click_ok(self, ):
+    def click_ok(self, ) -> None:
         img_dir = self.le_display_img_dir.text().strip()
         save_full_path = self.le_save_path.text().strip()
         is_select_mode = self.rb_rec_mode.isChecked()
@@ -162,22 +183,23 @@ class RapidVideOCRUI(QWidget):
         else:
             self.exit()
 
-    def click_cancel(self, ):
+    def click_cancel(self, ) -> None:
         self.exit()
 
     def show_msg(self, txt: str):
         QMessageBox.information(self, '信息', txt)
 
-    def exit(self, ):
+    def exit(self, ) -> None:
         self.close()
 
-    def clear_input(self, ):
+    def clear_input(self, ) -> None:
         self.le_save_path.clear()
         self.le_batch.setText('10')
-        self.le_display_img_dir.clear()
         self.rb_rec_mode.setChecked(False)
 
+        self.le_display_img_dir.clear()
         self.le_display_img_dir.setFocus()
+
         self.label_status.clear()
 
 
