@@ -55,7 +55,9 @@ flowchart LR
 - [RapidVideOCR高级教程（有python基础的小伙伴）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)）
-- 🎉2023-05-14 update:
+- ♠2023-06-04 Desktop v0.0.2 update:
+  - 修复isse #30: 保留上次选择的目录
+- 🎉2023-05-14 Desktop v0.0.1 update:
   - 采用pyqt5简单写了界面程序，可直接下载对应平台，双击执行程序运行。
   - 下载地址为：[link](https://github.com/SWHL/RapidVideOCR/releases/tag/v2.1.7)
 - 😀2023-05-12 v2.1.7 update:
