@@ -53,7 +53,7 @@ flowchart LR
 
 ### Change log ([more](https://github.com/SWHL/RapidVideOCR/wiki/Changelog))
 - ♠ 2023-06-04 Desktop v0.0.2 update:
-    - Fix isse #30: Keep the last selected directory.
+    - Fix issue #30: Keep the last selected directory.
 - 😀2023-05-12 v2.1.7 update:
    - Optimize code
    - Add `save_name` parameter, you can flexibly specify the saved `srt | txt` file name, the default is `result`

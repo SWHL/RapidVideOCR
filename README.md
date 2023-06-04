@@ -56,7 +56,7 @@ flowchart LR
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)）
 - ♠2023-06-04 Desktop v0.0.2 update:
-  - 修复isse #30: 保留上次选择的目录
+  - 修复issue #30: 保留上次选择的目录
 - 🎉2023-05-14 Desktop v0.0.1 update:
   - 采用pyqt5简单写了界面程序，可直接下载对应平台，双击执行程序运行。
   - 下载地址为：[link](https://github.com/SWHL/RapidVideOCR/releases/tag/v2.1.7)
