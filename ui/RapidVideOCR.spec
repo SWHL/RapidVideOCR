@@ -59,6 +59,7 @@ exe = EXE(
     entitlements_file=None,
     icon=['rapid_videocr.ico'],
 )
+
 coll = COLLECT(
     exe,
     a.binaries,
