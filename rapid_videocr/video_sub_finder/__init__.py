@@ -4,6 +4,7 @@
 from pathlib import Path
 import subprocess
 
+version = '6.10'
 cur_dir = Path(__file__).resolve().parent
 
 

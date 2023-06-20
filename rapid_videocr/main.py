@@ -16,4 +16,5 @@ class RapidVideoSubFinderOCR():
         self.vsf(video_path, output_dir)
 
         rgb_dir = Path(output_dir) / 'RGBImages'
-        self.video_ocr(rgb_dir, 'result', save_name='a')
+        save_name = Path(video_path).stem
+        self.video_ocr(rgb_dir, output_dir, save_name=save_name)
