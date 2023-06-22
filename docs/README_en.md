@@ -12,10 +12,11 @@ English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/README.m
     <a href="https://pypi.org/project/rapid-videocr/"><img alt="PyPI" src="https://img.shields.io/pypi/v/rapid_videocr"></a>
     <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
     <a href="https://pepy.tech/project/rapid-videocr"><img src="https://static.pepy.tech/personalized-badge/rapid-videocr?period=total&units=abbreviation&left_color=grey&right_color=blue&left_text=Downloads"></a>
-    <a href="https://semver.org/"><img alt="SemVer2.0" src="https://img.shields.io/badge/SemVer-2.0-brightgreen"></a>
     <a href='https://rapidvideocr.readthedocs.io/en/latest/?badge=latest'>
         <img src='https://readthedocs.org/projects/rapidvideocr/badge/?version=latest' alt='Documentation Status'/>
     </a>
+    <a href="https://semver.org/"><img alt="SemVer2.0" src="https://img.shields.io/badge/SemVer-2.0-brightgreen"></a>
+    <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
 <details>
@@ -52,16 +53,14 @@ flowchart LR
 - [☆☆☆ RapidVideOCR Advanced Tutorial (Partners with python foundation)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### Change log ([more](https://github.com/SWHL/RapidVideOCR/wiki/Changelog))
+- 🐲2023-06-22 v2.2.0 update:
+   - This version is compatible with `v2.1.x`, that is, the previous usage is still available.
+   - To integrate VSF's CLI into the library, just specify the full path of `VideoSubFinderWXW.exe`.
+   - Add batch recognition function, specify the video directory, and then automatically extract all video subtitles in the directory
+   - Use example, see: [demo.py](https://github.com/SWHL/RapidVideOCR/blob/main/demo.py)
 - ♠ 2023-06-04 Desktop v0.0.2 update:
     - Fix issue #30: Keep the last selected directory.
-- 😀2023-05-12 v2.1.7 update:
-   - Optimize code
-   - Add `save_name` parameter, you can flexibly specify the saved `srt | txt` file name, the default is `result`
-- 🐱2023-03-27 v2.1.6 update:
-    - Fix the problem of timeline misalignment. For details, see [issue 23](https://github.com/SWHL/RapidVideOCR/issues/23)
-- 👽2023-03-23 v2.1.5 update:
-    - Added print to screen control parameter `is_print_console`
-    - Adjust the position of the `out_format` parameter to when initializing the class.
+
 
 ### Announce
 For international developers, we regard [Discussions](https://github.com/SWHL/RapidVideOCR/discussions) as our international community platform. All ideas and questions can be discussed here in English.
