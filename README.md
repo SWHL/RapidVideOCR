@@ -7,17 +7,18 @@
 
 <p align="left">
     <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/75dae6e9804dec6e61bef98334601908dc9ec9fb/assets/RapidVideOCRDemo.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
-    <a href=""><img src="https://img.shields.io/badge/Python->=3.7,<=3.10-aff.svg"></a>
+    <a href=""><img src="https://img.shields.io/badge/Python->=3.6,<3.12-aff.svg"></a>
     <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
     <a href="https://pypi.org/project/rapid-videocr/"><img alt="PyPI" src="https://img.shields.io/pypi/v/rapid_videocr"></a>
     <a href="https://github.com/SWHL/RapidVideOCR/stargazers"><img src="https://img.shields.io/github/stars/SWHL/RapidVideOCR?color=ccf"></a>
     <a href="https://pepy.tech/project/rapid-videocr">
         <img src="https://static.pepy.tech/personalized-badge/rapid-videocr?period=total&units=abbreviation&left_color=grey&right_color=blue&left_text=Downloads">
     </a>
-    <a href="https://semver.org/"><img alt="SemVer2.0" src="https://img.shields.io/badge/SemVer-2.0-brightgreen"></a>
     <a href='https://rapidvideocr.readthedocs.io/en/latest/?badge=latest'>
         <img src='https://readthedocs.org/projects/rapidvideocr/badge/?version=latest' alt='Documentation Status'/>
     </a>
+    <a href="https://semver.org/"><img alt="SemVer2.0" src="https://img.shields.io/badge/SemVer-2.0-brightgreen"></a>
+    <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
 <details>
@@ -55,19 +56,13 @@ flowchart LR
 - [RapidVideOCR高级教程（有python基础的小伙伴）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)）
+- 🐲2023-06-22 v2.2.0 update:
+  - 该版本是向`v2.1.x`兼容的，也就是之前用法依然可以。
+  - 将VSF的CLI整合到库中，只需指定`VideoSubFinderWXW.exe`的全路径即可。
+  - 增加批量识别功能，指定视频目录，即可自动提取目录下所有视频字幕
+  - 使用示例, 参见：[demo.py](https://github.com/SWHL/RapidVideOCR/blob/main/demo.py)
 - ♠2023-06-04 Desktop v0.0.2 update:
   - 修复issue #30: 保留上次选择的目录
-- 🎉2023-05-14 Desktop v0.0.1 update:
-  - 采用pyqt5简单写了界面程序，可直接下载对应平台，双击执行程序运行。
-  - 下载地址为：[link](https://github.com/SWHL/RapidVideOCR/releases/tag/v2.1.7)
-- 😀2023-05-12 v2.1.7 update:
-  - 优化代码
-  - 添加`save_name`参数，可以灵活指定保存的`srt | txt`文件名称，默认是`result`
-- 🐱2023-03-27 v2.1.6 update:
-  - 修复时间轴对不齐问题，详情参见[issue 23](https://github.com/SWHL/RapidVideOCR/issues/23)
-- 👽2023-03-23 v2.1.5 update:
-  - 添加打印到屏幕的控制参数`is_print_console`
-  - 调整`out_format`参数位置到初始化类时
 
 ### 写在最后
 - 扫码加入组织：
