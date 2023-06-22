@@ -39,7 +39,7 @@ class RapidVideoSubFinderOCR:
             )
             with tempfile.TemporaryDirectory() as tmp_dir:
                 try:
-                    self.vsf(one_video, tmp_dir)
+                    self.vsf(str(one_video), tmp_dir)
                 except Exception as e:
                     self.logger.error(f'Extract {one_video} error, {e}, skip')
                     continue
@@ -123,11 +123,10 @@ def main() -> None:
 
     is_concat_rec = 'concat' in args.mode
 
-    if args.vsf_exe_path is not None:
-        if args.video_dir is None:
-            raise ValueError(
-                '--vsf_exe_path or --video_dir must not be None at the same time.'
-            )
+    if not (args.vsf_exe_path is None and args.video_dir is None):
+        raise ValueError(
+            '--vsf_exe_path or --video_dir must not be None at the same time.'
+        )
 
     if args.vsf_exe_path and args.video_dir:
         extractor = RapidVideoSubFinderOCR(

@@ -56,6 +56,9 @@ flowchart LR
 - [RapidVideOCR高级教程（有python基础的小伙伴）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)）
+- 🐲2023-06-22 Desktop v0.0.3 update:
+  - 整合VideoSubFinder界面，增加视频批处理
+  - 优化多次选取之后，路径保存问题
 - 🐲2023-06-22 v2.2.0 update:
   - 该版本是向`v2.1.x`兼容的，也就是之前用法依然可以。
   - 将VSF的CLI整合到库中，只需指定`VideoSubFinderWXW.exe`的全路径即可。

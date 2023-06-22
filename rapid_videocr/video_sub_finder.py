@@ -40,7 +40,7 @@ class VideoSubFinder:
             )
             return output_dir
         except Exception as e:
-            raise VSFError('vsf meets error') from e
+            raise e
 
 
 class VSFError(Exception):
