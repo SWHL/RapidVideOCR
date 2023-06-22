@@ -360,6 +360,12 @@ class RapidVideOCRUI(QWidget):
         elif cur_idx == 1:
             self.vsf_ocr(is_select_mode, batch_num)
 
+        question = QMessageBox.question(self, '识别完毕', '是否继续识别？（Yes → 继续，NO → 退出）')
+        if question == QMessageBox.Yes:
+            self.clear_input()
+        else:
+            self.exit()
+
     def only_ocr(self, is_select_mode: bool, batch_num: str):
         img_dir = self.le_display_img_dir.text().strip()
         save_full_path = self.le_save_path.text().strip()
@@ -427,7 +433,6 @@ class RapidVideOCRUI(QWidget):
     ) -> None:
         self.le_batch.setText('10')
         self.rb_rec_mode.setChecked(False)
-
         self.le_display_img_dir.setFocus()
 
 
