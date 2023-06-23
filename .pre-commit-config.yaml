@@ -3,3 +3,15 @@ repos:
   rev: 23.1.0
   hooks:
     - id: black
+- repo: https://github.com/myint/autoflake
+  rev: v2.1.1
+  hooks:
+    - id: autoflake
+      args:
+        [
+          "--recursive",
+          "--in-place",
+          "--remove-all-unused-imports",
+          "--remove-unused-variable",
+          "--ignore-init-module-imports",
+        ]
