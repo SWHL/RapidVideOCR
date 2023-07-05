@@ -68,7 +68,12 @@ flowchart LR
   - 修复issue #30: 保留上次选择的目录
 
 ### 写在最后
-- 扫码加入组织：
+- 微信扫描以下二维码，关注**RapidAI公众号**，回复video即可加入RapidVideOCR微信交流群：
+    <div align="center">
+        <img src="https://raw.githubusercontent.com/RapidAI/.github/main/assets/RapidAI_WeChatAccount.jpg" width="25%" height="25%" align="center">
+    </div>
+
+- 扫码加入QQ群：
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.jpg" width="25%" height="25%" align="center">
     </div>
