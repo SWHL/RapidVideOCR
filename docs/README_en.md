@@ -56,6 +56,7 @@ flowchart LR
 - 🤓2023-07-08 v2.2.2 update:
    - Fixed the problem that the Chinese path could not be read during batch recognition
    - Skip issue in SRT when fixing missing axes. At present, when a certain axis fails to be recognized, the position will be vacated, which is convenient for proofreading.
+   - Keep the vsf results.
 - 🐲2023-06-22 Desktop v0.0.3 update:
    - Integrate VideoSubFinder interface, increase video batch processing.
    - Optimize the problem of path preservation after multiple selections.

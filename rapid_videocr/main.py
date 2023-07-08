@@ -2,8 +2,8 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-import tempfile
 from pathlib import Path
+from typing import Optional
 
 from .rapid_videocr import RapidVideOCR
 from .utils import get_logger
@@ -11,7 +11,7 @@ from .video_sub_finder import VideoSubFinder
 
 
 class RapidVideoSubFinderOCR:
-    def __init__(self, vsf_exe_path: str = None, **ocr_params) -> None:
+    def __init__(self, vsf_exe_path: Optional[str] = None, **ocr_params) -> None:
         if vsf_exe_path is None:
             raise ValueError("vsf_exe_path must not be None.")
 
@@ -37,25 +37,24 @@ class RapidVideoSubFinderOCR:
             self.logger.info(
                 f"[{i+1}/{video_num}] Starting to extract {one_video} key frame"
             )
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                try:
-                    self.vsf(str(one_video), tmp_dir)
-                except Exception as e:
-                    self.logger.error(f"Extract {one_video} error, {e}, skip")
-                    continue
 
-                self.logger.info(f"[{i+1}/{video_num}] Starting to run {one_video} ocr")
+            save_name = Path(one_video).stem
+            save_dir = Path(output_dir) / save_name
+            save_vsf_dir = save_dir / "VSF_Results"
 
-                rgb_dir = Path(tmp_dir) / "RGBImages"
-                if not list(rgb_dir.iterdir()):
-                    self.logger.warning(
-                        f"Extracting frames from {one_video} is 0, skip"
-                    )
-                    continue
+            try:
+                self.vsf(str(one_video), str(save_vsf_dir))
+            except Exception as e:
+                self.logger.error(f"Extract {one_video} error, {e}, skip")
+                continue
 
-                save_name = Path(one_video).stem
-                save_srt_dir = Path(output_dir) / save_name
-                self.video_ocr(rgb_dir, save_srt_dir, save_name=save_name)
+            self.logger.info(f"[{i+1}/{video_num}] Starting to run {one_video} ocr")
+
+            rgb_dir = Path(save_vsf_dir) / "RGBImages"
+            if not list(rgb_dir.iterdir()):
+                self.logger.warning(f"Extracting frames from {one_video} is 0, skip")
+                continue
+            self.video_ocr(rgb_dir, save_dir, save_name=save_name)
 
 
 def main() -> None:
