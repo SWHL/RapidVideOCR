@@ -58,7 +58,7 @@ jobs:
         run: |
           mv ui/* .
           pyinstaller RapidVideOCR.spec
-          echo "VERSION=0.0.3" >> $GITHUB_OUTPUT
+          echo "VERSION=0.0.4" >> $GITHUB_OUTPUT
 
       - if: matrix.os == 'windows-2022'
         name: zip the artifact dir into a zip
