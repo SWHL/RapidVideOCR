@@ -6,6 +6,7 @@ on:
     paths:
         - 'rapid_videocr/**'
         - 'ui/**'
+        - '.github/workflows/Package.yml'
 
 jobs:
   create_release:
