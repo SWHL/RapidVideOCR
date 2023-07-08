@@ -5,11 +5,13 @@ import functools
 import logging
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 import colorlog
 import cv2
 import numpy as np
+import shapely
+from shapely.geometry import MultiPoint, Polygon
 
 logger_initialized = {}
 
@@ -30,10 +32,10 @@ class CropByProject:
         closed = cv2.dilate(img, None, iterations=1)
 
         # 水平投影
-        x0, x1 = self.get_project_loc(closed, direction='width')
+        x0, x1 = self.get_project_loc(closed, direction="width")
 
         # 竖直投影
-        y0, y1 = self.get_project_loc(closed, direction='height')
+        y0, y1 = self.get_project_loc(closed, direction="height")
 
         return origin_img[y0:y1, x0:x1]
 
@@ -48,12 +50,12 @@ class CropByProject:
         Returns:
             tuple: 起始索引位置
         """
-        if direction == 'width':
+        if direction == "width":
             axis = 0
-        elif direction == 'height':
+        elif direction == "height":
             axis = 1
         else:
-            raise ValueError(f'direction {direction} is not supported!')
+            raise ValueError(f"direction {direction} is not supported!")
 
         loc_sum = np.sum(img == 255, axis=axis)
         loc_range = np.argwhere(loc_sum > 0)
@@ -65,17 +67,17 @@ def mkdir(dir_path):
     Path(dir_path).mkdir(parents=True, exist_ok=True)
 
 
-def read_txt(txt_path: str) -> List:
+def read_txt(txt_path: Union[str, Path]) -> List[str]:
     if not isinstance(txt_path, str):
         txt_path = str(txt_path)
 
-    with open(txt_path, 'r', encoding='utf-8') as f:
-        data = list(map(lambda x: x.rstrip('\n'), f))
+    with open(txt_path, "r", encoding="utf-8") as f:
+        data = list(map(lambda x: x.rstrip("\n"), f))
     return data
 
 
 @functools.lru_cache()
-def get_logger(name='rapid_videocr'):
+def get_logger(name="rapid_videocr"):
     logger = logging.getLogger(name)
     if name in logger_initialized:
         return logger
@@ -84,13 +86,13 @@ def get_logger(name='rapid_videocr'):
         if name.startswith(logger_name):
             return logger
 
-    fmt_string = '%(log_color)s[%(asctime)s] [%(name)s] %(levelname)s: %(message)s'
+    fmt_string = "%(log_color)s[%(asctime)s] [%(name)s] %(levelname)s: %(message)s"
     log_colors = {
-        'DEBUG': 'white',
-        'INFO': 'white',
-        'WARNING': 'yellow',
-        'ERROR': 'red',
-        'CRITICAL': 'purple',
+        "DEBUG": "white",
+        "INFO": "white",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "purple",
     }
     fmt = colorlog.ColoredFormatter(fmt_string, log_colors=log_colors)
     stream_handler = logging.StreamHandler(stream=sys.stdout)
@@ -101,3 +103,68 @@ def get_logger(name='rapid_videocr'):
     logger_initialized[name] = True
     logger.propagate = False
     return logger
+
+
+def compute_poly_iou(a: np.ndarray, b: np.ndarray) -> float:
+    """计算两个多边形的IOU
+
+    Args:
+        poly1 (np.ndarray): (4, 2)
+        poly2 (np.ndarray): (4, 2)
+
+    Returns:
+        float: iou
+    """
+    poly1 = Polygon(a).convex_hull
+    poly2 = Polygon(b).convex_hull
+
+    union_poly = np.concatenate((a, b))
+
+    if not poly1.intersects(poly2):
+        return 0.0
+
+    try:
+        inter_area = poly1.intersection(poly2).area
+        union_area = MultiPoint(union_poly).convex_hull.area
+    except shapely.geos.TopologicalError:
+        print("shapely.geos.TopologicalError occured, iou set to 0")
+        return 0.0
+
+    if union_area == 0:
+        return 0.0
+
+    return float(inter_area) / union_area
+
+
+def is_inclusive_each_other(box1: np.ndarray, box2: np.ndarray) -> bool:
+    """判断两个多边形框是否存在包含关系
+
+    Args:
+        box1 (np.ndarray): (4, 2)
+        box2 (np.ndarray): (4, 2)
+
+    Returns:
+        bool: 是否存在包含关系
+    """
+    poly1 = Polygon(box1)
+    poly2 = Polygon(box2)
+
+    poly1_area = poly1.convex_hull.area
+    poly2_area = poly2.convex_hull.area
+
+    if poly1_area > poly2_area:
+        box_max = box1
+        box_min = box2
+    else:
+        box_max = box2
+        box_min = box1
+
+    x0, y0 = np.min(box_min[:, 0]), np.min(box_min[:, 1])
+    x1, y1 = np.max(box_min[:, 0]), np.max(box_min[:, 1])
+
+    edge_x0, edge_y0 = np.min(box_max[:, 0]), np.min(box_max[:, 1])
+    edge_x1, edge_y1 = np.max(box_max[:, 0]), np.max(box_max[:, 1])
+
+    if x0 >= edge_x0 and y0 >= edge_y0 and x1 <= edge_x1 and y1 <= edge_y1:
+        return True
+    return False

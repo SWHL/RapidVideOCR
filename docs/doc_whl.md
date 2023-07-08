@@ -26,8 +26,8 @@ pip install rapid_videocr
     from rapid_videocr import RapidVideOCR
 
     extractor = RapidVideOCR(is_concat_rec=True,
-                            concat_batch=10,
-                            out_format='srt')
+                             concat_batch=10,
+                             out_format='srt')
 
     rgb_dir = 'RGBImages'
     save_dir = 'outputs'

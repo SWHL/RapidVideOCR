@@ -56,6 +56,9 @@ flowchart LR
 - [RapidVideOCR高级教程（有python基础的小伙伴）](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### 更新日志（[more](https://github.com/SWHL/RapidVideOCR/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)）
+- 🤓2023-07-08 v2.2.2 update:
+  - 修复批量识别时，不能读取中文路径的问题
+  - 修复漏轴时，SRT中跳过问题。目前当出现某一轴未能识别，则会空出位置，便于校对。
 - 🐲2023-06-22 Desktop v0.0.3 update:
   - 整合VideoSubFinder界面，增加视频批处理
   - 优化多次选取之后，路径保存问题
@@ -64,8 +67,6 @@ flowchart LR
   - 将VSF的CLI整合到库中，只需指定`VideoSubFinderWXW.exe`的全路径即可。
   - 增加批量识别功能，指定视频目录，即可自动提取目录下所有视频字幕
   - 使用示例, 参见：[demo.py](https://github.com/SWHL/RapidVideOCR/blob/main/demo.py)
-- ♠2023-06-04 Desktop v0.0.2 update:
-  - 修复issue #30: 保留上次选择的目录
 
 ### 写在最后
 - 微信扫描以下二维码，关注**RapidAI公众号**，回复video即可加入RapidVideOCR微信交流群：
