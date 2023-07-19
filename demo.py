@@ -14,14 +14,14 @@ save_dir = "outputs"
 vsf_ocr(video_path, save_dir)
 
 
-# # 只识别
-# from rapid_videocr import RapidVideOCR
+# 只识别
+from rapid_videocr import RapidVideOCR
 
-# extractor = RapidVideOCR(is_concat_rec=True, is_print_console=False)
+extractor = RapidVideOCR(is_concat_rec=True, is_print_console=False)
 
-# rgb_dir = 'test_files/RGBImagesTiny'
-# save_dir = 'outputs'
-# save_name = 'a'
+rgb_dir = "test_files/RGBImagesTiny"
+save_dir = "outputs"
+save_name = "a"
 
-# # outputs/a.srt  outputs/a.txt
-# extractor(rgb_dir, save_dir, save_name=save_name)
+# outputs/a.srt  outputs/a.txt
+extractor(rgb_dir, save_dir, save_name=save_name)
