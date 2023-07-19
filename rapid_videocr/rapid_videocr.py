@@ -10,13 +10,22 @@ import numpy as np
 from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
-from .utils import (
-    CropByProject,
-    compute_poly_iou,
-    get_logger,
-    is_inclusive_each_other,
-    mkdir,
-)
+try:
+    from .utils import (
+        CropByProject,
+        compute_poly_iou,
+        get_logger,
+        is_inclusive_each_other,
+        mkdir,
+    )
+except:
+    from utils import (
+        CropByProject,
+        compute_poly_iou,
+        get_logger,
+        is_inclusive_each_other,
+        mkdir,
+    )
 
 CUR_DIR = Path(__file__).resolve().parent
 logger = get_logger()
@@ -293,7 +302,7 @@ class RapidVideOCR:
             self.save_file(srt_path, srt_result)
         else:
             raise ValueError(f"The {self.out_format} dost not support.")
-        logger.info(f"[OCR] The result has been saved to {save_dir} directory.")
+        logger.info("[OCR] The result has been saved to %s directory.", save_dir)
 
     def print_console(self, txt_result: List) -> None:
         for v in txt_result:
@@ -310,7 +319,7 @@ class RapidVideOCR:
         with open(save_path, mode, encoding="utf-8") as f:
             for value in content:
                 f.write(f"{value}\n")
-        logger.info(f"[OCR] The file has been saved in the {save_path}")
+        logger.info("[OCR] The file has been saved in the %s", save_path)
 
     @staticmethod
     def _compute_centroid(points: np.ndarray) -> List:
@@ -365,12 +374,10 @@ def main() -> None:
         help='Output file format. Default is "all".',
     )
     parser.add_argument(
-        "-m",
-        "--mode",
-        type=str,
-        default="single",
-        choices=["single", "concat"],
-        help='Which mode to run (concat recognition or single recognition). Default is "single".',
+        "--is_concat_rec",
+        action="store_true",
+        default=False,
+        help="Which mode to run (concat recognition or single recognition). Default is False.",
     )
     parser.add_argument(
         "-b",
@@ -389,9 +396,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    is_concat_rec = "concat" in args.mode
     extractor = RapidVideOCR(
-        is_concat_rec=is_concat_rec,
+        is_concat_rec=args.is_concat_rec,
         concat_batch=args.concat_batch,
         out_format=args.out_format,
         is_print_console=args.print_console,

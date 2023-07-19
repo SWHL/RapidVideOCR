@@ -1,9 +1,11 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import argparse
 import functools
 import logging
 import sys
+from enum import Enum
 from pathlib import Path
 from typing import List, Union
 
@@ -14,6 +16,11 @@ import shapely
 from shapely.geometry import MultiPoint, Polygon
 
 logger_initialized = {}
+
+
+class RecMode(Enum):
+    SINGLE = "single"
+    CONCAT = "concat"
 
 
 class CropByProject:
@@ -89,7 +96,7 @@ def get_logger(name="rapid_videocr"):
     fmt_string = "%(log_color)s[%(asctime)s] [%(name)s] %(levelname)s: %(message)s"
     log_colors = {
         "DEBUG": "white",
-        "INFO": "white",
+        "INFO": "green",
         "WARNING": "yellow",
         "ERROR": "red",
         "CRITICAL": "purple",
@@ -168,3 +175,28 @@ def is_inclusive_each_other(box1: np.ndarray, box2: np.ndarray) -> bool:
     if x0 >= edge_x0 and y0 >= edge_y0 and x1 <= edge_x1 and y1 <= edge_y1:
         return True
     return False
+
+
+def float_range(mini, maxi):
+    """Return function handle of an argument type function for
+    ArgumentParser checking a float range: mini <= arg <= maxi
+      mini - minimum acceptable argument
+      maxi - maximum acceptable argument"""
+
+    # Define the function with default arguments
+    def float_range_checker(arg):
+        """New Type function for argparse - a float within predefined range."""
+
+        try:
+            f = float(arg)
+        except ValueError as exc:
+            raise argparse.ArgumentTypeError("must be a floating point number") from exc
+
+        if f < mini or f > maxi:
+            raise argparse.ArgumentTypeError(
+                "must be in range [" + str(mini) + " .. " + str(maxi) + "]"
+            )
+        return f
+
+    # Return function handle to checking function
+    return float_range_checker
