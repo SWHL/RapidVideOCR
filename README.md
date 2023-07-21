@@ -33,12 +33,12 @@ English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/docs/REA
 ### Introduction
 - Video hard subtitle extraction, automatically generate the corresponding `srt | txt` file.
 - Supported subtitle languages: Chinese | English (For other supported languages, see: [List of supported languages](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
-- You can join the QQ group: **706807542**
-- Extract video hard subtitles faster and more accurately, and provide output in two formats `srt|txt`l:
-   - **FASTER**: Combined with [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software, extraction of key subtitle frames is faster.
+- Extract video hard subtitles faster and more accurately, and provide output in two formats `srt|txt`:
+   - **Faster**: Combined with [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software, extraction of key subtitle frames is faster.
    - **More accurate**: [RapidOCR](https://github.com/RapidAI/RapidOCR) is used as the recognition library.
    - **More convenient**: pip can be used directly after installation.
 - **This tool is under development. During use, if you encounter any problems, please submit an issue or join the group for feedback. If you don't want to use it, just don't use it, don't affect your mood.**
+- If it helps you, please give a little star ⭐ or sponsor a cup of coffee (click the link in Sponsor at the top of the page).
 
 
 ### Overall framework
