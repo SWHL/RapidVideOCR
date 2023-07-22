@@ -70,7 +70,6 @@ class VideoSubFinder:
 
     def __call__(self, video_path: str, output_dir: str) -> str:
         self.run_list.extend(["--input_video", video_path, "--output_dir", output_dir])
-        print(self.run_list)
 
         try:
             subprocess.run(
