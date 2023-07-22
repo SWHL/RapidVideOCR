@@ -2,7 +2,6 @@ name: Auto generate exe
 
 on:
   push:
-    branches: main
     tags:
       - Desktop-v*
 
