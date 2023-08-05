@@ -53,15 +53,15 @@ flowchart LR
 - [☆☆☆ RapidVideOCR Advanced Tutorial (Partners with python foundation)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### Change log ([more](https://github.com/SWHL/RapidVideOCR/wiki/Changelog))
+- ♦ 2023-08-05 v2.2.4 update:
+  - Fixed index error in concat_rec_mode.
+  - Add logging module for easy feedback.
 - 🛶 2023-07-19 v2.2.3 update:
     - Increase the adaptation of VSF parameters. During command line mode and class initialization, it is possible to specify parameters with the same name for VSF commands.
 - 🤓2023-07-08 v2.2.2 update:
    - Fixed the problem that the Chinese path could not be read during batch recognition
    - Skip issue in SRT when fixing missing axes. At present, when a certain axis fails to be recognized, the position will be vacated, which is convenient for proofreading.
    - Keep the vsf results.
-- 🐲2023-06-22 Desktop v0.0.3 update:
-   - Integrate VideoSubFinder interface, increase video batch processing.
-   - Optimize the problem of path preservation after multiple selections.
 
 ### Announce
 For international developers, we regard [Discussions](https://github.com/SWHL/RapidVideOCR/discussions) as our international community platform. All ideas and questions can be discussed here in English.

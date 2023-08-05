@@ -2,14 +2,10 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-import functools
-import logging
-import sys
 from enum import Enum
 from pathlib import Path
 from typing import List, Union
 
-import colorlog
 import cv2
 import numpy as np
 import shapely
@@ -81,35 +77,6 @@ def read_txt(txt_path: Union[str, Path]) -> List[str]:
     with open(txt_path, "r", encoding="utf-8") as f:
         data = list(map(lambda x: x.rstrip("\n"), f))
     return data
-
-
-@functools.lru_cache()
-def get_logger(name="rapid_videocr"):
-    logger = logging.getLogger(name)
-    if name in logger_initialized:
-        return logger
-
-    for logger_name in logger_initialized:
-        if name.startswith(logger_name):
-            return logger
-
-    fmt_string = "%(log_color)s[%(asctime)s] [%(name)s] %(levelname)s: %(message)s"
-    log_colors = {
-        "DEBUG": "white",
-        "INFO": "green",
-        "WARNING": "yellow",
-        "ERROR": "red",
-        "CRITICAL": "purple",
-    }
-    fmt = colorlog.ColoredFormatter(fmt_string, log_colors=log_colors)
-    stream_handler = logging.StreamHandler(stream=sys.stdout)
-    stream_handler.setFormatter(fmt)
-    logger.addHandler(stream_handler)
-
-    logger.setLevel(logging.INFO)
-    logger_initialized[name] = True
-    logger.propagate = False
-    return logger
 
 
 def compute_poly_iou(a: np.ndarray, b: np.ndarray) -> float:

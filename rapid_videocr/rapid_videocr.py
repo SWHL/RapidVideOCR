@@ -11,24 +11,13 @@ from rapidocr_onnxruntime import RapidOCR
 from tqdm import tqdm
 
 try:
-    from .utils import (
-        CropByProject,
-        compute_poly_iou,
-        get_logger,
-        is_inclusive_each_other,
-        mkdir,
-    )
+    from .logger import logger
+    from .utils import CropByProject, compute_poly_iou, is_inclusive_each_other, mkdir
 except:
-    from utils import (
-        CropByProject,
-        compute_poly_iou,
-        get_logger,
-        is_inclusive_each_other,
-        mkdir,
-    )
+    from logger import logger
+    from utils import CropByProject, compute_poly_iou, is_inclusive_each_other, mkdir
 
 CUR_DIR = Path(__file__).resolve().parent
-logger = get_logger()
 
 
 class RapidVideOCR:
@@ -188,7 +177,7 @@ class RapidVideOCR:
 
                 box_iou = compute_poly_iou(frame_boxes, dt_box)
                 if is_inclusive_each_other(frame_boxes, dt_box) or box_iou > 0.1:
-                    matched_path = img_paths[idx]
+                    matched_path = img_paths[i]
                     match_dict.setdefault(i, []).append(
                         [matched_path, dt_box, rec_res[idx]]
                     )
@@ -302,7 +291,7 @@ class RapidVideOCR:
             self.save_file(srt_path, srt_result)
         else:
             raise ValueError(f"The {self.out_format} dost not support.")
-        logger.info("[OCR] The result has been saved to %s directory.", save_dir)
+        logger.info(f"[OCR] The result has been saved to {save_dir} directory.")
 
     def print_console(self, txt_result: List) -> None:
         for v in txt_result:
@@ -319,7 +308,7 @@ class RapidVideOCR:
         with open(save_path, mode, encoding="utf-8") as f:
             for value in content:
                 f.write(f"{value}\n")
-        logger.info("[OCR] The file has been saved in the %s", save_path)
+        logger.info(f"[OCR] The file has been saved in the {save_path}")
 
     @staticmethod
     def _compute_centroid(points: np.ndarray) -> List:
