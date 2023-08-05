@@ -1,4 +1,4 @@
-English | [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/docs/README_zh.md)
+[简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/docs/README_zh.md) | English
 
 <div align="center">
    <img src="https://raw.githubusercontent.com/SWHL/RapidVideOCR/main/assets/logo.png"  width="75%" height="75%">
