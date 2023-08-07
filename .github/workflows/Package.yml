@@ -48,7 +48,7 @@ jobs:
 
       - name: Install env
         run: |
-          pip3 install pyqt5 pyinstaller tqdm rapidocr_onnxruntime>=1.2.8 get_pypi_latest_version colorlog
+          pip3 install pyqt5 pyinstaller tqdm rapidocr_onnxruntime>=1.2.8 get_pypi_latest_version loguru
 
       - name: Run pyinstaller
         id: run_pyinstaller
