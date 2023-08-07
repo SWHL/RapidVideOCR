@@ -2,6 +2,7 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import sys
+import traceback
 from pathlib import Path
 
 from PyQt5.QtCore import QRect, QSettings
@@ -21,7 +22,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from rapid_videocr import RapidVideOCR, RapidVideoSubFinderOCR
+from rapid_videocr import RapidVideOCR, RapidVideoSubFinderOCR, logger
 
 
 class RapidVideOCRUI(QWidget):
@@ -388,7 +389,11 @@ class RapidVideOCRUI(QWidget):
 
         save_dir = Path(save_full_path).parent
         save_name = Path(save_full_path).stem
-        extractor(img_dir, save_dir, save_name)
+        try:
+            extractor(img_dir, save_dir, save_name)
+        except Exception as e:
+            error = traceback.format_exc()
+            logger.error(error)
 
     def vsf_ocr(self, is_select_mode: bool, batch_num: str):
         vsf_exe_path = self.le_vsf_path.text().strip()
@@ -413,7 +418,11 @@ class RapidVideOCRUI(QWidget):
             concat_batch=int(batch_num),
             is_print_console=False,
         )
-        extractor(video_path, save_dir)
+        try:
+            extractor(video_path, save_dir)
+        except Exception:
+            error = traceback.format_exc()
+            logger.error(error)
 
     def click_cancel(
         self,

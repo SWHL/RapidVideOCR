@@ -11,17 +11,12 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - name: get_cur_time
-        uses: srfrnk/current-time@master
-        id:  get_cur_time
-        with:
-            format: YYYY-MM-DD-HH-mm-ss
       - name: create_release
         id: create_release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: Draft-${{ steps.get_cur_time.outputs.formattedTime }}
+          automatic_release_tag: ${{ github.ref_name }}
           prerelease: false
           draft: true
 

@@ -24,7 +24,7 @@ class RapidVideoSubFinderOCR:
         is_concat_rec: bool = False,
         concat_batch: int = 10,
         out_format: str = "all",
-        print_console: bool = False,
+        is_print_console: bool = False,
         vsf_exe_path: Optional[str] = None,
         clear_dirs: bool = True,
         run_search: bool = True,
@@ -71,7 +71,7 @@ class RapidVideoSubFinderOCR:
             is_concat_rec=is_concat_rec,
             concat_batch=concat_batch,
             out_format=out_format,
-            is_print_console=print_console,
+            is_print_console=is_print_console,
         )
         self.video_formats = [".mp4", ".avi", ".mov", ".mkv"]
 
@@ -160,7 +160,7 @@ def main():
     )
     videocr_param_group.add_argument(
         "-p",
-        "--print_console",
+        "--is_print_console",
         action="store_true",
         default=False,
         help="Whether to print the subtitle results to console. -p means to print.",
