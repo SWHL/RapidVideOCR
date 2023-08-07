@@ -53,7 +53,7 @@ flowchart LR
 - [☆☆☆ RapidVideOCR Advanced Tutorial (Partners with python foundation)](https://github.com/SWHL/RapidVideOCR/wiki/RapidVideOCR%E9%AB%98%E7%BA%A7%E6%95%99%E7%A8%8B%EF%BC%88%E6%9C%89python%E5%9F%BA%E7%A1%80%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4%EF%BC%89)
 
 ### Change log ([more](https://github.com/SWHL/RapidVideOCR/wiki/Changelog))
-- ♦ 2023-08-05 v2.2.4 update:
+- ♦ 2023-08-05 v2.2.4~2.2.6 update:
   - Fixed index error in concat_rec_mode.
   - Add logging module for easy feedback.
 - 🛶 2023-07-19 v2.2.3 update:
