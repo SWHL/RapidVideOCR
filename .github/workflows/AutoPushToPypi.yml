@@ -2,7 +2,7 @@ name: Push rapid_videocr to pypi
 
 on:
   push:
-    branches: [ main ]
+    # branches: [ main ]
     tags:
       - v*
     # paths:
