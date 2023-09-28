@@ -75,7 +75,7 @@ Full documentation can be found on [docs](https://swhl.github.io/RapidVideOCR/do
 to discuss what you would like to change.
 - Please make sure to update tests as appropriate.
 
-### Sponsor
+### [Sponsor](https://swhl.github.io/RapidVideOCR/docs/sponsor/)
 
 If you want to sponsor the project, you can directly click the **Buy me a coffee** image, please write a note (e.g. your github account name) to facilitate adding to the sponsorship list below.
 

@@ -80,15 +80,15 @@ rapid_videocr -i RGBImages
 ### 加入我们
 - 微信扫描以下二维码，关注**RapidAI公众号**，回复video即可加入RapidVideOCR微信交流群：
     <div align="center">
-        <img src="https://raw.githubusercontent.com/RapidAI/.github/main/assets/RapidAI_WeChatAccount.jpg" width="25%" height="25%" align="center">
+        <img src="https://raw.githubusercontent.com/RapidAI/.github/main/assets/RapidAI_WeChatAccount_round_corner.png" width="25%" height="25%" align="center">
     </div>
 
 - 扫码加入QQ群（706807542）：
     <div align="center">
-        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.jpg" width="25%" height="25%" align="center">
+        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.png" width="25%" height="25%" align="center">
     </div>
 
-### 赞助
+### [赞助](https://swhl.github.io/RapidVideOCR/docs/sponsor/)
 
 如果您想要赞助该项目，可直接点击当前页最上面的Sponsor按钮，请写好备注(**您的Github账号名称**)，方便添加到赞助列表中。
 
