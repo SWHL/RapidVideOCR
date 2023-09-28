@@ -3,6 +3,7 @@
 
 <div>&nbsp;</div>
 
+<a href="https://huggingface.co/spaces/SWHL/RapidVideOCR" target="_blank"><img src="https://img.shields.io/badge/%F0%9F%A4%97-Hugging Face Demo-blue"></a>
 <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/75dae6e9804dec6e61bef98334601908dc9ec9fb/assets/RapidVideOCRDemo.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
 <a href=""><img src="https://img.shields.io/badge/Python->=3.6,<3.12-aff.svg"></a>
 <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
@@ -40,8 +41,10 @@
    - **More convenient to use**: pip can be installed directly and used.
 - If it helps you, please give a little star ⭐.
 
-### Demo
-- TODO
+### [Demo](https://huggingface.co/spaces/SWHL/RapidVideOCR)
+<div align="center">
+    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="100%" height="100%">
+</div>
 
 ### Overall framework
 ```mermaid

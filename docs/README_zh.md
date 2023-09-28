@@ -3,6 +3,7 @@
 
 <div>&nbsp;</div>
 
+<a href="https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary" target="_blank"><img src="https://img.shields.io/badge/ModelScope-Demo-blue"></a>
 <a href="https://colab.research.google.com/github/SWHL/RapidVideOCR/blob/75dae6e9804dec6e61bef98334601908dc9ec9fb/assets/RapidVideOCRDemo.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg"></a>
 <a href=""><img src="https://img.shields.io/badge/Python->=3.6,<3.12-aff.svg"></a>
 <a href=""><img src="https://img.shields.io/badge/OS-Linux%2C%20Win%2C%20Mac-pink.svg"></a>
@@ -42,8 +43,10 @@
   - **使用更方便**：pip直接安装即可使用。
 - 如果有帮助到您的话，请给个小星星⭐。
 
-### Demo
-- TODO
+### [Demo](https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary)
+<div align="center">
+    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="100%" height="100%">
+</div>
 
 ### 整体框架
 ```mermaid
