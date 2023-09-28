@@ -39,7 +39,7 @@
    - **Faster extraction**: Used in conjunction with [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software to extract key subtitle frames faster.
    - **More accurate recognition**: Use [RapidOCR](https://github.com/RapidAI/RapidOCR) as the recognition library.
    - **More convenient to use**: pip can be installed directly and used.
-- If it helps you, please give a little star ⭐.
+- If it helps you, please give a star ⭐.
 
 ### [Demo](https://huggingface.co/spaces/SWHL/RapidVideOCR)
 <div align="center">
