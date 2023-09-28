@@ -3,11 +3,13 @@ name: Push rapid_videocr to pypi
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'rapid_videocr/**'
-      - 'docs/doc_whl.md'
-      - 'setup.py'
-      - '.github/workflows/AutoPushToPypi.yml'
+    tags:
+      - v*
+    # paths:
+    #   - 'rapid_videocr/**'
+    #   - 'docs/doc_whl.md'
+    #   - 'setup.py'
+    #   - '.github/workflows/AutoPushToPypi.yml'
 
 jobs:
   UnitTesting:
