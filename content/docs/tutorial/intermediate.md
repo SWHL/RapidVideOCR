@@ -77,77 +77,74 @@ draft: false
     <img src="https://camo.githubusercontent.com/28bd4e944f834d5e878db4c1e8b781698ffaa1ed09ccb29eed7d504dd37798e6/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f37313736386539343466623634363036623364336165323961393265653566662e706e67237069635f63656e746572">
 </div>
 
-#### 3. 安装RapidVideOCR工具
-1. `Win + r`输入`cmd`，回车，进入命令窗口
+### 3. 安装RapidVideOCR工具
+#### 1. `Win + r`输入`cmd`，回车，进入命令窗口
 <div align="center">
     <img src="https://camo.githubusercontent.com/f87a24d66de7a385e46a9dbd25940d4a735dc9b6f4cf36337adfc00785427b15/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f62326230393839383264636534373865383730323766613730303934323966302e706e67237069635f63656e746572">
 </div>
 
-2. 输入`pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/` 安装RapidVideOCR
+#### 2. 输入`pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/` 安装RapidVideOCR
 
-    <div align="center">
-        <img src="https://camo.githubusercontent.com/154f1949fd26afedb1d577d01e1295c8f69279a04182b97f9da7092052e91888/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f31363136636562633066356534363161626562653562323062623437366439322e706e67237069635f63656e746572">
-    </div>
+<div align="center">
+    <img src="https://camo.githubusercontent.com/154f1949fd26afedb1d577d01e1295c8f69279a04182b97f9da7092052e91888/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f31363136636562633066356534363161626562653562323062623437366439322e706e67237069635f63656e746572">
+</div>
 
-3. 测试是否安装成功，输入`rapid_videocr -h`,如果出现类似下图输出，则说明安装成功。
-    <div align="center">
-        <img src="https://camo.githubusercontent.com/a785df6c909c40b260a3c5391827029b81f94d647b38c9dffec33a1fcfebb344/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f62393464653664396262663934656330383939363566353336386532626437622e706e67237069635f63656e746572">
-    </div>
+#### 3. 测试是否安装成功，输入`rapid_videocr -h`,如果出现类似下图输出，则说明安装成功。
+<div align="center">
+    <img src="https://camo.githubusercontent.com/a785df6c909c40b260a3c5391827029b81f94d647b38c9dffec33a1fcfebb344/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f62393464653664396262663934656330383939363566353336386532626437622e706e67237069635f63656e746572">
+</div>
 
-4. 命令行使用
-     1. Win + r 输入`cmd`，回车，进入命令窗口
-     2. 输入`rapid_videocr -i RGBImages -s result -m concat`。其中`RGBImages`为VideoSubFinder软件生成，可以自定义，例如：`G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages` 等等。
+#### 4. 命令行使用
+1. Win + r 输入`cmd`，回车，进入命令窗口
+2. 输入`rapid_videocr -i RGBImages -s result -m concat`。其中`RGBImages`为VideoSubFinder软件生成，可以自定义，例如：`G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages` 等等。
 
-        <div align="center">
-            <img src="https://camo.githubusercontent.com/621eee585dd7a13607e1afad6b61aea322c1e9441603b894211c448ceac0e60c/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f35346132353539363130643434356238626265353234363635383464306234382e706e67237069635f63656e746572">
-        </div>
-5. 脚本使用
-    1. 在桌面上新建TXT文件，命名为`rapid_videocr.py`，注意后缀名改为`*.py`。
-    2. 用记事本打开，将以下代码拷贝到`rapid_videocr.py`里面
-        ```python {linenos=table}
-        from rapid_videocr import RapidVideOCR
+<div align="center">
+    <img src="https://camo.githubusercontent.com/621eee585dd7a13607e1afad6b61aea322c1e9441603b894211c448ceac0e60c/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f35346132353539363130643434356238626265353234363635383464306234382e706e67237069635f63656e746572">
+</div>
 
-         # RapidVideOCR有两个初始化参数
-         # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
-         # concat_batch: 叠图识别的图像张数，默认10，可自行调节
-         # out_format: 输出格式选择，[srt, txt, all], 默认是 all
-         # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
-         extractor = RapidVideOCR(is_concat=False, out_format='all', is_print_console=False)
+#### 5. 脚本使用
+1. 在桌面上新建TXT文件，命名为`rapid_videocr.py`，注意后缀名改为`*.py`。
+2. 用记事本打开，将以下代码拷贝到`rapid_videocr.py`里面
+    ```python {linenos=table}
+    from rapid_videocr import RapidVideOCR
 
-         # Windows: 路径前加了一个r
-         rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
+        # RapidVideOCR有两个初始化参数
+        # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
+        # concat_batch: 叠图识别的图像张数，默认10，可自行调节
+        # out_format: 输出格式选择，[srt, txt, all], 默认是 all
+        # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
+        extractor = RapidVideOCR(is_concat=False, out_format='all', is_print_console=False)
 
-         # Linux/Mac写法如下
-         rgb_dir = 'test_files/TXTImages'
-
-         save_dir = 'result'
-         extractor(rgb_dir, save_dir)
-        ```
-
-     3. 更改`rgb_dir` 后面的目录为VideoSubFinder生成的`RGBImages`目录路径。
-
-        {{< tabs tabTotal="2">}}
-        {{% tab tabName="Windows下路径写法" %}}
-
-        ```python {linenos=table}
-        rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
-        ```
-
-        {{% /tab %}}
-        {{% tab tabName="Linux/Mac下路径写法" %}}
-
-        ```python {linenos=table}
         rgb_dir = 'test_files/TXTImages'
-        ```
 
-        {{% /tab %}}
-        {{< /tabs >}}
-      4. `Win + r` 打开终端输入以下代码，回车执行即可。
-          ```bash {linenos=table}
-          $ cd Desktop
-          $ python rapid_videocr.py
-          ```
+        save_dir = 'result'
+        extractor(rgb_dir, save_dir)
+    ```
+3. 更改`rgb_dir` 后面的目录为VideoSubFinder生成的`RGBImages`目录路径。
 
-         <div align="center">
-            <img src="https://camo.githubusercontent.com/4a6b1382cb984f9192d882203cc59affef8302570e8104659201be86a75c158c/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f33323932623831616430313634326561396638316362373031396263333131382e706e67">
-         </div>
+{{< tabs tabTotal="2">}}
+{{% tab tabName="Windows下路径写法" %}}
+
+```python {linenos=table}
+rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
+```
+
+{{% /tab %}}
+{{% tab tabName="Linux/Mac下路径写法" %}}
+
+```python {linenos=table}
+rgb_dir = 'test_files/TXTImages'
+```
+
+{{% /tab %}}
+{{< /tabs >}}
+
+4. `Win + r` 打开终端输入以下代码，回车执行即可。
+```bash {linenos=table}
+$ cd Desktop
+$ python rapid_videocr.py
+```
+
+<div align="center">
+<img src="https://camo.githubusercontent.com/4a6b1382cb984f9192d882203cc59affef8302570e8104659201be86a75c158c/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f33323932623831616430313634326561396638316362373031396263333131382e706e67">
+</div>
