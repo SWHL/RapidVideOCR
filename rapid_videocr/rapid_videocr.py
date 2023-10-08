@@ -27,6 +27,7 @@ class RapidVideOCR:
         concat_batch: int = 10,
         out_format: str = "all",
         is_print_console: bool = False,
+        **kwargs,
     ) -> None:
         """Init
 
@@ -36,7 +37,7 @@ class RapidVideOCR:
             out_format (str, optional): Output format of subtitle(srt, txt, all). Defaults to 'all'.
             is_print_console (bool, optional): Whether to print the subtitle results to console. 1 means to print results to console. Default is 0.
         """
-        self.rapid_ocr = RapidOCR(width_height_ratio=-1)
+        self.rapid_ocr = RapidOCR(width_height_ratio=-1, **kwargs)
         self.cropper = CropByProject()
 
         self.batch_size = concat_batch
