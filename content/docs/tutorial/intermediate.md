@@ -144,10 +144,10 @@ rgb_dir = 'test_files/TXTImages'
 {{% /tab %}}
 {{< /tabs >}}
 4. `Win + r` 打开终端输入以下代码，回车执行即可。
-```bash {linenos=table}
-$ cd Desktop
-$ python rapid_videocr.py
-```
-<div align="center">
-    <img src="https://camo.githubusercontent.com/4a6b1382cb984f9192d882203cc59affef8302570e8104659201be86a75c158c/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f33323932623831616430313634326561396638316362373031396263333131382e706e67">
-</div>
+    ```bash {linenos=table}
+    $ cd Desktop
+    $ python rapid_videocr.py
+    ```
+    <div align="center">
+        <img src="https://camo.githubusercontent.com/4a6b1382cb984f9192d882203cc59affef8302570e8104659201be86a75c158c/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f33323932623831616430313634326561396638316362373031396263333131382e706e67">
+    </div>
