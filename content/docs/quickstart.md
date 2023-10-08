@@ -1,5 +1,5 @@
 ---
-weight: 300
+weight: 2000
 lastmod: "2022-08-10"
 draft: false
 author: "SWHL"
@@ -8,6 +8,8 @@ icon: "rocket_launch"
 description: "故事的开始，只需3步。"
 toc: true
 ---
+
+{{< alert text="该库的输入必须是来自VideoSubFinder软件输出的RGBImagers或者TXTImages目录的路径。VideoSubFinder教程：[link](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)" />}}
 
 ### 1. 安装
 ```bash {linenos=table}
