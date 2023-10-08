@@ -9,6 +9,8 @@ toc: true
 description: ""
 ---
 
+#### 🚩2023-10-08 v2.2.8 update:
+- 适配`rapidocr_onnxruntime`的相关参数，可以通过RapidVideOCR类传入，从而更加灵活指定不同语言的模型。
 #### ♦ 2023-08-05 v2.2.4 update:
 - 修复批量识别模式下，索引错误。
 - 添加日志记录模块，便于使用桌面版，快速记录问题，便于反馈。
