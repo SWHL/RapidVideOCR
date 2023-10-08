@@ -51,7 +51,7 @@ draft: false
     <img src="https://camo.githubusercontent.com/0a9055c53a23bdb7dfc4f3b9682e09fd01f1d3ddd4f4e17c82845991cb91e7ce/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f35313665613137333663663734343532623232656630663362636231363963612e706e67237069635f63656e746572" width="80%">
 </div>
 
-#### 7. Win + r 输入`cmd`，回车，进入命令窗口
+#### 7. `Win + r` 输入`cmd`，回车，进入命令窗口
 <div align="center">
     <img src="https://camo.githubusercontent.com/845f93c9cbd1dc8ae02b49dd67a0b14ce817e07fbd6cdde76115fbf56e323ce3/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f38623237343037303036643434383134383039336437356632346330663462622e706e67237069635f63656e746572" width="60%">
 </div>
@@ -62,7 +62,7 @@ draft: false
 </div>
 
 #### 9. 添加`Scripts`目录到环境变量中
--  Win + q 输入“编辑” → 点击**编辑系统环境变量**
+-  `Win + q` 输入“编辑” → 点击**编辑系统环境变量**
     <div align="center">
         <img src="https://camo.githubusercontent.com/231e76a3857341f592e008257517cbd581b5b4b60164d1cea87af0e96eb1ff58/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f34653338323466356338653534666431613538366638383765646133366336392e706e67237069635f63656e746572">
     </div>
@@ -78,13 +78,15 @@ draft: false
 </div>
 
 ### 3. 安装RapidVideOCR工具
-#### 1. `Win + r`输入`cmd`，回车，进入命令窗口
+#### 1. `Win + r` 输入`cmd`，回车，进入命令窗口
 <div align="center">
     <img src="https://camo.githubusercontent.com/f87a24d66de7a385e46a9dbd25940d4a735dc9b6f4cf36337adfc00785427b15/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f62326230393839383264636534373865383730323766613730303934323966302e706e67237069635f63656e746572">
 </div>
 
-#### 2. 输入`pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/` 安装RapidVideOCR
-
+#### 2. 安装`rapid_videocr`
+```bash {linenos=table}
+pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/
+```
 <div align="center">
     <img src="https://camo.githubusercontent.com/154f1949fd26afedb1d577d01e1295c8f69279a04182b97f9da7092052e91888/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f31363136636562633066356534363161626562653562323062623437366439322e706e67237069635f63656e746572">
 </div>
@@ -95,8 +97,12 @@ draft: false
 </div>
 
 #### 4. 命令行使用
-1. Win + r 输入`cmd`，回车，进入命令窗口
-2. 输入`rapid_videocr -i RGBImages -s result -m concat`。其中`RGBImages`为VideoSubFinder软件生成，可以自定义，例如：`G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages` 等等。
+`Win + r` 输入`cmd`，回车，进入命令行窗口
+
+```bash {linenos=table}
+rapid_videocr -i RGBImages -s result -m concat
+```
+其中`RGBImages`为VideoSubFinder软件生成，可以自定义，例如：`G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages` 等等。
 
 <div align="center">
     <img src="https://camo.githubusercontent.com/621eee585dd7a13607e1afad6b61aea322c1e9441603b894211c448ceac0e60c/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f35346132353539363130643434356238626265353234363635383464306234382e706e67237069635f63656e746572">
@@ -108,17 +114,17 @@ draft: false
     ```python {linenos=table}
     from rapid_videocr import RapidVideOCR
 
-        # RapidVideOCR有两个初始化参数
-        # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
-        # concat_batch: 叠图识别的图像张数，默认10，可自行调节
-        # out_format: 输出格式选择，[srt, txt, all], 默认是 all
-        # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
-        extractor = RapidVideOCR(is_concat=False, out_format='all', is_print_console=False)
+    # RapidVideOCR有两个初始化参数
+    # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
+    # concat_batch: 叠图识别的图像张数，默认10，可自行调节
+    # out_format: 输出格式选择，[srt, txt, all], 默认是 all
+    # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
+    extractor = RapidVideOCR(is_concat=False, out_format='all', is_print_console=False)
 
-        rgb_dir = 'test_files/TXTImages'
+    rgb_dir = 'test_files/TXTImages'
 
-        save_dir = 'result'
-        extractor(rgb_dir, save_dir)
+    save_dir = 'result'
+    extractor(rgb_dir, save_dir)
     ```
 3. 更改`rgb_dir` 后面的目录为VideoSubFinder生成的`RGBImages`目录路径。
 {{< tabs tabTotal="2">}}
