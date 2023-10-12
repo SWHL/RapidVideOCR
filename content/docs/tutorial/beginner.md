@@ -19,7 +19,7 @@ draft: false
 
 #### RapidVideOCR Desktop使用教程
 1. 下载对应平台的**RapidVideOCR Desktop**压缩包
-   - [Github下载](https://github.com/SWHL/RapidVideOCR/releases/tag/v2.1.7)
+   - [Github下载最新版本](https://github.com/SWHL/RapidVideOCRDesktop/releases)
    - QQ群共享文件下载，QQ群号：706807542， 或者扫码加入：
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.png" width="25%" height="25%" align="center">
