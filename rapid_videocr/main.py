@@ -295,31 +295,22 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.vsf_exe_path is None and args.video_dir is None:
-        raise ValueError(
-            "--vsf_exe_path or --video_dir must not be None at the same time."
-        )
-
-    video_dir = args.video_dir
-    save_dir = args.save_dir
-    img_dir = args.img_dir
-
     args_dict = vars(args)
     del args_dict["video_dir"]
     del args_dict["save_dir"]
     del args_dict["img_dir"]
 
-    if args.vsf_exe_path and video_dir:
+    if args.vsf_exe_path and args.video_dir:
         extractor = RapidVideoSubFinderOCR(**vars(args))
-        extractor(video_dir, save_dir)
-    elif img_dir:
+        extractor(args.video_dir, args.save_dir)
+    elif args.img_dir:
         extractor = RapidVideOCR(
             is_concat_rec=args.is_concat_rec,
             concat_batch=args.concat_batch,
             out_format=args.out_format,
             is_print_console=args.print_console,
         )
-        extractor(img_dir, save_dir)
+        extractor(args.img_dir, args.save_dir)
     else:
         pass
 
