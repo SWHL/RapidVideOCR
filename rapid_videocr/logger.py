@@ -26,7 +26,7 @@ def get_logger(save_dir: str = "."):
 
     file_name = "{time:YYYY-MM-DD-HH-mm-ss}.log"
     save_file = Path(save_dir) / file_name
-    logger.add(save_file, rotation=None, retention="5 days")
+    logger.add(save_file, rotation=None, retention="2 days")
     return logger
 
 

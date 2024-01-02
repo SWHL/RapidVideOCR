@@ -295,11 +295,6 @@ def main():
     )
     args = parser.parse_args()
 
-    args_dict = vars(args)
-    del args_dict["video_dir"]
-    del args_dict["save_dir"]
-    del args_dict["img_dir"]
-
     if args.vsf_exe_path and args.video_dir:
         extractor = RapidVideoSubFinderOCR(**vars(args))
         extractor(args.video_dir, args.save_dir)
@@ -308,7 +303,7 @@ def main():
             is_concat_rec=args.is_concat_rec,
             concat_batch=args.concat_batch,
             out_format=args.out_format,
-            is_print_console=args.print_console,
+            is_print_console=args.is_print_console,
         )
         extractor(args.img_dir, args.save_dir)
     else:
