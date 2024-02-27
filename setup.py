@@ -31,7 +31,6 @@ MODULE_NAME = "rapid_videocr"
 obtainer = GetPyPiLatestVersion()
 latest_version = obtainer(MODULE_NAME)
 VERSION_NUM = obtainer.version_add_one(latest_version)
-VERSION_NUM = obtainer.version_add_one(VERSION_NUM)
 
 # 优先提取commit message中的语义化版本号，如无，则自动加1
 if len(sys.argv) > 2:
