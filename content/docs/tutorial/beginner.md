@@ -22,13 +22,12 @@ draft: false
    - [Github下载最新版本](https://github.com/SWHL/RapidVideOCRDesktop/releases)
    - QQ群共享文件下载，QQ群号：706807542， 或者扫码加入：
     <div align="center">
-        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.png" width="25%" height="25%" align="center">
+        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.png" width="15%" height="15%" align="center">
     </div>
 2. 解压zip包，双击`RapidVideOCR.exe`（以Windows平台为例）
 3. 界面如下图所示：
     <div align="center">
-        <img src="https://camo.githubusercontent.com/5763bb69dccad729feeb5abdd5c57573e5e4d54c0edd3d3b90ccaa9e2f80b3dd/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f36643634303862653362643734646361393465376264353138363931356634622e706e67" width=50%>
-        <img src="https://camo.githubusercontent.com/7d954a3498edb68f4491af260e428c94126c81698f564b37691ef95dda677ddd/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f64343763353564626464643334373131393238386466643464353262366165372e706e67" width=50%>
+        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/DesktopUI.png" width=50%>
     </div>
 
 4. 界面各个部分介绍
