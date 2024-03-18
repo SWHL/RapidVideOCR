@@ -54,6 +54,10 @@ flowchart LR
 ```
 
 ### Installation
+> [!WARNING]
+>
+> The input image path of `rapid_videocr` must be the path output by the **VideoSubFinder** software (RGBImages/TXTImages).
+
 ```bash
 pip install rapid_videocr
 ```
