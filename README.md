@@ -16,22 +16,6 @@
 [简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/docs/README_zh.md) | English
 </div>
 
-<details>
-    <summary>Contents</summary>
-
-- [Introduction](#introduction)
-- [Demo](#demo)
-- [Overall framework](#overall-framework)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Documentation](#documentation)
-- [Code Contributors](#code-contributors)
-- [Contributing](#contributing)
-- [Sponsor](#sponsor)
-- [License](#license)
-
-</details>
-
 ### Introduction
 - Video hard subtitle extraction, automatically generate the corresponding `srt | txt` file.
 - Supported subtitle languages: Chinese | English (For other supported languages, see: [List of supported languages](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
@@ -39,9 +23,11 @@
    - **Faster extraction**: Used in conjunction with [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software to extract key subtitle frames faster.
    - **More accurate recognition**: Use [RapidOCR](https://github.com/RapidAI/RapidOCR) as the recognition library.
    - **More convenient to use**: pip can be installed directly and used.
+
+- For desktop EXE version, please go to [RapidVideOCRDesktop](https://github.com/SWHL/RapidVideOCRDesktop).
 - If it helps you, please give a star ⭐.
 
-### [Demo](https://huggingface.co/spaces/SWHL/RapidVideOCR)
+### [Online Demo](https://huggingface.co/spaces/SWHL/RapidVideOCR)
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="100%" height="100%">
 </div>
@@ -54,15 +40,16 @@ flowchart LR
 ```
 
 ### Installation
-> [!WARNING]
->
-> The input image path of `rapid_videocr` must be the path output by the **VideoSubFinder** software (RGBImages/TXTImages).
-
 ```bash
 pip install rapid_videocr
 ```
 
 ### Usage
+
+> [!NOTE]
+>
+> The input image path of `rapid_videocr` must be the path of **RGBImages** or **TXTImages** output by **VideoSubFinder** software.
+
 ```bash
 rapid_videocr -i RGBImages
 ```

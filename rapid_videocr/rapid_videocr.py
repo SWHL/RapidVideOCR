@@ -292,7 +292,7 @@ class RapidVideOCR:
             self.save_file(srt_path, srt_result)
         else:
             raise ValueError(f"The {self.out_format} dost not support.")
-        logger.info(f"[OCR] The result has been saved to {save_dir} directory.")
+        logger.info("[OCR] The result has been saved to %s directory.", save_dir)
 
     def print_console(self, txt_result: List) -> None:
         for v in txt_result:
@@ -309,7 +309,7 @@ class RapidVideOCR:
         with open(save_path, mode, encoding="utf-8") as f:
             for value in content:
                 f.write(f"{value}\n")
-        logger.info(f"[OCR] The file has been saved in the {save_path}")
+        logger.info("[OCR] The file has been saved in the %s", save_path)
 
     @staticmethod
     def _compute_centroid(points: np.ndarray) -> List:

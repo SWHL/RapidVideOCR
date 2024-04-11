@@ -11,8 +11,6 @@ import numpy as np
 import shapely
 from shapely.geometry import MultiPoint, Polygon
 
-logger_initialized = {}
-
 
 class RecMode(Enum):
     SINGLE = "single"

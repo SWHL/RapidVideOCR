@@ -1,34 +1,22 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
-import functools
-import sys
-from pathlib import Path
-
-from loguru import logger
+import logging
 
 
-@functools.lru_cache()
-def get_logger(save_dir: str = "."):
-    loguru_format = (
-        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
-        "<level>{level: <8}</level> | "
-        "<cyan>{name}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
-    )
+def get_logger():
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
 
-    logger.remove()
-    logger.add(
-        sys.stderr,
-        format=loguru_format,
-        level="INFO",
-        enqueue=True,
-    )
+    fmt = "%(asctime)s - %(levelname)s: %(message)s"
+    format_str = logging.Formatter(fmt)
 
-    file_name = "{time:YYYY-MM-DD-HH-mm-ss}.log"
-    save_file = Path(save_dir) / file_name
-    logger.add(save_file, rotation=None, retention="2 days")
+    # 注意这里，想要写到不同log文件中，这里会存在写到同一个log文件中问题
+    if not logger.handlers:
+        sh = logging.StreamHandler()
+        logger.addHandler(sh)
+        sh.setFormatter(format_str)
     return logger
 
 
-log_dir = Path(__file__).resolve().parent / "log"
-logger = get_logger(str(log_dir))
+logger = get_logger()
