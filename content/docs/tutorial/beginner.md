@@ -40,3 +40,21 @@ draft: false
         - **视频目录**：想要提取硬字幕的视频所在目录
         - **保存路径**：保存提取结果的目录
 6. 上述都填好之后，点击OK按钮，即可开始识别。
+
+
+<script src="https://giscus.app/client.js"
+        data-repo="SWHL/RapidVideOCR"
+        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
+        data-category="Q&A"
+        data-category-id="DIC_kwDOGCzMJc4CUluM"
+        data-mapping="title"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>

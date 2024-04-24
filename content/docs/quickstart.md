@@ -40,3 +40,21 @@ extractor(rgb_dir, save_dir)
 ```
 {{% /tab %}}
 {{< /tabs >}}
+
+
+<script src="https://giscus.app/client.js"
+        data-repo="SWHL/RapidVideOCR"
+        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
+        data-category="Q&A"
+        data-category-id="DIC_kwDOGCzMJc4CUluM"
+        data-mapping="title"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>

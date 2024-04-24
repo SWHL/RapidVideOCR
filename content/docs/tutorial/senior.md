@@ -168,3 +168,21 @@ VSFParameters:
 
 
 {{< alert context="info" text="如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。" />}}
+
+
+<script src="https://giscus.app/client.js"
+        data-repo="SWHL/RapidVideOCR"
+        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
+        data-category="Q&A"
+        data-category-id="DIC_kwDOGCzMJc4CUluM"
+        data-mapping="title"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>
