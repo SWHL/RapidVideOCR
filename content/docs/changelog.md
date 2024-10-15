@@ -9,6 +9,8 @@ toc: true
 description: ""
 ---
 
+### 📣 后续更新日志将移步到[Release](https://github.com/SWHL/RapidVideOCR/releases)界面，这里不再更新
+
 #### 🚩2023-10-08 v2.2.8 update:
 - 适配`rapidocr_onnxruntime`的相关参数，可以通过RapidVideOCR类传入，从而更加灵活指定不同语言的模型。
 #### ♦ 2023-08-05 v2.2.4 update:
