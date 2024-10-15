@@ -26,7 +26,7 @@ jobs:
 
       - name: Unit testings
         run: |
-          pip install -r requirements.txt
+          pip install -r requirements.txt --break-system-packages
           pip install pytest six
           pytest -s tests/test_*.py
 
