@@ -39,9 +39,9 @@ jobs:
 
       - name: Run setup.py
         run: |
-          pip install wheel get_pypi_latest_version
+          pip install wheel get_pypi_latest_version --break-system-packages
 
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip --break-system-packages
           python setup.py bdist_wheel ${{ github.ref_name }}
 
       - name: Publish distribution 📦 to PyPI
