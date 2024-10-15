@@ -30,7 +30,7 @@ class VideoSubFinder:
         general_settings: Optional[str] = None,
         num_threads: int = 2,
         num_ocr_threads: int = 1,
-    ) -> None:
+    ):
         self.exe_path = vsf_exe_path
         if self.exe_path is None:
             raise ValueError("VSF Exe path must not be None.")

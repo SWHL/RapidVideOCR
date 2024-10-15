@@ -50,7 +50,7 @@ class RapidVideOCR:
         video_sub_finder_dir: Union[str, Path],
         save_dir: Union[str, Path],
         save_name: str = "result",
-    ) -> None:
+    ):
         """call
 
         Args:

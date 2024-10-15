@@ -44,6 +44,7 @@ class RapidVideoSubFinderOCR:
         general_settings: Optional[str] = None,
         num_threads: int = -1,
         num_ocr_threads: int = 1,
+        **kwargs,
     ) -> None:
         self.vsf = VideoSubFinder(
             vsf_exe_path,
@@ -72,6 +73,7 @@ class RapidVideoSubFinderOCR:
             concat_batch=concat_batch,
             out_format=out_format,
             is_print_console=is_print_console,
+            **kwargs,
         )
         self.video_formats = [".mp4", ".avi", ".mov", ".mkv"]
 

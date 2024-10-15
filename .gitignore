@@ -1,5 +1,6 @@
 rapid_videocr/video_sub_finder/libs
 *.vscode
+outputs
 
 *.pyc
 
