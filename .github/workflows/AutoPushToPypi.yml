@@ -27,7 +27,7 @@ jobs:
       - name: Unit testings
         run: |
           pip install -r requirements.txt --break-system-packages
-          pip install pytest six
+          pip install pytest six --break-system-packages
           pytest -s tests/test_*.py
 
   GenerateWHL_PushPyPi:
