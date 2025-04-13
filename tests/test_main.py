@@ -12,8 +12,8 @@ root_dir = cur_dir.parent
 
 sys.path.append(str(root_dir))
 
-from rapid_videocr import RapidVideOCR, RapidVideOCRError
-from rapid_videocr.utils import mkdir, read_txt
+from rapid_videocr import RapidVideOCR, RapidVideOCRExeception
+from rapid_videocr.utils.utils import mkdir, read_txt
 
 test_file_dir = cur_dir / "test_files"
 srt_path = test_file_dir / "result.srt"
@@ -47,9 +47,7 @@ def test_single_rec(img_dir):
 
 @pytest.mark.parametrize(
     "img_dir",
-    [
-        test_file_dir / "RGBImages",
-    ],
+    [test_file_dir / "RGBImages"],
 )
 def test_concat_rec(img_dir):
     extractor = RapidVideOCR(is_concat_rec=True)
@@ -80,9 +78,9 @@ def test_empty_dir(img_dir):
     extractor = RapidVideOCR(is_concat_rec=False)
     mkdir(img_dir)
 
-    with pytest.raises(RapidVideOCRError) as exc_info:
+    with pytest.raises(RapidVideOCRExeception) as exc_info:
         extractor(img_dir, test_file_dir)
-    assert exc_info.type is RapidVideOCRError
+    assert exc_info.type is RapidVideOCRExeception
 
     shutil.rmtree(img_dir)
 
@@ -97,9 +95,9 @@ def test_empty_dir(img_dir):
 def test_nothing_dir(img_dir):
     extractor = RapidVideOCR(is_concat_rec=False)
     mkdir(img_dir)
-    with pytest.raises(RapidVideOCRError) as exc_info:
+    with pytest.raises(RapidVideOCRExeception) as exc_info:
         extractor(img_dir, test_file_dir)
-    assert exc_info.type is RapidVideOCRError
+    assert exc_info.type is RapidVideOCRExeception
 
     shutil.rmtree(img_dir)
 

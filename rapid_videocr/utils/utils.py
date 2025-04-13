@@ -2,9 +2,8 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-from enum import Enum
 from pathlib import Path
-from typing import List, Union
+from typing import List, Tuple, Union
 
 import cv2
 import numpy as np
@@ -12,9 +11,48 @@ import shapely
 from shapely.geometry import MultiPoint, Polygon
 
 
-class RecMode(Enum):
-    SINGLE = "single"
-    CONCAT = "concat"
+def compute_centroid(points: np.ndarray) -> List:
+    """计算所给框的质心坐标
+
+    :param points ([type]): (4, 2)
+    :return: [description]
+    """
+    x_min, x_max = np.min(points[:, 0]), np.max(points[:, 0])
+    y_min, y_max = np.min(points[:, 1]), np.max(points[:, 1])
+    return [(x_min + x_max) / 2, (y_min + y_max) / 2]
+
+
+def write_txt(
+    save_path: Union[str, Path], contents: Union[List[str], str], mode: str = "w"
+) -> None:
+    if not isinstance(contents, list):
+        contents = [contents]
+
+    with open(save_path, mode, encoding="utf-8") as f:
+        for value in contents:
+            f.write(f"{value}\n")
+
+
+def read_img(img_path: Union[str, Path]) -> np.ndarray:
+    img = cv2.imdecode(np.fromfile(str(img_path), dtype=np.uint8), 1)
+    return img
+
+
+def padding_img(
+    img: np.ndarray,
+    padding_value: Tuple[int, int, int, int],
+    padding_color: Tuple[int, int, int] = (0, 0, 0),
+) -> np.ndarray:
+    padded_img = cv2.copyMakeBorder(
+        img,
+        padding_value[0],
+        padding_value[1],
+        padding_value[2],
+        padding_value[3],
+        cv2.BORDER_CONSTANT,
+        value=padding_color,
+    )
+    return padded_img
 
 
 class CropByProject:

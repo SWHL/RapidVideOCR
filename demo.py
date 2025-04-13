@@ -2,24 +2,24 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 
-# 提取 + 识别
-from rapid_videocr import RapidVideoSubFinderOCR
+# # 提取 + 识别
+# from rapid_videocr import RapidVideoSubFinderOCR
 
-vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
-vsf_ocr = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True)
+# vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
+# vsf_ocr = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True)
 
-# video_path可以是目录或者具体video路径
-video_path = "test_files/tiny/2.mp4"
-save_dir = "outputs"
-vsf_ocr(video_path, save_dir)
+# # video_path可以是目录或者具体video路径
+# video_path = "test_files/tiny/2.mp4"
+# save_dir = "outputs"
+# vsf_ocr(video_path, save_dir)
 
 
 # 只识别
 from rapid_videocr import RapidVideOCR
 
-extractor = RapidVideOCR(is_concat_rec=True, is_print_console=False)
+extractor = RapidVideOCR(is_concat_rec=False, is_print_console=False)
 
-rgb_dir = "test_files/RGBImagesTiny"
+rgb_dir = "tests/test_files/RGBImages"
 save_dir = "outputs"
 save_name = "a"
 
