@@ -5,23 +5,16 @@ import argparse
 from pathlib import Path
 from typing import Optional
 
-try:
-    from .main import RapidVideOCR
-    from .utils.logger import Logger
-    from .utils.utils import float_range
-    from .vsf_cli import VideoSubFinder
-except:
-    from utils.utils import float_range
-    from rapid_videocr.vsf_cli import VideoSubFinder
-
-    from rapid_videocr import RapidVideOCR
-    from rapid_videocr.utils.logger import Logger
+from .main import RapidVideOCR
+from .utils.logger import Logger
+from .utils.utils import float_range
+from .vsf_cli import VideoSubFinder
 
 
 class RapidVideoSubFinderOCR:
     def __init__(
         self,
-        is_concat_rec: bool = False,
+        is_batch_rec: bool = False,
         concat_batch: int = 10,
         out_format: str = "all",
         is_print_console: bool = False,
@@ -71,7 +64,7 @@ class RapidVideoSubFinderOCR:
         self.logger = Logger(logger_name=__name__).get_log()
 
         self.video_ocr = RapidVideOCR(
-            is_concat_rec=is_concat_rec,
+            is_batch_rec=is_batch_rec,
             concat_batch=concat_batch,
             out_format=out_format,
             is_print_console=is_print_console,
@@ -152,7 +145,7 @@ def main():
         help='Output file format. Default is "all".',
     )
     videocr_param_group.add_argument(
-        "--is_concat_rec",
+        "--is_batch_rec",
         action="store_true",
         default=False,
         help="Which mode to run (concat recognition or single recognition). Default is False.",
@@ -306,7 +299,7 @@ def main():
         extractor(args.video_dir, args.save_dir)
     elif args.img_dir:
         extractor = RapidVideOCR(
-            is_concat_rec=args.is_concat_rec,
+            is_batch_rec=args.is_batch_rec,
             concat_batch=args.concat_batch,
             out_format=args.out_format,
             is_print_console=args.is_print_console,

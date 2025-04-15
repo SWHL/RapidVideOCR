@@ -6,7 +6,7 @@
 # from rapid_videocr import RapidVideoSubFinderOCR
 
 # vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
-# vsf_ocr = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True)
+# vsf_ocr = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_batch_rec=True)
 
 # # video_path可以是目录或者具体video路径
 # video_path = "test_files/tiny/2.mp4"
@@ -17,7 +17,7 @@
 # 只识别
 from rapid_videocr import RapidVideOCR
 
-extractor = RapidVideOCR(is_concat_rec=False, is_print_console=False)
+extractor = RapidVideOCR(is_batch_rec=False)
 
 rgb_dir = "tests/test_files/RGBImages"
 save_dir = "outputs"

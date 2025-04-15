@@ -2,7 +2,6 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -11,96 +10,68 @@ import numpy as np
 from rapidocr import RapidOCR
 from tqdm import tqdm
 
-try:
-    from .utils.logger import Logger
-    from .utils.utils import (
-        CropByProject,
-        compute_centroid,
-        compute_poly_iou,
-        is_inclusive_each_other,
-        mkdir,
-        padding_img,
-        read_img,
-        write_txt,
-    )
-except:
-    from utils.utils import (
-        CropByProject,
-        compute_centroid,
-        compute_poly_iou,
-        is_inclusive_each_other,
-        mkdir,
-        padding_img,
-        read_img,
-        write_txt,
-    )
-
-    from rapid_videocr.utils.logger import Logger
-
-CUR_DIR = Path(__file__).resolve().parent
-
-
-class OutputFormat(Enum):
-    TXT = "txt"
-    SRT = "srt"
-    ALL = "all"
+from .export import ExportStrategyFactory, OutputFormat
+from .utils.crop_by_project import CropByProject
+from .utils.logger import Logger
+from .utils.utils import (
+    compute_centroid,
+    compute_poly_iou,
+    is_inclusive_each_other,
+    mkdir,
+    padding_img,
+    read_img,
+)
 
 
 class RapidVideOCR:
     def __init__(
         self,
-        is_concat_rec: bool = False,
-        concat_batch: int = 10,
+        is_batch_rec: bool = False,
+        batch_size: int = 10,
         out_format: str = OutputFormat.ALL.value,
-        is_print_console: bool = False,
         ocr_params: Optional[Dict[str, Any]] = None,
     ):
         self.logger = Logger(logger_name=__name__).get_log()
-        self.ocr_processor = OCRProcessor(ocr_params, concat_batch)
+
+        self.ocr_processor = OCRProcessor(ocr_params, batch_size)
+
         self.cropper = CropByProject()
-        self.is_concat_rec = is_concat_rec
+
+        self.is_batch_rec = is_batch_rec
         self.out_format = out_format
-        self.is_print_console = is_print_console
 
     def __call__(
         self,
-        video_sub_finder_dir: Union[str, Path],
+        vsf_dir: Union[str, Path],
         save_dir: Union[str, Path],
         save_name: str = "result",
     ) -> List[str]:
-        save_dir = Path(save_dir)
-        mkdir(save_dir)
+        vsf_dir = Path(vsf_dir)
+        if not vsf_dir.exists():
+            raise RapidVideOCRExeception(f"{vsf_dir} does not exist.")
 
-        img_list = self.get_img_list(video_sub_finder_dir)
-        if len(img_list) <= 0:
-            raise RapidVideOCRExeception(
-                f"{video_sub_finder_dir} does not have valid images"
-            )
-
+        img_list = self.get_img_list(vsf_dir)
         srt_result, txt_result = self.ocr_processor(
-            img_list, self.is_concat_rec, self.is_txt_dir
+            img_list, self.is_batch_rec, self.is_txt_dir(vsf_dir)
         )
-        self.export_file(save_dir, save_name, srt_result, txt_result)
-        if self.is_print_console:
-            self.print_console(txt_result)
 
+        self.export_file(Path(save_dir), save_name, srt_result, txt_result)
         return txt_result
 
-    def get_img_list(self, video_sub_finder_dir: Union[str, Path]) -> List[Path]:
+    def get_img_list(self, vsf_dir: Path) -> List[Path]:
         def get_sort_key(x: Path) -> int:
             return int("".join(str(x.stem).split("_")[:4]))
 
-        video_sub_finder_dir = Path(video_sub_finder_dir)
-        if not video_sub_finder_dir.exists():
-            raise RapidVideOCRExeception(f"{video_sub_finder_dir} does not exist.")
-
-        self.is_txt_dir = "TXTImages" in Path(video_sub_finder_dir).name
-
-        img_list = list(Path(video_sub_finder_dir).glob("*.jpeg"))
-        img_list = sorted(img_list, key=get_sort_key)
+        img_list = list(vsf_dir.glob("*.jpeg"))
         if not img_list:
-            return []
+            raise RapidVideOCRExeception(f"{vsf_dir} does not have valid images")
+
+        img_list = sorted(img_list, key=get_sort_key)
         return img_list
+
+    @staticmethod
+    def is_txt_dir(vsf_dir: Path) -> bool:
+        return "TXTImages" in vsf_dir.name
 
     def export_file(
         self,
@@ -109,25 +80,15 @@ class RapidVideOCR:
         srt_result: List[str],
         txt_result: List[str],
     ):
-        format_actions = {
-            OutputFormat.TXT.value: [(OutputFormat.TXT.value, txt_result)],
-            OutputFormat.SRT.value: [(OutputFormat.SRT.value, srt_result)],
-            OutputFormat.ALL.value: [
-                (OutputFormat.TXT.value, txt_result),
-                (OutputFormat.SRT.value, srt_result),
-            ],
-        }
-
         try:
-            actions = format_actions[self.out_format]
-        except KeyError:
-            raise ValueError(f"Unsupported output format: {self.out_format}") from None
+            strategy = ExportStrategyFactory.create_strategy(self.out_format)
 
-        for ext, content in actions:
-            file_path = save_dir / f"{save_name}.{ext}"
-            write_txt(file_path, content)
-
-        self.logger.info("[OCR] Results saved to directory: %s", save_dir)
+            mkdir(save_dir)
+            strategy.export(save_dir, save_name, srt_result, txt_result)
+            self.logger.info("[OCR] Results saved to directory: %s", save_dir)
+        except ValueError as e:
+            self.logger.error("Export failed: %s", str(e))
+            raise
 
     def print_console(self, txt_result: List):
         for v in txt_result:
@@ -147,9 +108,9 @@ class OCRProcessor:
 
         self.batch_size = batch_size
 
-    def __call__(self, img_list: List[Path], is_concat_rec: bool, is_txt_dir: bool):
+    def __call__(self, img_list: List[Path], is_batch_rec: bool, is_txt_dir: bool):
         self.is_txt_dir = is_txt_dir
-        process_func = self.batch_rec if is_concat_rec else self.single_rec
+        process_func = self.batch_rec if is_batch_rec else self.single_rec
         srt_result, txt_result = process_func(img_list)
         return srt_result, txt_result
 
@@ -362,14 +323,14 @@ def main():
         help='Output file format. Default is "all".',
     )
     parser.add_argument(
-        "--is_concat_rec",
+        "--is_batch_rec",
         action="store_true",
         default=False,
         help="Which mode to run (concat recognition or single recognition). Default is False.",
     )
     parser.add_argument(
         "-b",
-        "--concat_batch",
+        "--batch_size",
         type=int,
         default=10,
         help="The batch of concating image nums in concat recognition mode. Default is 10.",
@@ -385,10 +346,9 @@ def main():
     args = parser.parse_args()
 
     extractor = RapidVideOCR(
-        is_concat_rec=args.is_concat_rec,
-        concat_batch=args.concat_batch,
+        is_batch_rec=args.is_batch_rec,
+        batch_size=args.batch_size,
         out_format=args.out_format,
-        is_print_console=args.print_console,
     )
     extractor(args.img_dir, args.save_dir)
 
