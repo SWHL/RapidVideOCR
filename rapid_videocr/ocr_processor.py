@@ -189,15 +189,6 @@ class OCRProcessor:
         return ocr_result.boxes, ocr_result.txts
 
     def process_same_line(self, dt_boxes: np.ndarray, rec_res: List[str]) -> str:
-        """处理同一行文本的识别结果
-
-        Args:
-            dt_boxes: 检测框坐标数组
-            rec_res: 识别结果列表
-
-        Returns:
-            合并后的文本结果字符串
-        """
         if len(rec_res) == 1:
             return rec_res[0]
 
@@ -207,7 +198,20 @@ class OCRProcessor:
 
     def _group_by_lines(self, y_centroids: List[float]) -> List[List[int]]:
         """将文本框按行分组"""
-        bool_res = self.is_same_line(y_centroids)
+
+        @staticmethod
+        def is_same_line(points: List) -> List[bool]:
+            threshold = 5
+
+            align_points = list(zip(points, points[1:]))
+            bool_res = [False] * len(align_points)
+            for i, point in enumerate(align_points):
+                y0, y1 = point
+                if abs(y0 - y1) <= threshold:
+                    bool_res[i] = True
+            return bool_res
+
+        bool_res = is_same_line(y_centroids)
         groups = []
         current_group = [0]
         for i, is_same in enumerate(bool_res, 1):
@@ -226,15 +230,3 @@ class OCRProcessor:
             line_text = " ".join(rec_res[i] for i in group)
             lines.append(line_text)
         return "\n".join(lines)
-
-    @staticmethod
-    def is_same_line(points: List) -> List[bool]:
-        threshold = 5
-
-        align_points = list(zip(points, points[1:]))
-        bool_res = [False] * len(align_points)
-        for i, point in enumerate(align_points):
-            y0, y1 = point
-            if abs(y0 - y1) <= threshold:
-                bool_res[i] = True
-        return bool_res
