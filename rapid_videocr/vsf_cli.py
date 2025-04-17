@@ -3,10 +3,7 @@
 # @Contact: liekkaskono@163.com
 import subprocess
 from dataclasses import asdict, dataclass
-from pathlib import Path
 from typing import Optional
-
-cur_dir = Path(__file__).resolve().parent
 
 
 @dataclass
@@ -50,7 +47,3 @@ class VideoSubFinder:
             return output_dir
         except Exception as e:
             raise e
-
-
-class VSFError(Exception):
-    pass

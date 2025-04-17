@@ -2,75 +2,32 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
+from enum import Enum
 from pathlib import Path
-from typing import Optional
 
-from .main import RapidVideOCR
+from .main import OutputFormat, RapidVideOCR, RapidVideOCRInput
 from .utils.logger import Logger
 from .utils.utils import float_range
-from .vsf_cli import VideoSubFinder
+from .vsf_cli import VideoSubFinder, VideoSubFinderInput
+
+
+class VideoFormat(Enum):
+    MP4 = ".mp4"
+    AVI = ".avi"
+    MOV = ".mov"
+    MKV = ".mkv"
 
 
 class RapidVideoSubFinderOCR:
     def __init__(
         self,
-        is_batch_rec: bool = False,
-        concat_batch: int = 10,
-        out_format: str = "all",
-        is_print_console: bool = False,
-        vsf_exe_path: Optional[str] = None,
-        clear_dirs: bool = True,
-        run_search: bool = True,
-        create_cleared_text_images: bool = True,
-        create_empty_sub: Optional[str] = None,
-        create_sub_from_cleared_txt_images: Optional[str] = None,
-        create_sub_from_txt_results: Optional[str] = None,
-        open_video_opencv: bool = True,
-        open_video_ffmpeg: bool = False,
-        use_cuda: bool = False,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
-        top_video_image_percent_end: float = 0.2,
-        bottom_video_image_percent_end: float = 0.0,
-        left_video_image_percent_end: float = 0.0,
-        right_video_image_percent_end: float = 1.0,
-        general_settings: Optional[str] = None,
-        num_threads: int = -1,
-        num_ocr_threads: int = 1,
-        **kwargs,
-    ) -> None:
-        self.vsf = VideoSubFinder(
-            vsf_exe_path,
-            clear_dirs,
-            run_search,
-            create_cleared_text_images,
-            create_empty_sub,
-            create_sub_from_cleared_txt_images,
-            create_sub_from_txt_results,
-            open_video_opencv,
-            open_video_ffmpeg,
-            use_cuda,
-            start_time,
-            end_time,
-            top_video_image_percent_end,
-            bottom_video_image_percent_end,
-            left_video_image_percent_end,
-            right_video_image_percent_end,
-            general_settings,
-            num_threads,
-            num_ocr_threads,
-        )
-
+        vsf_input_params: VideoSubFinderInput,
+        ocr_input_params: RapidVideOCRInput,
+    ):
         self.logger = Logger(logger_name=__name__).get_log()
-
-        self.video_ocr = RapidVideOCR(
-            is_batch_rec=is_batch_rec,
-            concat_batch=concat_batch,
-            out_format=out_format,
-            is_print_console=is_print_console,
-            **kwargs,
-        )
-        self.video_formats = [".mp4", ".avi", ".mov", ".mkv"]
+        self.vsf = VideoSubFinder(vsf_input_params)
+        self.video_ocr = RapidVideOCR(ocr_input_params)
+        self.video_formats = [VideoFormat[v].value for v in VideoFormat.__members__]
 
     def __call__(self, video_path: str, output_dir: str = "outputs"):
         if Path(video_path).is_dir():
@@ -140,8 +97,8 @@ def main():
         "-o",
         "--out_format",
         type=str,
-        default="all",
-        choices=["srt", "txt", "all"],
+        default=OutputFormat.ALL.value,
+        choices=[OutputFormat[v].value for v in OutputFormat.__members__],
         help='Output file format. Default is "all".',
     )
     videocr_param_group.add_argument(
@@ -152,17 +109,10 @@ def main():
     )
     videocr_param_group.add_argument(
         "-b",
-        "--concat_batch",
+        "--batch_size",
         type=int,
         default=10,
         help="The batch of concating image nums in concat recognition mode. Default is 10.",
-    )
-    videocr_param_group.add_argument(
-        "-p",
-        "--is_print_console",
-        action="store_true",
-        default=False,
-        help="Whether to print the subtitle results to console. -p means to print.",
     )
 
     vsf_param_group = parser.add_argument_group(title="VSFParameters")
@@ -294,16 +244,18 @@ def main():
     )
     args = parser.parse_args()
 
+    ocr_input_params = RapidVideOCRInput(
+        is_batch_rec=args.is_batch_rec,
+        batch_size=args.batch_size,
+        out_format=args.out_format,
+    )
+
     if args.vsf_exe_path and args.video_dir:
-        extractor = RapidVideoSubFinderOCR(**vars(args))
+        vsf_input_params = VideoSubFinderInput(**vars(args))
+        extractor = RapidVideoSubFinderOCR(vsf_input_params, ocr_input_params)
         extractor(args.video_dir, args.save_dir)
     elif args.img_dir:
-        extractor = RapidVideOCR(
-            is_batch_rec=args.is_batch_rec,
-            concat_batch=args.concat_batch,
-            out_format=args.out_format,
-            is_print_console=args.is_print_console,
-        )
+        extractor = RapidVideOCR(ocr_input_params)
         extractor(args.img_dir, args.save_dir)
     else:
         pass

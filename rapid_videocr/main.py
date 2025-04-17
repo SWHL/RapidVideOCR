@@ -2,6 +2,7 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -12,22 +13,26 @@ from .utils.logger import Logger
 from .utils.utils import mkdir
 
 
+@dataclass
+class RapidVideOCRInput:
+    is_batch_rec: Optional[bool] = False
+    batch_size: int = 10
+    out_format: str = OutputFormat.ALL.value
+    ocr_params: Optional[Dict[str, Any]] = None
+
+
 class RapidVideOCR:
-    def __init__(
-        self,
-        is_batch_rec: bool = False,
-        batch_size: int = 10,
-        out_format: str = OutputFormat.ALL.value,
-        ocr_params: Optional[Dict[str, Any]] = None,
-    ):
+    def __init__(self, input_params: RapidVideOCRInput):
         self.logger = Logger(logger_name=__name__).get_log()
 
-        self.ocr_processor = OCRProcessor(ocr_params, batch_size)
+        self.ocr_processor = OCRProcessor(
+            input_params.ocr_params, input_params.batch_size
+        )
 
         self.cropper = CropByProject()
 
-        self.is_batch_rec = is_batch_rec
-        self.out_format = out_format
+        self.is_batch_rec = input_params.is_batch_rec
+        self.out_format = input_params.out_format
 
     def __call__(
         self,
@@ -125,21 +130,14 @@ def main():
         default=10,
         help="The batch of concating image nums in concat recognition mode. Default is 10.",
     )
-    parser.add_argument(
-        "-p",
-        "--print_console",
-        type=bool,
-        default=0,
-        choices=[0, 1],
-        help="Whether to print the subtitle results to console. 1 means to print results to console. Default is 0.",
-    )
     args = parser.parse_args()
 
-    extractor = RapidVideOCR(
+    ocr_input_params = RapidVideOCRInput(
         is_batch_rec=args.is_batch_rec,
         batch_size=args.batch_size,
         out_format=args.out_format,
     )
+    extractor = RapidVideOCR(ocr_input_params)
     extractor(args.img_dir, args.save_dir)
 
 
