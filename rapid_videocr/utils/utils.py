@@ -2,9 +2,8 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-from enum import Enum
 from pathlib import Path
-from typing import List, Union
+from typing import List, Tuple, Union
 
 import cv2
 import numpy as np
@@ -12,56 +11,48 @@ import shapely
 from shapely.geometry import MultiPoint, Polygon
 
 
-class RecMode(Enum):
-    SINGLE = "single"
-    CONCAT = "concat"
+def compute_centroid(points: np.ndarray) -> List:
+    """计算所给框的质心坐标
+
+    :param points ([type]): (4, 2)
+    :return: [description]
+    """
+    x_min, x_max = np.min(points[:, 0]), np.max(points[:, 0])
+    y_min, y_max = np.min(points[:, 1]), np.max(points[:, 1])
+    return [(x_min + x_max) / 2, (y_min + y_max) / 2]
 
 
-class CropByProject:
-    """投影法裁剪"""
+def write_txt(
+    save_path: Union[str, Path], contents: Union[List[str], str], mode: str = "w"
+) -> None:
+    if not isinstance(contents, list):
+        contents = [contents]
 
-    def __init__(self, threshold=250):
-        self.threshold = threshold
+    with open(save_path, mode, encoding="utf-8") as f:
+        for value in contents:
+            f.write(f"{value}\n")
 
-    def __call__(self, origin_img):
-        image = cv2.cvtColor(origin_img, cv2.COLOR_BGR2GRAY)
 
-        # 将图片二值化
-        retval, img = cv2.threshold(image, self.threshold, 255, cv2.THRESH_BINARY_INV)
+def read_img(img_path: Union[str, Path]) -> np.ndarray:
+    img = cv2.imdecode(np.fromfile(str(img_path), dtype=np.uint8), 1)
+    return img
 
-        # 使文字增长成块
-        closed = cv2.dilate(img, None, iterations=1)
 
-        # 水平投影
-        x0, x1 = self.get_project_loc(closed, direction="width")
-
-        # 竖直投影
-        y0, y1 = self.get_project_loc(closed, direction="height")
-
-        return origin_img[y0:y1, x0:x1]
-
-    @staticmethod
-    def get_project_loc(img, direction):
-        """获得裁剪的起始和终点索引位置
-        Args:
-            img (ndarray): 二值化后得到的图像
-            direction (str): 'width/height'
-        Raises:
-            ValueError: 不支持的求和方向
-        Returns:
-            tuple: 起始索引位置
-        """
-        if direction == "width":
-            axis = 0
-        elif direction == "height":
-            axis = 1
-        else:
-            raise ValueError(f"direction {direction} is not supported!")
-
-        loc_sum = np.sum(img == 255, axis=axis)
-        loc_range = np.argwhere(loc_sum > 0)
-        i0, i1 = loc_range[0][0], loc_range[-1][0]
-        return i0, i1
+def padding_img(
+    img: np.ndarray,
+    padding_value: Tuple[int, int, int, int],
+    padding_color: Tuple[int, int, int] = (0, 0, 0),
+) -> np.ndarray:
+    padded_img = cv2.copyMakeBorder(
+        img,
+        padding_value[0],
+        padding_value[1],
+        padding_value[2],
+        padding_value[3],
+        cv2.BORDER_CONSTANT,
+        value=padding_color,
+    )
+    return padded_img
 
 
 def mkdir(dir_path):
