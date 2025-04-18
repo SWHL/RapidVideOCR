@@ -26,11 +26,7 @@ class OCRProcessor:
         self.batch_size = batch_size
 
     def _init_ocr_engine(self, ocr_params: Optional[Dict] = None) -> RapidOCR:
-        default_params = {"Global.width_height_ratio": -1}
-        params = (
-            default_params if ocr_params is None else {**default_params, **ocr_params}
-        )
-        return RapidOCR(params=params)
+        return RapidOCR(params=ocr_params)
 
     def __call__(
         self, img_list: List[Path], is_batch_rec: bool, is_txt_dir: bool
