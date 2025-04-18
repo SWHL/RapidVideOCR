@@ -12,11 +12,13 @@ toc: true
 {{< alert text="该库的输入必须是来自VideoSubFinder软件输出的RGBImagers或者TXTImages目录的路径。VideoSubFinder教程：[link](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)" />}}
 
 ### 1. 安装
+
 ```bash {linenos=table}
 pip install rapid_videocr
 ```
 
 ### 2. 使用
+
 {{< tabs tabTotal="2">}}
 {{% tab tabName="终端使用" %}}
 
@@ -38,9 +40,9 @@ rgb_dir = 'test_files/RGBImages'
 save_dir = 'result'
 extractor(rgb_dir, save_dir)
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
-
 
 <script src="https://giscus.app/client.js"
         data-repo="SWHL/RapidVideOCR"

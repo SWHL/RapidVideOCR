@@ -8,11 +8,14 @@ draft: false
 ---
 
 ### 1. 安装使用VideoSubFinder软件
+
 - 下载地址：Windows & Linux ([videosubfinder官网](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件) | [Mac版](https://github.com/eritpchy/videosubfinder-cli)
 - 使用教程：[VideoSubFinder提取字幕关键帧教程](https://juejin.cn/post/7203362527082053691)
 - 最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
 - ✧ 推荐用`RGBImages`目录中图像（感谢小伙伴[dyphire](https://github.com/dyphire)在[#21](https://github.com/SWHL/RapidVideOCR/issues/21)的反馈）
+
 ### 2. 安装rapid_videocr
+
 ```bash {linenos=table}
 pip install rapid_videocr
 ```
@@ -25,24 +28,27 @@ pip install rapid_videocr
 ```python {linenos=table}
 from rapid_videocr import RapidVideOCR
 
-# RapidVideOCR有两个初始化参数
+# RapidVideOCRInput有两个初始化参数
 # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
 # concat_batch: 叠图识别的图像张数，默认10，可自行调节
 # out_format: 输出格式选择，[srt, txt, all], 默认是 all
 # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
-extractor = RapidVideOCR(is_concat_rec=False,
-                        out_format='all',
-                        is_print_console=False)
+ocr_input_params = RapidVideOCRInput(
+is_batch_rec=False, ocr_params={"Global.with_paddle": True}
+)
+extractor = RapidVideOCR(ocr_input_params)
 
-# Windows端，需要这样写： rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
-# Linux / Mac 下面这样写
-rgb_dir = 'test_files/TXTImages'
-save_dir = 'result'
-extractor(rgb_dir, save_dir)
+rgb_dir = "tests/test_files/RGBImages"
+save_dir = "outputs"
+save_name = "a"
+
+# outputs/a.srt  outputs/a.t
+extractor(rgb_dir, save_dir, save_name=save_name)
 ```
 
 {{% /tab %}}
 {{% tab tabName="Extract + OCR" %}}
+
 ```python {linenos=table}
 from rapid_videocr import RapidVideoSubFinderOCR
 
@@ -54,6 +60,7 @@ video_path = 'test_files/tiny/2.mp4'
 save_dir = 'outputs'
 extractor(video_path, save_dir)
 ```
+
 {{% /tab %}}
 {{< /tabs >}}
 
@@ -63,14 +70,14 @@ extractor(video_path, save_dir)
 {{% tab tabName="Only OCR" %}}
 
 ```bash {linenos=table}
-$ rapid_videocr -i RGBImages
+rapid_videocr -i RGBImages
 ```
 
 {{% /tab %}}
 {{% tab tabName="Extract + OCR" %}}
 
 ```bash {linenos=table}
-$ rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe -video_dir G:\ProgramFiles\RapidVideOCR\test_files\tiny
+rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe -video_dir G:\ProgramFiles\RapidVideOCR\test_files\tiny
 ```
 
 {{% /tab %}}
@@ -161,14 +168,14 @@ VSFParameters:
 -nocrthr NUM_OCR_THREADS, --num_ocr_threads NUM_OCR_THREADS
                         number of threads used for Create Cleared TXT Images
 ```
+
 </details>
 
 ### 5. 查看结果
+
 前往`save_dir`目录下即可查看结果。
 
-
 {{< alert context="info" text="如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。" />}}
-
 
 <script src="https://giscus.app/client.js"
         data-repo="SWHL/RapidVideOCR"
