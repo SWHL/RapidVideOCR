@@ -1,2 +1,5 @@
 tqdm
-rapidocr_onnxruntime
+rapidocr
+onnxruntime
+colorlog
+tqdm
