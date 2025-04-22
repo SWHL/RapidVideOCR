@@ -1,14 +1,25 @@
 # -*- encoding: utf-8 -*-
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
+import platform
 import subprocess
+import tarfile
 from dataclasses import asdict, dataclass
-from typing import Optional
+from pathlib import Path
+from typing import List, Optional, Union
+
+from .utils.download_file import download_file
+
+cur_dir = Path(__file__).resolve().parent
+
+VSF_MODEL_DICT = {
+    "Linux": "https://github.com/eritpchy/videosubfinder-cli/releases/download/6.10.2-ci/videosubfinder-cli-cpu-static-linux-x64.tar.gz"
+}
 
 
 @dataclass
 class VideoSubFinderInput:
-    vsf_exe_path: str
+    vsf_exe_path: Optional[str] = None
     clear_dirs: bool = True
     run_search: bool = True
     create_cleared_text_images: bool = True
@@ -31,6 +42,18 @@ class VideoSubFinderInput:
 
 class VideoSubFinder:
     def __init__(self, input_params: VideoSubFinderInput):
+        cur_platform = platform.system()
+
+        if input_params.vsf_exe_path is None:
+            # 自动下载指定版本
+            cur_platform = "Linux"
+            vsf_url = VSF_MODEL_DICT[cur_platform]
+            save_path = cur_dir / f"{Path(vsf_url).name}"
+            download_file(vsf_url, save_path)
+            untar(save_path, cur_dir / "vsf")
+            run_cmd([f"cd {cur_dir}/vsf", "chmod +x ./VideoSubFinderCli.run"])
+            input_params.vsf_exe_path = str(cur_dir / "vsf" / "VideoSubFinderCli.run")
+
         param_dict = asdict(input_params)
         run_list = [input_params.vsf_exe_path]
         for k, v in param_dict.items():
@@ -43,7 +66,26 @@ class VideoSubFinder:
     def __call__(self, video_path: str, output_dir: str) -> str:
         self.run_list.extend(["--input_video", video_path, "--output_dir", output_dir])
         try:
-            subprocess.run(self.run_list, check=False)
+            run_cmd(self.run_list)
             return output_dir
         except Exception as e:
             raise e
+
+
+def untar(file_path: Union[str, Path], save_dir: Union[str, Path]):
+    with tarfile.open(file_path, "r") as tar:
+        tar.extractall(path=save_dir)
+
+
+def run_cmd(cmd: List[str]):
+    try:
+        process = subprocess.run(
+            cmd,
+            shell=True,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise ValueError(f"Run {cmd} meets error. \n{e.stderr}") from e
