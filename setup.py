@@ -53,8 +53,7 @@ setuptools.setup(
     license="Apache-2.0",
     include_package_data=True,
     install_requires=read_txt("requirements.txt"),
-    packages=[MODULE_NAME],
-    package_data={"": ["*.yaml"]},
+    packages=setuptools.find_packages(),
     keywords=["rapidocr,videocr,subtitle"],
     classifiers=[
         "Programming Language :: Python :: 3.6",
