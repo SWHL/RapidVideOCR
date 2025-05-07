@@ -12,10 +12,12 @@ from .utils.crop_by_project import CropByProject
 from .utils.logger import Logger
 from .utils.utils import mkdir
 
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"}
+
 
 @dataclass
 class RapidVideOCRInput:
-    is_batch_rec: Optional[bool] = False
+    is_batch_rec: bool = False
     batch_size: int = 10
     out_format: str = OutputFormat.ALL.value
     ocr_params: Optional[Dict[str, Any]] = None
@@ -56,7 +58,16 @@ class RapidVideOCR:
         def get_sort_key(x: Path) -> int:
             return int("".join(str(x.stem).split("_")[:4]))
 
-        img_list = list(vsf_dir.glob("*.jpeg"))
+        img_list = []
+        for v in vsf_dir.glob("*.*"):
+            if not v.is_file():
+                continue
+
+            if v.suffix.lower() not in IMAGE_EXTENSIONS:
+                continue
+
+            img_list.append(v)
+
         if not img_list:
             raise RapidVideOCRExeception(f"{vsf_dir} does not have valid images")
 
