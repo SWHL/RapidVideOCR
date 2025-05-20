@@ -17,6 +17,7 @@ from rapid_videocr.utils.utils import mkdir, read_txt
 
 test_file_dir = cur_dir / "test_files"
 srt_path = test_file_dir / "result.srt"
+ass_path = test_file_dir / "result.ass"
 txt_path = test_file_dir / "result.txt"
 
 
@@ -32,16 +33,22 @@ def test_single_rec(img_dir):
     extractor(img_dir, test_file_dir)
 
     srt_data = read_txt(srt_path)
+    ass_data = read_txt(ass_path)
     txt_data = read_txt(txt_path)
 
     assert len(srt_data) == 16
     assert srt_data[2] == "空间里面他绝对赢不了的"
     assert srt_data[-2] == "你们接着善后"
 
+    assert len(ass_data) == 17
+    assert ass_data[13].split(',', 9)[-1] == "空间里面他绝对赢不了的"
+    assert ass_data[-1].split(',', 9)[-1] == "你们接着善后"
+
     assert len(txt_data) == 8
     assert txt_data[-2] == "你们接着善后"
 
     srt_path.unlink()
+    ass_path.unlink()
     txt_path.unlink()
 
 
@@ -55,16 +62,22 @@ def test_concat_rec(img_dir):
     extractor(img_dir, test_file_dir)
 
     srt_data = read_txt(srt_path)
+    ass_data = read_txt(ass_path)
     txt_data = read_txt(txt_path)
 
     assert len(srt_data) == 16
     assert srt_data[2] == "空间里面他绝对赢不了的"
     assert srt_data[-2] == "你们接着善后"
 
+    assert len(ass_data) == 17
+    assert ass_data[13].split(',', 9)[-1] == "空间里面他绝对赢不了的"
+    assert ass_data[-1].split(',', 9)[-1] == "你们接着善后"
+
     assert len(txt_data) == 8
     assert txt_data[-2] == "你们接着善后"
 
     srt_path.unlink()
+    ass_path.unlink()
     txt_path.unlink()
 
 
@@ -116,6 +129,21 @@ def test_out_only_srt():
     assert srt_data[-2] == "你们接着善后"
 
     srt_path.unlink()
+
+
+def test_out_only_ass():
+    img_dir = test_file_dir / "RGBImages"
+    input_param = RapidVideOCRInput(is_batch_rec=True, out_format="ass")
+    extractor = RapidVideOCR(input_param)
+    extractor(img_dir, test_file_dir)
+
+    ass_data = read_txt(ass_path)
+
+    assert len(ass_data) == 17
+    assert ass_data[13].split(',', 9)[-1] == "空间里面他绝对赢不了的"
+    assert ass_data[-1].split(',', 9)[-1] == "你们接着善后"
+
+    ass_path.unlink()
 
 
 def test_out_only_txt():
