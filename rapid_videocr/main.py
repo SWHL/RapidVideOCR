@@ -47,11 +47,11 @@ class RapidVideOCR:
             raise RapidVideOCRExeception(f"{vsf_dir} does not exist.")
 
         img_list = self.get_img_list(vsf_dir)
-        srt_result, txt_result = self.ocr_processor(
+        srt_result, ass_result, txt_result = self.ocr_processor(
             img_list, self.is_batch_rec, self.is_txt_dir(vsf_dir)
         )
 
-        self.export_file(Path(save_dir), save_name, srt_result, txt_result)
+        self.export_file(Path(save_dir), save_name, srt_result, ass_result, txt_result)
         return txt_result
 
     def get_img_list(self, vsf_dir: Path) -> List[Path]:
@@ -83,13 +83,14 @@ class RapidVideOCR:
         save_dir: Path,
         save_name: str,
         srt_result: List[str],
+        ass_result: List[str],
         txt_result: List[str],
     ):
         try:
             strategy = ExportStrategyFactory.create_strategy(self.out_format)
 
             mkdir(save_dir)
-            strategy.export(save_dir, save_name, srt_result, txt_result)
+            strategy.export(save_dir, save_name, srt_result, ass_result, txt_result)
             self.logger.info("[OCR] Results saved to directory: %s", save_dir)
         except ValueError as e:
             self.logger.error("Export failed: %s", str(e))
@@ -121,11 +122,18 @@ def main():
         help='The path of saving the recognition result. Default is "outputs" under the current directory.',
     )
     parser.add_argument(
+        "-f",
+        "--file_name",
+        type=str,
+        default="result",
+        help='The name of the resulting file name. Default is "result".'
+    )
+    parser.add_argument(
         "-o",
         "--out_format",
         type=str,
         default="all",
-        choices=["srt", "txt", "all"],
+        choices=["srt", "ass", "txt", "all"],
         help='Output file format. Default is "all".',
     )
     parser.add_argument(
@@ -149,7 +157,7 @@ def main():
         out_format=args.out_format,
     )
     extractor = RapidVideOCR(ocr_input_params)
-    extractor(args.img_dir, args.save_dir)
+    extractor(args.img_dir, args.save_dir, args.file_name)
 
 
 if __name__ == "__main__":
