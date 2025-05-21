@@ -35,7 +35,7 @@ class OCRProcessor:
         process_func = self.batch_rec if is_batch_rec else self.single_rec
         rec_results = process_func(img_list)
         srt_results = self._generate_srt_results(rec_results)
-        ass_results = self._generate_ass_results(rec_results);
+        ass_results = self._generate_ass_results(rec_results)
         txt_results = self._generate_txt_result(rec_results)
         return srt_results, ass_results, txt_results
 
