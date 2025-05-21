@@ -126,14 +126,14 @@ def main():
         "--file_name",
         type=str,
         default="result",
-        help='The name of the resulting file name. Default is "result".'
+        help='The name of the resulting file name. Default is "result".',
     )
     parser.add_argument(
         "-o",
         "--out_format",
         type=str,
-        default="all",
-        choices=["srt", "ass", "txt", "all"],
+        default=OutputFormat.ALL.value,
+        choices=[v.value for v in OutputFormat],
         help='Output file format. Default is "all".',
     )
     parser.add_argument(
