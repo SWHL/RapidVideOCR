@@ -157,3 +157,9 @@ long1.jpg
 
 .DS_Store
 *.npy
+
+# hugo generated files
+public/
+resources/_gen/
+tests/
+.hugo_build.lock

@@ -3,31 +3,31 @@ weight: 2000
 lastmod: "2022-08-10"
 draft: false
 author: "SWHL"
-title: "快速开始"
+title: "Quickstart"
 icon: "rocket_launch"
-description: "故事的开始，只需3步。"
+description: "Begin your story, with only 3 steps."
 toc: true
 ---
 
-{{< alert text="该库的输入必须是来自VideoSubFinder软件输出的RGBImages或者TXTImages目录的路径。VideoSubFinder教程：[link](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)" />}}
+{{< alert text="The input for this library must be a path to an RGBImages or TXTImages directory outputted by VideoSubFinder. VideoSubFinder tutorial (note: this blog post is written in Chinese)：[link](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)" />}}
 
-### 1. 安装
+### 1. Installation
 
 ```bash {linenos=table}
 pip install rapid_videocr
 ```
 
-### 2. 使用
+### 2. Usage
 
 {{< tabs tabTotal="2">}}
-{{% tab tabName="终端使用" %}}
+{{% tab tabName="Terminal" %}}
 
 ```bash {linenos=table}
 rapid_videocr -i test_files/RGBImages
 ```
 
 {{% /tab %}}
-{{% tab tabName="Python使用" %}}
+{{% tab tabName="Python" %}}
 
 ```python {linenos=table}
 from rapid_videocr import RapidVideOCR
@@ -55,8 +55,9 @@ extractor(rgb_dir, save_dir)
         data-emit-metadata="0"
         data-input-position="top"
         data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
+        data-lang="en"
         data-loading="lazy"
         crossorigin="anonymous"
         async>
 </script>
+
