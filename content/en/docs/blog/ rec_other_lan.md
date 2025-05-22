@@ -13,7 +13,7 @@ draft: false
 - This article takes the French OCR solution proposed in [discussions #40](https://github.com/SWHL/RapidVideOCR/discussions/40) as an example, and other languages can be done in the same way.
 
 ### 1. Correctly install and use RapidVideOCR
-Please refer to this [link](https://swhl.github.io/RapidVideOCR/en-us/docs/tutorial/senior/)
+Please refer to this [link](https://swhl.github.io/RapidVideOCR/en/docs/tutorial/senior/)
 
 ### 2. Use PaddleOCR Convert tool to convert French recognition model to ONNX
 {{< alert text="Refer to the tutorial [link](https://github.com/RapidAI/PaddleOCRModelConvert)" />}}
