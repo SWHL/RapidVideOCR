@@ -24,7 +24,7 @@ draft: false
 
 #### 1. 下载python安装包
 
-打开python官网 → <https://www.python.org，选择自己系统进入下载界面（VideoSubFinder工具目前只有Windows的）>
+打开python官网 → <https://www.python.org>，选择自己系统进入下载界面（VideoSubFinder工具目前只有Windows的）>
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/1.png">
 </div>

@@ -20,9 +20,9 @@ jobs:
       - run: go version
 
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: '0.118.2'
+          hugo-version: '0.147.4'
           extended: true
 
       - name: Build

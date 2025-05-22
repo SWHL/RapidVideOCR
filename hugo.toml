@@ -1,9 +1,26 @@
 baseURL = 'https://swhl.github.io/RapidVideOCR/'
-languageCode = 'en-us'
 title = 'RapidVideOCR Documentation'
 enableEmoji = true
 enableGitInfo = true # N.B. .GitInfo does not currently function with submodule content directories
 # googleAnalytics = "G-VXQVVP7V8K" # (or set via env variable HUGO_GOOGLEANALYTICS)
+
+# internationalization
+defaultContentLanguage = "zh-CN"
+defaultContentLanguageInSubdir = false
+disableDefaultLanguageRedirect = false
+disableLanguages = []
+
+[languages]
+  [languages.zh-CN]
+    disabled = false
+    contentDir = "content"
+    languageName = "简体中文"
+    weight = 1
+  [languages.en]
+    disabled = false
+    contentDir = "content/en"
+    languageName = "English"
+    weight = 10
 
 [build]
   noJSConfigInAssets = true
