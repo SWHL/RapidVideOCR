@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+
+
+
+
+
+    
+        
+    
+
+    
+        
+    
+
+    
+
+    
+
+    
+
+<html lang="en"><head>
+    <meta charset="utf-8" />
+    <title>Docs | RapidVideOCR Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="Documentation, Hugo, Hugo Theme, Bootstrap" />
+    <meta name="author" content="Colin Wilson - Lotus Labs" />
+    <meta name="email" content="support@aigis.uk" />
+    <meta name="website" content="https://lotusdocs.dev" />
+    <meta name="Version" content="v0.1.0" />
+    
+    <link rel="icon" href="https://swhl.github.io/RapidVideOCR/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="https://swhl.github.io/RapidVideOCR/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="https://swhl.github.io/RapidVideOCR/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://swhl.github.io/RapidVideOCR/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://swhl.github.io/RapidVideOCR/favicon-16x16.png">
+<link rel="manifest" crossorigin="use-credentials" href="https://swhl.github.io/RapidVideOCR/site.webmanifest">
+<meta property="og:title" content="Docs" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://swhl.github.io/RapidVideOCR/en/docs/" /><meta property="og:image" content="https://swhl.github.io/RapidVideOCR/opengraph/card-base-2_hu_fe7ebe313c1e78e.png"/><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://swhl.github.io/RapidVideOCR/opengraph/card-base-2_hu_fe7ebe313c1e78e.png"/>
+<meta name="twitter:title" content="Docs"/>
+<meta name="twitter:description" content=""/>
+
+    
+        <link rel="alternate" type="application/atom+xml" title="Atom feed for RapidVideOCR Documentation" href="/index.xml" />
+    
+    <script>(()=>{var t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,e=localStorage.getItem("theme");t&&e===null&&(localStorage.setItem("theme","dark"),document.documentElement.setAttribute("data-dark-mode","")),t&&e==="dark"&&document.documentElement.setAttribute("data-dark-mode",""),e==="dark"&&document.documentElement.setAttribute("data-dark-mode","")})()</script>
+    
+    
+            
+                
+                <script type="text/javascript" src="https://swhl.github.io/RapidVideOCR/docs/js/flexsearch.bundle.min.f5159d5a2151ffbb653996ec17eaff7da4e04c286bd879fc41839d36a5586f3f20eaead0b6089de48f9adc669cdee771.js" integrity="sha384-9RWdWiFR/7tlOZbsF&#43;r/faTgTChr2Hn8QYOdNqVYbz8g6urQtgid5I&#43;a3Gac3udx" crossorigin="anonymous"></script>
+                
+        
+    
+    
+    
+    
+        
+        
+        
+        
+    
+        
+        
+        
+        
+    
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link href="https://fonts.googleapis.com/css?family=Inter:300,400,600,700|Fira+Code:500,700&display=block" rel="stylesheet">
+
+    <link rel="stylesheet" href="/RapidVideOCR/docs/scss/style.min.cf4a0f03ad7a09130aff0a869015200ce8e89cca990fa2bf450164af79e4f6afa4af0b01bd62ca766f6db5ea7823e143.css" integrity="sha384-z0oPA616CRMK/wqGkBUgDOjonMqZD6K/RQFkr3nk9q&#43;krwsBvWLKdm9ttep4I&#43;FD"crossorigin="anonymous">
+    
+    
+    
+    <script defer data-domain="rapidai.github.io/rapidocrdocs" data-api='/docs/s/api/event/' src='/docs/s/js/script.outbound-links.js'></script>
+<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script></head>
+<body>
+        <div class="content">
+            <div class="page-wrapper toggled">
+<nav id="sidebar" class="sidebar-wrapper">
+    <div class="sidebar-brand">
+        <a href='/RapidVideOCR/en/' aria-label="HomePage" alt="HomePage">
+            
+                <?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path d="m143,39.5c-18,0-18,18-18,18,0,0,0-18-18-18H22c-2.76,0-5,2.24-5,5v143c0,2.76,2.24,5,5,5h76c7.2,0,8.64,11.52,8.93,16.13.07,1.05.95,1.87,2,1.87h32.14c1.06,0,1.94-.82,2-1.87.29-4.61,1.73-16.13,8.93-16.13h76c2.76,0,5-2.24,5-5V44.5c0-2.76-2.24-5-5-5h-85Zm63,123.5c0,1.38-1.12,2.5-2.5,2.5h-60.5c-18,0-18,18-18,18,0,0,0-18-18-18h-60.5c-1.38,0-2.5-1.12-2.5-2.5v-94c0-1.38,1.12-2.5,2.5-2.5h51.5c7.2,0,8.64,11.52,8.93,16.13.07,1.05.95,1.87,2,1.87h32.14c1.06,0,1.94-.82,2-1.87.29-4.61,1.73-16.13,8.93-16.13h51.5c1.38,0,2.5,1.12,2.5,2.5v94Z" style="fill:#06f;"/></svg>
+            
+        </a>
+    </div>
+    <div class="sidebar-content" style="height: calc(100% - 131px);">
+        <ul class="sidebar-menu">
+            
+                
+                
+                    
+                        
+                        <li class="">
+                            <a class="sidebar-root-link" href="https://swhl.github.io/RapidVideOCR/en/docs/overview/">
+                                <i class="material-icons me-2">circle</i>
+                                
+                                Overview
+                            </a>
+                        </li>
+                    
+                
+                    
+                        
+                        <li class="">
+                            <a class="sidebar-root-link" href="https://swhl.github.io/RapidVideOCR/en/docs/quickstart/">
+                                <i class="material-icons me-2">rocket_launch</i>
+                                
+                                Quickstart
+                            </a>
+                        </li>
+                    
+                
+                    
+                        
+                        <li class="">
+                            <a class="sidebar-root-link" href="https://swhl.github.io/RapidVideOCR/en/docs/online_demo/">
+                                <i class="material-icons me-2">language</i>
+                                
+                                Online Demo
+                            </a>
+                        </li>
+                    
+                
+                    
+                    
+                        <li class="sidebar-dropdown  ">
+                            <button class="btn">
+                                <i class="material-icons me-2">local_library</i>
+                                Tutorial
+                            </button>
+                            <div class="sidebar-submenu ">
+                                <ul>
+                                    
+                                        
+                                        
+                                            <li class=" "><a class="sidebar-nested-link" href="https://swhl.github.io/RapidVideOCR/en/docs/tutorial/beginner/">Beginner Tutorial (Download and unzip the GUI version)</a></li>
+                                        
+                                    
+                                        
+                                        
+                                            <li class=" "><a class="sidebar-nested-link" href="https://swhl.github.io/RapidVideOCR/en/docs/tutorial/intermediate/">Intermediate Tutorial (Beginner Python)</a></li>
+                                        
+                                    
+                                        
+                                        
+                                            <li class=" "><a class="sidebar-nested-link" href="https://swhl.github.io/RapidVideOCR/en/docs/tutorial/senior/">Advanced Tutorial (For those with Python basics)</a></li>
+                                        
+                                    
+                                </ul>
+                            </div>
+                        </li>
+                    
+                
+                    
+                    
+                        <li class="sidebar-dropdown  ">
+                            <button class="btn">
+                                <i class="material-icons me-2">article</i>
+                                Blog
+                            </button>
+                            <div class="sidebar-submenu ">
+                                <ul>
+                                    
+                                        
+                                        
+                                            <li class=" "><a class="sidebar-nested-link" href="https://swhl.github.io/RapidVideOCR/en/docs/blog/-rec_other_lan/">How can I do OCR for subtitles in languages other than Chinese and English?</a></li>
+                                        
+                                    
+                                </ul>
+                            </div>
+                        </li>
+                    
+                
+                    
+                        
+                        <li class="">
+                            <a class="sidebar-root-link" href="https://swhl.github.io/RapidVideOCR/en/docs/sponsor/">
+                                <i class="material-icons me-2">cheer</i>
+                                
+                                Sponsor
+                            </a>
+                        </li>
+                    
+                
+                    
+                        
+                        <li class="">
+                            <a class="sidebar-root-link" href="https://swhl.github.io/RapidVideOCR/en/docs/faq/">
+                                <i class="material-icons me-2">update</i>
+                                
+                                FAQ
+                            </a>
+                        </li>
+                    
+                
+                    
+                        
+                        <li class="">
+                            <a class="sidebar-root-link" href="https://swhl.github.io/RapidVideOCR/en/docs/changelog/">
+                                <i class="material-icons me-2">update</i>
+                                
+                                Changelog
+                            </a>
+                        </li>
+                    
+                
+            
+        </ul>
+        
+    </div>
+    
+        <ul class="sidebar-footer list-unstyled mb-0">
+            
+        </ul>
+    
+</nav>
+
+                    <main class="page-content bg-transparent">
+                        
+<div id="top-header" class="top-header d-print-none">
+    <div class="header-bar d-flex justify-content-between">
+        <div class="d-flex align-items-center">
+            <a href='/RapidVideOCR/en/' class="logo-icon me-3" aria-label="HomePage" alt="HomePage">
+                <div class="small">
+                    
+                            <?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path d="m143,39.5c-18,0-18,18-18,18,0,0,0-18-18-18H22c-2.76,0-5,2.24-5,5v143c0,2.76,2.24,5,5,5h76c7.2,0,8.64,11.52,8.93,16.13.07,1.05.95,1.87,2,1.87h32.14c1.06,0,1.94-.82,2-1.87.29-4.61,1.73-16.13,8.93-16.13h76c2.76,0,5-2.24,5-5V44.5c0-2.76-2.24-5-5-5h-85Zm63,123.5c0,1.38-1.12,2.5-2.5,2.5h-60.5c-18,0-18,18-18,18,0,0,0-18-18-18h-60.5c-1.38,0-2.5-1.12-2.5-2.5v-94c0-1.38,1.12-2.5,2.5-2.5h51.5c7.2,0,8.64,11.52,8.93,16.13.07,1.05.95,1.87,2,1.87h32.14c1.06,0,1.94-.82,2-1.87.29-4.61,1.73-16.13,8.93-16.13h51.5c1.38,0,2.5,1.12,2.5,2.5v94Z" style="fill:#06f;"/></svg>
+                    
+                </div>
+                <div class="big">
+                    
+                            <?xml version="1.0" encoding="UTF-8"?><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path d="m143,39.5c-18,0-18,18-18,18,0,0,0-18-18-18H22c-2.76,0-5,2.24-5,5v143c0,2.76,2.24,5,5,5h76c7.2,0,8.64,11.52,8.93,16.13.07,1.05.95,1.87,2,1.87h32.14c1.06,0,1.94-.82,2-1.87.29-4.61,1.73-16.13,8.93-16.13h76c2.76,0,5-2.24,5-5V44.5c0-2.76-2.24-5-5-5h-85Zm63,123.5c0,1.38-1.12,2.5-2.5,2.5h-60.5c-18,0-18,18-18,18,0,0,0-18-18-18h-60.5c-1.38,0-2.5-1.12-2.5-2.5v-94c0-1.38,1.12-2.5,2.5-2.5h51.5c7.2,0,8.64,11.52,8.93,16.13.07,1.05.95,1.87,2,1.87h32.14c1.06,0,1.94-.82,2-1.87.29-4.61,1.73-16.13,8.93-16.13h51.5c1.38,0,2.5,1.12,2.5,2.5v94Z" style="fill:#06f;"/></svg>
+                    
+                </div>
+            </a>
+            <button id="close-sidebar" class="btn btn-icon btn-soft">
+                <span class="material-icons size-20 menu-icon align-middle">menu</span>
+            </button>
+            
+            
+                    
+                    <button id="flexsearch-button" class="ms-3 btn btn-soft" data-bs-toggle="collapse" data-bs-target="#FlexSearchCollapse" aria-expanded="false" aria-controls="FlexSearchCollapse">
+                        <span class="material-icons size-20 menu-icon align-middle">search</span>
+                        <span class="flexsearch-button-placeholder ms-1 me-2 d-none d-sm-block">Search</span>
+                        <div class="d-none d-sm-block">
+                            <span class="flexsearch-button-keys">
+                                <kbd class="flexsearch-button-cmd-key">
+                                    <svg width="44" height="15"><path d="M2.118,11.5A1.519,1.519,0,0,1,1,11.042,1.583,1.583,0,0,1,1,8.815a1.519,1.519,0,0,1,1.113-.458h.715V6.643H2.118A1.519,1.519,0,0,1,1,6.185,1.519,1.519,0,0,1,.547,5.071,1.519,1.519,0,0,1,1,3.958,1.519,1.519,0,0,1,2.118,3.5a1.519,1.519,0,0,1,1.114.458A1.519,1.519,0,0,1,3.69,5.071v.715H5.4V5.071A1.564,1.564,0,0,1,6.976,3.5,1.564,1.564,0,0,1,8.547,5.071,1.564,1.564,0,0,1,6.976,6.643H6.261V8.357h.715a1.575,1.575,0,0,1,1.113,2.685,1.583,1.583,0,0,1-2.227,0A1.519,1.519,0,0,1,5.4,9.929V9.214H3.69v.715a1.519,1.519,0,0,1-.458,1.113A1.519,1.519,0,0,1,2.118,11.5Zm0-.857a.714.714,0,0,0,.715-.714V9.214H2.118a.715.715,0,1,0,0,1.429Zm4.858,0a.715.715,0,1,0,0-1.429H6.261v.715a.714.714,0,0,0,.715.714ZM3.69,8.357H5.4V6.643H3.69ZM2.118,5.786h.715V5.071a.714.714,0,0,0-.715-.714.715.715,0,0,0-.5,1.22A.686.686,0,0,0,2.118,5.786Zm4.143,0h.715a.715.715,0,0,0,.5-1.22.715.715,0,0,0-1.22.5Z" fill="currentColor"></path><path d="M12.4,11.475H11.344l3.879-7.95h1.056Z" fill="currentColor"></path><path d="M25.073,5.384l-.864.576a2.121,2.121,0,0,0-1.786-.923,2.207,2.207,0,0,0-2.266,2.326,2.206,2.206,0,0,0,2.266,2.325,2.1,2.1,0,0,0,1.782-.918l.84.617a3.108,3.108,0,0,1-2.622,1.293,3.217,3.217,0,0,1-3.349-3.317,3.217,3.217,0,0,1,3.349-3.317A3.046,3.046,0,0,1,25.073,5.384Z" fill="currentColor"></path><path d="M30.993,5.142h-2.07v5.419H27.891V5.142h-2.07V4.164h5.172Z" fill="currentColor"></path><path d="M34.67,4.164c1.471,0,2.266.658,2.266,1.851,0,1.087-.832,1.809-2.134,1.855l2.107,2.691h-1.28L33.591,7.87H33.07v2.691H32.038v-6.4Zm-1.6.969v1.8h1.572c.832,0,1.22-.3,1.22-.918s-.411-.882-1.22-.882Z" fill="currentColor"></path><path d="M42.883,10.561H38.31v-6.4h1.033V9.583h3.54Z" fill="currentColor"></path></svg>
+                                </kbd>
+                                <kbd class="flexsearch-button-key">
+                                    <svg width="15" height="15"><path d="M5.926,12.279H4.41L9.073,2.721H10.59Z" fill="currentColor"/></svg>
+                                </kbd>
+                            </span>
+                        </div>
+                    </button>
+                
+            </div>
+
+        <div class="d-flex align-items-center">
+            <ul class="list-unstyled mb-0">
+                
+                
+                    
+                    <li class="list-inline-item mb-0">
+                        <a href=" https://github.com/SWHL/RapidVideOCR " alt="github" rel="noopener noreferrer" target="_blank">
+                            <div class="btn btn-icon btn-default border-0">
+                                
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>GitHub</title><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                
+                            </div>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item mb-0">
+                        <a href=" https://twitter.com/_SWHL " alt="twitter" rel="noopener noreferrer" target="_blank">
+                            <div class="btn btn-icon btn-default border-0">
+                                
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title>Twitter / X</title><path d="M.088.768l9.266,12.39L.029,23.231h2.1l8.163-8.819,6.6,8.819h7.142L14.242,10.145,22.921.768h-2.1L13.3,8.891,7.229.768ZM3.174,2.314H6.455L20.942,21.685h-3.28Z" fill="currentColor"/></svg>
+                                
+                            </div>
+                        </a>
+                    </li>
+                    
+                
+            </ul>
+            <button id="mode" class="btn btn-icon btn-default ms-2" type="button" aria-label="Toggle user interface mode">
+                <span class="toggle-dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 48 48" fill="currentColor">
+                        <title>Enable dark mode</title>
+                        <path d="M24 42q-7.5 0-12.75-5.25T6 24q0-7.5 5.25-12.75T24 6q.4 0 .85.025.45.025 1.15.075-1.8 1.6-2.8 3.95-1 2.35-1 4.95 0 4.5 3.15 7.65Q28.5 25.8 33 25.8q2.6 0 4.95-.925T41.9 22.3q.05.6.075.975Q42 23.65 42 24q0 7.5-5.25 12.75T24 42Zm0-3q5.45 0 9.5-3.375t5.05-7.925q-1.25.55-2.675.825Q34.45 28.8 33 28.8q-5.75 0-9.775-4.025T19.2 15q0-1.2.25-2.575.25-1.375.9-3.125-4.9 1.35-8.125 5.475Q9 18.9 9 24q0 6.25 4.375 10.625T24 39Zm-.2-14.85Z"/>
+                    </svg>
+                </span>
+                <span class="toggle-light">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 48 48" fill="currentColor">
+                        <title>Enable light mode</title>
+                        <path d="M24 31q2.9 0 4.95-2.05Q31 26.9 31 24q0-2.9-2.05-4.95Q26.9 17 24 17q-2.9 0-4.95 2.05Q17 21.1 17 24q0 2.9 2.05 4.95Q21.1 31 24 31Zm0 3q-4.15 0-7.075-2.925T14 24q0-4.15 2.925-7.075T24 14q4.15 0 7.075 2.925T34 24q0 4.15-2.925 7.075T24 34ZM3.5 25.5q-.65 0-1.075-.425Q2 24.65 2 24q0-.65.425-1.075Q2.85 22.5 3.5 22.5h5q.65 0 1.075.425Q10 23.35 10 24q0 .65-.425 1.075-.425.425-1.075.425Zm36 0q-.65 0-1.075-.425Q38 24.65 38 24q0-.65.425-1.075.425-.425 1.075-.425h5q.65 0 1.075.425Q46 23.35 46 24q0 .65-.425 1.075-.425.425-1.075.425ZM24 10q-.65 0-1.075-.425Q22.5 9.15 22.5 8.5v-5q0-.65.425-1.075Q23.35 2 24 2q.65 0 1.075.425.425.425.425 1.075v5q0 .65-.425 1.075Q24.65 10 24 10Zm0 36q-.65 0-1.075-.425-.425-.425-.425-1.075v-5q0-.65.425-1.075Q23.35 38 24 38q.65 0 1.075.425.425.425.425 1.075v5q0 .65-.425 1.075Q24.65 46 24 46ZM12 14.1l-2.85-2.8q-.45-.45-.425-1.075.025-.625.425-1.075.45-.45 1.075-.45t1.075.45L14.1 12q.4.45.4 1.05 0 .6-.4 1-.4.45-1.025.45-.625 0-1.075-.4Zm24.7 24.75L33.9 36q-.4-.45-.4-1.075t.45-1.025q.4-.45 1-.45t1.05.45l2.85 2.8q.45.45.425 1.075-.025.625-.425 1.075-.45.45-1.075.45t-1.075-.45ZM33.9 14.1q-.45-.45-.45-1.05 0-.6.45-1.05l2.8-2.85q.45-.45 1.075-.425.625.025 1.075.425.45.45.45 1.075t-.45 1.075L36 14.1q-.4.4-1.025.4-.625 0-1.075-.4ZM9.15 38.85q-.45-.45-.45-1.075t.45-1.075L12 33.9q.45-.45 1.05-.45.6 0 1.05.45.45.45.45 1.05 0 .6-.45 1.05l-2.8 2.85q-.45.45-1.075.425-.625-.025-1.075-.425ZM24 24Z"/>
+                    </svg>
+                </span>
+            </button>
+            
+                <div class="dropdown">
+                    <button class="btn btn-link btn-default dropdown-toggle ps-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        EN
+                    </button>
+                    <ul class="dropdown-menu text-end">
+                        
+
+
+
+
+
+    
+    
+    <li><a class="dropdown-item" href="/RapidVideOCR/docs/" role="button" rel="alternate" hreflang="zh-cn" lang="zh-cn">简体中文</a></li>
+
+
+
+
+    
+        
+        
+        
+    
+
+    
+
+                    </ul>
+                </div>
+            
+        </div>
+    </div>
+    
+    
+            <div class="collapse" id="FlexSearchCollapse">
+                <div class="flexsearch-container">
+                    <div class="flexsearch-keymap">
+                        <li>
+                            <kbd class="flexsearch-button-cmd-key"><svg width="15" height="15" aria-label="Arrow down" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M7.5 3.5v8M10.5 8.5l-3 3-3-3"></path></g></svg></kbd>
+                            <kbd class="flexsearch-button-cmd-key"><svg width="15" height="15" aria-label="Arrow up" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M7.5 11.5v-8M10.5 6.5l-3-3-3 3"></path></g></svg></kbd>
+                            <span class="flexsearch-key-label">to navigate</span>
+                        </li>
+                        <li>
+                            <kbd class="flexsearch-button-cmd-key"><svg width="15" height="15" aria-label="Enter key" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M12 3.53088v3c0 1-1 2-2 2H4M7 11.53088l-3-3 3-3"></path></g></svg></kbd>
+                            <span class="flexsearch-key-label">to select</span>
+                        </li>
+                        <li>
+                            <kbd class="flexsearch-button-cmd-key"><svg width="15" height="15" aria-label="Escape key" role="img"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"><path d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956"></path></g></svg></kbd>
+                            <span class="flexsearch-key-label">to close</span>
+                        </li>
+                    </div>
+                    <form class="flexsearch position-relative flex-grow-1 ms-2 me-2">
+                        <div class="d-flex flex-row">
+                            <input id="flexsearch" class="form-control" type="search" placeholder="Search" aria-label="Search" autocomplete="off">
+                            <button id="hideFlexsearch" type="button" class="ms-2 btn btn-soft">
+                                cancel
+                            </button>
+                        </div>
+                        <div id="suggestions" class="shadow rounded-1 d-none"></div>
+                    </form>
+                </div>
+            </div>
+        
+    
+    
+</div>
+
+
+                            <div class="container-fluid">
+                                <div class="layout-spacing">
+                                    
+                                        <div class="d-md-flex justify-content-between align-items-center"><nav aria-label="breadcrumb" class="d-inline-block pb-2 mt-1 mt-sm-0">
+    <ul id="breadcrumbs" class="breadcrumb bg-transparent mb-0" itemscope itemtype="https://schema.org/BreadcrumbList">
+        
+        
+            <li class="breadcrumb-item text-capitalize active" aria-current="page" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <i class="material-icons size-20 align-text-bottom" itemprop="name">Home</i>
+                <meta itemprop="position" content='1' />
+            </li>
+        
+    </ul>
+</nav></div>
+                                    
+                                    <div class="row flex-xl-nowrap">
+                                        
+                                        <div class="docs-toc col-xl-3 visually-hidden visually-hidden  d-xl-block"><toc>
+    <div class="fw-bold text-uppercase mb-2">On this page</div>
+    <nav id="toc"></nav>
+    </toc></div>
+                                        
+                                        
+                                        <div class="docs-toc-mobile visually-hidden visually-hidden  d-print-none d-xl-none">
+                                            <button id="toc-dropdown-btn" class="btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-offset="0,0" aria-expanded="false">
+                                                Table of Contents
+                                            </button>
+<nav id="toc-mobile"></nav></div>
+                                        <div class="docs-content col-12  mt-0">
+                                            <div class="mb-0 d-flex">
+                                                
+                                                <h1 class="content-title mb-0">
+                                                    Docs
+                                                    
+                                                </h1>
+                                            </div>
+                                            
+                                                <p class="lead mb-3"></p>
+                                            
+                                            <div id="content" class="main-content" data-bs-spy="scroll" data-bs-root-margin="0px 0px -65%" data-bs-target="#toc-mobile">
+                                                
+    <div class="row flex-xl-wrap">
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/overview/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">circle</i>
+                        
+                        
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">Overview</p>
+                        <p class="para card-text mb-0"></p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/quickstart/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">rocket_launch</i>
+                        
+                        
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">Quickstart</p>
+                        <p class="para card-text mb-0">Begin your story, with only 3 steps.</p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/online_demo/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">language</i>
+                        
+                        
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">Online Demo</p>
+                        <p class="para card-text mb-0"></p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/tutorial/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">local_library</i>
+                        
+                        <i class="material-icons icon-faint align-middle ms-auto" title="Directory">folder</i>
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">Tutorial</p>
+                        <p class="para card-text mb-0"></p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/blog/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">article</i>
+                        
+                        <i class="material-icons icon-faint align-middle ms-auto" title="Directory">folder</i>
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">Blog</p>
+                        <p class="para card-text mb-0"></p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/sponsor/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">cheer</i>
+                        
+                        
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">Sponsor</p>
+                        <p class="para card-text mb-0"></p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/faq/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">update</i>
+                        
+                        
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">FAQ</p>
+                        <p class="para card-text mb-0"></p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+        <div id="list-item" class="col-md-4 col-12 mt-4 pt-2">
+            <a class="text-decoration-none text-reset" href="https://swhl.github.io/RapidVideOCR/en/docs/changelog/">
+                <div class="card h-100 features feature-full-bg rounded p-4 position-relative overflow-hidden border-1">
+                    <span class="icon-color d-flex my-3">
+                        <i class="material-icons align-middle">update</i>
+                        
+                        
+                    </span>
+                    <div class="card-body p-0 content">
+                        <p class="fs-5 fw-semibold card-title mb-1">Changelog</p>
+                        <p class="para card-text mb-0"></p>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        
+    </div>
+
+                                            </div>
+                                            <div><hr class="doc-hr">
+<div id="doc-nav" class="d-print-none">
+</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+<footer class="shadow py-3 d-print-none">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="text-sm-start text-center mx-md-2">
+                    <p class="mb-0">
+                        
+                        © 2025 SWHL. Built with <a href="https://github.com/colinwilson/lotusdocs"><strong>Lotus Docs</strong></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</main>
+            </div>
+        </div>
+
+        
+        
+        <button onclick="topFunction()" id="back-to-top" aria-label="Back to Top Button" class="back-to-top fs-5"><svg width="24" height="24"><path d="M12,10.224l-6.3,6.3L4.32,15.152,12,7.472l7.68,7.68L18.3,16.528Z" style="fill:#fff"/></svg></button>
+        
+        
+
+        
+        
+            <script>(()=>{var e=document.getElementById("mode");e!==null&&(window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{e.matches?(localStorage.setItem("theme","dark"),document.documentElement.setAttribute("data-dark-mode","")):(localStorage.setItem("theme","light"),document.documentElement.removeAttribute("data-dark-mode"))}),e.addEventListener("click",()=>{document.documentElement.toggleAttribute("data-dark-mode"),localStorage.setItem("theme",document.documentElement.hasAttribute("data-dark-mode")?"dark":"light")}),localStorage.getItem("theme")==="dark"?document.documentElement.setAttribute("data-dark-mode",""):document.documentElement.removeAttribute("data-dark-mode"))})()</script>
+        
+
+
+
+
+    
+        
+        
+    
+    
+
+
+
+
+
+
+    
+
+    <script src="/RapidVideOCR/docs/js/bootstrap.06175e150dd4896f731eda3e18d90481c255253538cf5afe2d2274a9920d1bb3d69c335654ee26aa2ce859302129298b.js" integrity="sha384-BhdeFQ3UiW9zHto&#43;GNkEgcJVJTU4z1r&#43;LSJ0qZING7PWnDNWVO4mqizoWTAhKSmL"defer></script>
+
+
+    <script type="text/javascript" src="https://swhl.github.io/RapidVideOCR/docs/js/bundle.min.41708f704cf08058b2cff7a26ea536bc8726435553c2c2e29d82a5d471ed7174ebad295d497f88e1e6c409c426d8cc55.js" integrity="sha384-QXCPcEzwgFiyz/eibqU2vIcmQ1VTwsLinYKl1HHtcXTrrSldSX&#43;I4ebECcQm2MxV" crossorigin="anonymous" defer></script>
+
+        
+
+        
+        <script type="module">
+    var suggestions = document.getElementById('suggestions');
+    var search = document.getElementById('flexsearch');
+
+    const flexsearchContainer = document.getElementById('FlexSearchCollapse');
+
+    const hideFlexsearchBtn = document.getElementById('hideFlexsearch');
+
+    const configObject = { toggle: false }
+    const flexsearchContainerCollapse = new Collapse(flexsearchContainer, configObject) 
+
+    if (search !== null) {
+        document.addEventListener('keydown', inputFocus);
+        flexsearchContainer.addEventListener('shown.bs.collapse', function () {
+            search.focus();
+        });
+        
+        var topHeader = document.getElementById("top-header");
+        document.addEventListener('click', function(elem) {
+            if (!flexsearchContainer.contains(elem.target) && !topHeader.contains(elem.target))
+                flexsearchContainerCollapse.hide();
+        });
+    }
+
+    hideFlexsearchBtn.addEventListener('click', () =>{
+        flexsearchContainerCollapse.hide()
+    })
+
+    function inputFocus(e) {
+        if (e.ctrlKey && e.key === '/') {
+            e.preventDefault();
+            flexsearchContainerCollapse.toggle();
+        }
+        if (e.key === 'Escape' ) {
+            search.blur();
+            
+            flexsearchContainerCollapse.hide();
+        }
+    };
+
+    document.addEventListener('click', function(event) {
+
+    var isClickInsideElement = suggestions.contains(event.target);
+
+    if (!isClickInsideElement) {
+        suggestions.classList.add('d-none');
+    }
+
+    });
+
+    
+
+
+    document.addEventListener('keydown',suggestionFocus);
+
+    function suggestionFocus(e) {
+    const suggestionsHidden = suggestions.classList.contains('d-none');
+    if (suggestionsHidden) return;
+
+    const focusableSuggestions= [...suggestions.querySelectorAll('a')];
+    if (focusableSuggestions.length === 0) return;
+
+    const index = focusableSuggestions.indexOf(document.activeElement);
+
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const nextIndex = index > 0 ? index - 1 : 0;
+        focusableSuggestions[nextIndex].focus();
+    }
+    else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const nextIndex= index + 1 < focusableSuggestions.length ? index + 1 : index;
+        focusableSuggestions[nextIndex].focus();
+    }
+
+    }
+
+    
+
+
+    (function(){
+
+    var index = new FlexSearch.Document({
+        
+        tokenize: "full",
+        minlength:  1 ,
+        cache:  100 ,
+        optimize:  true ,
+        document: {
+        id: 'id',
+        store: [
+            "href", "title", "description"
+        ],
+        index: ["title", "description", "content"]
+        }
+    });
+
+
+    
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+
+    
+
+    index.add(
+            {
+                id:  0 ,
+                href: "\/RapidVideOCR\/en\/docs\/overview\/",
+                title: "Overview",
+                description: " 简体中文 | English\nIntroduction link Video hard subtitle extraction, automatically generate the corresponding srt | txt file.\nSupported subtitle languages: Chinese | English (For other supported languages, see: List of supported languages)\n",
+                content: " 简体中文 | English\nIntroduction link Video hard subtitle extraction, automatically generate the corresponding srt | txt file.\nSupported subtitle languages: Chinese | English (For other supported languages, see: List of supported languages)\nThe advantages are as follows:\nFaster extraction: Used in conjunction with VideoSubFinder software to extract key subtitle frames faster. More accurate recognition: Use RapidOCR as the recognition library. More convenient to use: pip can be installed directly and used. For desktop EXE version, please go to RapidVideOCRDesktop.\nIf it helps you, please give a star ⭐.\nOverall framework linkflowchart LR A[/Video/] --Extract subtitle key frame--\u003e B(VideoSubFinder) --OCR--\u003eC(RapidVideOCR) C --Convert--\u003e D[/\"SRT | TXT\"/] "
+            }
+        );
+    index.add(
+            {
+                id:  1 ,
+                href: "\/RapidVideOCR\/en\/docs\/quickstart\/",
+                title: "Quickstart",
+                description: "Begin your story, with only 3 steps.",
+                content: " notifications The input for this library must be a path to an RGBImages or TXTImages directory outputted by VideoSubFinder. VideoSubFinder tutorial (note: this blog post is written in Chinese)：link 1. Installation link pip install rapid_videocr 2. Usage link Terminal Python rapid_videocr -i test_files/RGBImages from rapid_videocr import RapidVideOCR extractor = RapidVideOCR(is_concat_rec=False, out_format='all', is_print_console=False) rgb_dir = 'test_files/RGBImages' save_dir = 'result' extractor(rgb_dir, save_dir) "
+            }
+        );
+    index.add(
+            {
+                id:  2 ,
+                href: "\/RapidVideOCR\/en\/docs\/online_demo\/",
+                title: "Online Demo",
+                description: "Introduction link The demo on Hugging Face and MoDa are based on the same code, and both are built using streamlit. The difference between the two is that MoDa is a Chinese domestic platform and does not require a VPN; Hugging Face requires a VPN (note: this is not applicable outside of mainland China) The purpose of the demos are to： Quickly preview the results of extracted subtitles Demo Source Code link Hugging Face Demo: https://huggingface.co/spaces/SWHL/RapidVideOCR/tree/main MoDa Spaces: https://www.modelscope.cn/studios/liekkas/RapidVideOCR/files Online Demo link Hugging Face Demo: https://huggingface.co/spaces/SWHL/RapidVideOCR MoDa Spaces: https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary ",
+                content: "Introduction link The demo on Hugging Face and MoDa are based on the same code, and both are built using streamlit. The difference between the two is that MoDa is a Chinese domestic platform and does not require a VPN; Hugging Face requires a VPN (note: this is not applicable outside of mainland China) The purpose of the demos are to： Quickly preview the results of extracted subtitles Demo Source Code link Hugging Face Demo: https://huggingface.co/spaces/SWHL/RapidVideOCR/tree/main MoDa Spaces: https://www.modelscope.cn/studios/liekkas/RapidVideOCR/files Online Demo link Hugging Face Demo: https://huggingface.co/spaces/SWHL/RapidVideOCR MoDa Spaces: https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary "
+            }
+        );
+    index.add(
+            {
+                id:  3 ,
+                href: "\/RapidVideOCR\/en\/docs\/tutorial\/",
+                title: "Tutorial",
+                description: "",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  4 ,
+                href: "\/RapidVideOCR\/en\/docs\/tutorial\/beginner\/",
+                title: "Beginner Tutorial (Download and unzip the GUI version)",
+                description: "Introduction link Considering that most people who extract video subtitles are not programmers, in order to lower the threshold of use, we hereby launch the GUI version of RapidVideOCR Desktop.\nRapidVideOCR Desktop needs to be used with VideoSubFinder. The relationship between the two is shown in the figure below:\nflowchart LR A(VideoSubFinder) --Extract subtitle keyframes B(RapidVideOCR) --OCR--\u003e C(SRT) VideoSubFinder Tutorial (in Chinese) linkRapidVideOCR Desktop Tutorial link Download the RapidVideOCR Desktop release archive for your corresponding platform\n",
+                content: "Introduction link Considering that most people who extract video subtitles are not programmers, in order to lower the threshold of use, we hereby launch the GUI version of RapidVideOCR Desktop.\nRapidVideOCR Desktop needs to be used with VideoSubFinder. The relationship between the two is shown in the figure below:\nflowchart LR A(VideoSubFinder) --Extract subtitle keyframes B(RapidVideOCR) --OCR--\u003e C(SRT) VideoSubFinder Tutorial (in Chinese) linkRapidVideOCR Desktop Tutorial link Download the RapidVideOCR Desktop release archive for your corresponding platform\nDownload the latest version from Github Download from QQ Group shared file, QQ Group number: 706807542, or scan the QR code to join： Uncompress the zip archive, and double-click RapidVideOCR.exe (using Windows for example)\nThe GUI is shown below:\nIntroduction to each part of the GUI\nRapidVideOCR: Image Directory (图像目录): Points to the RGBImages or TXTImages directory generated by VideoSubFinder，must be one of the two directories Output Directory (保存路径): Where to save the converted results，including srt files and txt files Overlay Recognition (叠图识别): After checking, the recognition speed will be faster. The accuracy may be lower VideoSubFinder + RapidVideOCR: VSF exe path: The full path to the locally installed VideoSubFinder executable, for example: G:\\ProgramFiles\\VideoSubFinder_6.10_x64\\Release_x64\\VideoSubFinderWXW.exe Video path: The path to where the video to extract hard subtitles from is located Output directory：The directory where the extraction results are saved After filling in the above, click the OK button to start recognition.\n"
+            }
+        );
+    index.add(
+            {
+                id:  5 ,
+                href: "\/RapidVideOCR\/en\/docs\/tutorial\/intermediate\/",
+                title: "Intermediate Tutorial (Beginner Python)",
+                description: "Introduction link This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool Supported operating systems: `Windows | Mac | Linux`` Environment Configuration link1. Install VideoSubFinder (used for extracting subtitle keyframes) link [RapidVideOCR extras] VideoSubFinder subtitle keyframe extraction tutorial 2. Install python（used for running RapidVideOCR） link info Disclaimer: Some of the following images are from 终极保姆教’stutorial on installing Python_3.10.7 1. Download the Python installer linkOpen the official Python website → https://www.python.org, and select the installer for your own operating system (VideoSubFinder is currently only available for Windows)\u003e\n",
+                content: "Introduction link This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool Supported operating systems: `Windows | Mac | Linux`` Environment Configuration link1. Install VideoSubFinder (used for extracting subtitle keyframes) link [RapidVideOCR extras] VideoSubFinder subtitle keyframe extraction tutorial 2. Install python（used for running RapidVideOCR） link info Disclaimer: Some of the following images are from 终极保姆教’stutorial on installing Python_3.10.7 1. Download the Python installer linkOpen the official Python website → https://www.python.org, and select the installer for your own operating system (VideoSubFinder is currently only available for Windows)\u003e\n2. Find the version you want linkTake Python 3.10.7 for example, if the download speed is too slow you can join the RapidVideOCR QQ group: (706807542) to download the files.\n3. After the download is complete, double-click to open the exe and start the installation linkClick Customize installation and select the installation location. Also, remember to check the last item Add Python 3.10 to PATH\n4. Click Next link 5. Check the installation path link 6. Click install, and wait for the installation to finish link 7. Press Win + r input cmd, and press Enter to open the command prompt link 8. Enter python and see if an output something similar to the following image appears. If so, then the installation was successful link 9. Add the Scripts directory to the environment variables link Press Win + q enter Edit the system→ Click Edit the system environment variables\nClick Environment Variables → User variables → Path → Edit\nCreate a new entry for the Script directory under the Python installation directory, as shown in the image below, and remember to click save.\n3. Install RapidVideOCR link1. Press Win + r input cmd, and press Enter to open the command prompt link 2. Install rapid_videocr link pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/ 3. To test whether the installation was successful, enter rapid_videocr -h link 4. Command line usage linkPress Win + r input cmd, and press Enter to open the command prompt\nrapid_videocr -i RGBImages -s result -m concat RGBImages is generated by VideoSubFinder and its output path can be customized, for example: G:\\ProgramFiles\\_self\\RapidVideOCR\\test_files\\RGBImages and so on.\n5. Script usage link Create a new TXT file on the desktop and name it rapid_videocr.py. Note that the file extension is changed to *.py.\nOpen rapid_videocr.py with Notepad and copy the following code into it\nfrom rapid_videocr import RapidVideOCR, RapidVideOCRInput # RapidVideOCRInput has two initialization parameters # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default. # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted # out_format: Output format selection, [srt, txt, all], the default is all # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing ocr_input_params = RapidVideOCRInput( is_batch_rec=False, ocr_params={\"Global.with_paddle\": True} ) extractor = RapidVideOCR(ocr_input_params) rgb_dir = \"tests/test_files/RGBImages\" save_dir = \"outputs\" save_name = \"a\" # outputs/a.srt outputs/a.t extractor(rgb_dir, save_dir, save_name=save_name) Change rgb_dir to the path to the RGBImages directory generated by VideoSubFinder。 Windows path style Linux/Mac path style rgb_dir = r'G:\\ProgramFiles\\_self\\RapidVideOCR\\test_files\\RGBImages' rgb_dir = 'test_files/TXTImages' Press Win + r and open the command prompt, and run the following commands\n$ cd Desktop $ python rapid_videocr.py "
+            }
+        );
+    index.add(
+            {
+                id:  6 ,
+                href: "\/RapidVideOCR\/en\/docs\/tutorial\/senior\/",
+                title: "Advanced Tutorial (For those with Python basics)",
+                description: "1. Install and use VideoSubFinder link Download link: Windows \u0026 Linux (videosubfinder / QQ group (706807542) shared files) | Mac version Tutorial: Tutorial for extracting subtitle keyframes with VideoSubFinder The final RGBImages and TXTImages are usually in the installation directory for VideoSubFinder ✧ It is recommended to use RGBImages (thanks to dyphire for the feedback in #21) 2. Install rapid_videocr link pip install rapid_videocr 3. Python usage link Only OCR Extract + OCR from rapid_videocr import RapidVideOCR # RapidVideOCRInput has two initialization parameters # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default. # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted # out_format: Output format selection, [srt, txt, all], the default is all # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing ocr_input_params = RapidVideOCRInput( is_batch_rec=False, ocr_params={\"Global.with_paddle\": True} ) extractor = RapidVideOCR(ocr_input_params) rgb_dir = \"tests/test_files/RGBImages\" save_dir = \"outputs\" save_name = \"a\" # outputs/a.srt outputs/a.t extractor(rgb_dir, save_dir, save_name=save_name) from rapid_videocr import RapidVideoSubFinderOCR vsf_exe = r\"G:\\ProgramFiles\\VideoSubFinder_6.10_x64\\Release_x64\\VideoSubFinderWXW.exe\" extractor = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True) # video_path can be directory path or video full path. video_path = 'test_files/tiny/2.mp4' save_dir = 'outputs' extractor(video_path, save_dir) 4. Command line usage link Only OCR Extract + OCR rapid_videocr -i RGBImages rapid_videocr -vsf G:\\ProgramFiles\\VideoSubFinder_6.10_x64\\Release_x64\\VideoSubFinderWXW.exe -video_dir G:\\ProgramFiles\\RapidVideOCR\\test_files\\tiny Parameter details:\n",
+                content: "1. Install and use VideoSubFinder link Download link: Windows \u0026 Linux (videosubfinder / QQ group (706807542) shared files) | Mac version Tutorial: Tutorial for extracting subtitle keyframes with VideoSubFinder The final RGBImages and TXTImages are usually in the installation directory for VideoSubFinder ✧ It is recommended to use RGBImages (thanks to dyphire for the feedback in #21) 2. Install rapid_videocr link pip install rapid_videocr 3. Python usage link Only OCR Extract + OCR from rapid_videocr import RapidVideOCR # RapidVideOCRInput has two initialization parameters # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default. # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted # out_format: Output format selection, [srt, txt, all], the default is all # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing ocr_input_params = RapidVideOCRInput( is_batch_rec=False, ocr_params={\"Global.with_paddle\": True} ) extractor = RapidVideOCR(ocr_input_params) rgb_dir = \"tests/test_files/RGBImages\" save_dir = \"outputs\" save_name = \"a\" # outputs/a.srt outputs/a.t extractor(rgb_dir, save_dir, save_name=save_name) from rapid_videocr import RapidVideoSubFinderOCR vsf_exe = r\"G:\\ProgramFiles\\VideoSubFinder_6.10_x64\\Release_x64\\VideoSubFinderWXW.exe\" extractor = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True) # video_path can be directory path or video full path. video_path = 'test_files/tiny/2.mp4' save_dir = 'outputs' extractor(video_path, save_dir) 4. Command line usage link Only OCR Extract + OCR rapid_videocr -i RGBImages rapid_videocr -vsf G:\\ProgramFiles\\VideoSubFinder_6.10_x64\\Release_x64\\VideoSubFinderWXW.exe -video_dir G:\\ProgramFiles\\RapidVideOCR\\test_files\\tiny Parameter details:\n$ rapid_videocr -h usage: rapid_videocr [-h] [-video_dir VIDEO_DIR] [-i IMG_DIR] [-s SAVE_DIR] [-o {srt,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p] [-vsf VSF_EXE_PATH] [-c] [-r] [-ccti] [-ces CREATE_EMPTY_SUB] [-cscti CREATE_SUB_FROM_CLEARED_TXT_IMAGES] [-cstxt CREATE_SUB_FROM_TXT_RESULTS] [-ovocv] [-ovffmpeg] [-uc] [--start_time START_TIME] [--end_time END_TIME] [-te TOP_VIDEO_IMAGE_PERCENT_END] [-be BOTTOM_VIDEO_IMAGE_PERCENT_END] [-le LEFT_VIDEO_IMAGE_PERCENT_END] [-re RIGHT_VIDEO_IMAGE_PERCENT_END] [-gs GENERAL_SETTINGS] [-nthr NUM_THREADS] [-nocrthr NUM_OCR_THREADS] optional arguments: -h, --help show this help message and exit VideOCRParameters: -video_dir VIDEO_DIR, --video_dir VIDEO_DIR The full path of video or the path of video directory. -i IMG_DIR, --img_dir IMG_DIR The full path of RGBImages or TXTImages. -s SAVE_DIR, --save_dir SAVE_DIR The path of saving the recognition result. Default is \"outputs\" under the current directory. -o {srt,txt,all}, --out_format {srt,txt,all} Output file format. Default is \"all\". --is_concat_rec Which mode to run (concat recognition or single recognition). Default is False. -b CONCAT_BATCH, --concat_batch CONCAT_BATCH The batch of concating image nums in concat recognition mode. Default is 10. -p, --print_console Whether to print the subtitle results to console. -p means to print. VSFParameters: -vsf VSF_EXE_PATH, --vsf_exe_path VSF_EXE_PATH The full path of VideoSubFinderWXW.exe. -c, --clear_dirs Clear Folders (remove all images), performed before any other steps. Default is True -r, --run_search Run Search (find frames with hardcoded text (hardsub) on video) Default is True -ccti, --create_cleared_text_images Create Cleared Text Images. Default is True -ces CREATE_EMPTY_SUB, --create_empty_sub CREATE_EMPTY_SUB Create Empty Sub With Provided Output File Name (*.ass or *.srt) -cscti CREATE_SUB_FROM_CLEARED_TXT_IMAGES, --create_sub_from_cleared_txt_images CREATE_SUB_FROM_CLEARED_TXT_IMAGES Create Sub From Cleared TXT Images With Provided Output File Name (*.ass or *.srt) -cstxt CREATE_SUB_FROM_TXT_RESULTS, --create_sub_from_txt_results CREATE_SUB_FROM_TXT_RESULTS Create Sub From TXT Results With Provided Output File Name (*.ass or *.srt) -ovocv, --open_video_opencv open video by OpenCV (default). Default is True -ovffmpeg, --open_video_ffmpeg open video by FFMPEG -uc, --use_cuda use cuda --start_time START_TIME start time, default = 0:00:00:000 (in format hour:min:sec:milisec) --end_time END_TIME end time, default = video length -te TOP_VIDEO_IMAGE_PERCENT_END, --top_video_image_percent_end TOP_VIDEO_IMAGE_PERCENT_END top video image percent offset from image bottom, can be in range [0.0,1.0], default = 1.0 -be BOTTOM_VIDEO_IMAGE_PERCENT_END, --bottom_video_image_percent_end BOTTOM_VIDEO_IMAGE_PERCENT_END bottom video image percent offset from image bottom, can be in range [0.0,1.0], default = 0.0 -le LEFT_VIDEO_IMAGE_PERCENT_END, --left_video_image_percent_end LEFT_VIDEO_IMAGE_PERCENT_END left video image percent end, can be in range [0.0,1.0], default = 0.0 -re RIGHT_VIDEO_IMAGE_PERCENT_END, --right_video_image_percent_end RIGHT_VIDEO_IMAGE_PERCENT_END right video image percent end, can be in range [0.0,1.0], default = 1.0 -gs GENERAL_SETTINGS, --general_settings GENERAL_SETTINGS general settings (path to general settings *.cfg file, default = settings/general.cfg) -nthr NUM_THREADS, --num_threads NUM_THREADS number of threads used for Run Search -nocrthr NUM_OCR_THREADS, --num_ocr_threads NUM_OCR_THREADS number of threads used for Create Cleared TXT Images 5. View results linkGo to the save_dir directory to view the results.\ninfo If you want the video playback software to automatically mount the srt file, you need to change the srt filename to be the same as the video file and put it in the same directory, or manually specify it. "
+            }
+        );
+    index.add(
+            {
+                id:  7 ,
+                href: "\/RapidVideOCR\/en\/docs\/blog\/",
+                title: "Blog",
+                description: "",
+                content: ""
+            }
+        );
+    index.add(
+            {
+                id:  8 ,
+                href: "\/RapidVideOCR\/en\/docs\/blog\/-rec_other_lan\/",
+                title: "How can I do OCR for subtitles in languages other than Chinese and English?",
+                description: "Introduction link Currently, RapidVideOCR directly uses the default configuration of rapidocr_onnxruntime, so it can only do OCR for subtitles in Chinese and English. Since rapidocr_onnxruntime has an interface for passing in other multilingual recognition models, RapidVieOCR has scalability. This article is here to explain how to use it. This article takes the French OCR solution proposed in discussions #40 as an example, and other languages can be done in the same way. 1. Correctly install and use RapidVideOCR linkPlease refer to this link\n",
+                content: "Introduction link Currently, RapidVideOCR directly uses the default configuration of rapidocr_onnxruntime, so it can only do OCR for subtitles in Chinese and English. Since rapidocr_onnxruntime has an interface for passing in other multilingual recognition models, RapidVieOCR has scalability. This article is here to explain how to use it. This article takes the French OCR solution proposed in discussions #40 as an example, and other languages can be done in the same way. 1. Correctly install and use RapidVideOCR linkPlease refer to this link\n2. Use PaddleOCR Convert tool to convert French recognition model to ONNX link notifications Refer to the tutorial link Using,\nModel path: https://paddleocr.bj.bcebos.com/dygraph_v2.0/multilingual/french_mobile_v2.0_rec_infer.tar, Dictionary path: https://raw.githubusercontent.com/PaddlePaddle/PaddleOCR/dygraph/ppocr/utils/dict/french_dict.txt For model download links for other languages, please refer to: paddleocr whl in the source paddleocr.py file\nFor dictionary models, see: link\nFinally, a French recognition model can be obtained: french_mobile_v2.0_rec_infer.onnx\n3. OCR French subtitles link info rapid_videocr\u003e=v2.2.8 from rapid_videocr import RapidVideOCR\rextractor = RapidVideOCR(rec_model_path=\"french_mobile_v2.0_rec_infer.onnx\")\rrgb_dir = \"test_files/RGBImagesTiny\"\rsave_dir = \"outputs\"\rsave_name = \"a\"\r# outputs/a.srt outputs/a.txt\rextractor(rgb_dir, save_dir, save_name=save_name) "
+            }
+        );
+    index.add(
+            {
+                id:  9 ,
+                href: "\/RapidVideOCR\/en\/docs\/sponsor\/",
+                title: "Sponsor",
+                description: "Foreword linkI like open source and AI technology because I think open source and AI will bring convenience and help to people in need, and will also make the world a better place. By donating to these projects, you can join me in making AI bring warmth and beauty to more people.\nRapidAI Private Group linkQuestions asked here will be answered and supported first, you will also enjoy RapidAI’s continued high-quality services. Everyone is welcome to join.\n",
+                content: "Foreword linkI like open source and AI technology because I think open source and AI will bring convenience and help to people in need, and will also make the world a better place. By donating to these projects, you can join me in making AI bring warmth and beauty to more people.\nRapidAI Private Group linkQuestions asked here will be answered and supported first, you will also enjoy RapidAI’s continued high-quality services. Everyone is welcome to join.\nAlipay reward or WeChat reward linkGive the author a reward through Alipay or WeChat.\nBuy me a Coffee linkIf you are not in mainland China, you can also support the author through:\n"
+            }
+        );
+    index.add(
+            {
+                id:  10 ,
+                href: "\/RapidVideOCR\/en\/docs\/faq\/",
+                title: "FAQ",
+                description: "Q: After setting up the environment and running python main.py, an error message appears: OSError: [WinError 126] The specified module could not be found linkA: The reason is that the Shapely library is not installed correctly. If you are using Windows, you can download the corresponding whl package from Shapely whl and use the offline installer. Another option is to install it using conda. (@hongyuntw)\n",
+                content: "Q: After setting up the environment and running python main.py, an error message appears: OSError: [WinError 126] The specified module could not be found linkA: The reason is that the Shapely library is not installed correctly. If you are using Windows, you can download the corresponding whl package from Shapely whl and use the offline installer. Another option is to install it using conda. (@hongyuntw)\n"
+            }
+        );
+    index.add(
+            {
+                id:  11 ,
+                href: "\/RapidVideOCR\/en\/docs\/changelog\/",
+                title: "Changelog",
+                description: "📣 Subsequent update logs will be moved to Release, and will no longer be updated here link🚩2023-10-08 v2.2.8 update link Adapt the relevant parameters of rapidocr_onnxruntime, which can be passed in through the RapidVideOCR class, so as to more flexibly specify models of different languages. ♦ 2023-08-05 v2.2.4 update link Fix the index error in batch recognition mode.\n",
+                content: "📣 Subsequent update logs will be moved to Release, and will no longer be updated here link🚩2023-10-08 v2.2.8 update link Adapt the relevant parameters of rapidocr_onnxruntime, which can be passed in through the RapidVideOCR class, so as to more flexibly specify models of different languages. ♦ 2023-08-05 v2.2.4 update link Fix the index error in batch recognition mode.\nAdd a logging module to facilitate the use of the desktop version, quickly record problems, and facilitate feedback.\n🛶2023-07-19 v2.2.3 update link Added adaptation to VSF parameters. When in command line mode and during class initialization, you can specify the same-name parameters of the VSF command. For detailed usage, please refer to link 🤓2023-07-08 v2.2.2 update link Fixed the problem that Chinese paths cannot be read during batch recognition Fixed the problem of skipping in SRT when missing axes. Currently, when an axis fails to be recognized, a position will be vacated for easy proofreading. Keep the intermediate results of VSF recognition 🐲2023-06-22 v2.2.0 update link This version is compatible with v2.1.x, which means that the previous usage is still possible. Integrate VSF’s CLI into the library, just specify the full path of VideoSubFinderWXW.exe. Added batch recognition function, specify the video directory, and automatically extract all video subtitles in the directory For usage examples, see: demo.py 😀2023-05-12 v2.1.7 update link Optimized code Added save_name parameter, which can flexibly specify the name of the saved srt | txt file, the default is result 🐱2023-03-27 v2.1.6 update link Fixed the timeline misalignment problem, see issue 23 for details 👽2023-03-23 v2.1.5 update link Added control parameter is_print_console for printing to the screen Adjust the out_format parameter position to the initialization class 😀2023-03-14 v2.1.3 update link Fix the error when passing in the TXTImages directory and identifying duplicate characters 😜2023-03-12 v2.1.2 update link Fix index error, #22 🎢2023-03-11 v2.1.1 update link Fix the difference between single image recognition and previous versions\nThe default recognition mode is changed to single image recognition. Whether to use duplicate image recognition is up to you\n🥇2023-03-10 v2.1.0 update link Added duplicate character recognition function, faster, and the default is duplicate character recognition function 🎈2023-03-02 v2.0.5~7 update link Fix format errors in generated srt files, #19 🎫2023-02-17 v2.0.4 update link Optimized passing in the TXTImages directory. Compared with passing in RGBImages, it will be faster and more accurate. It is recommended to pass in the TXTImages directory 💎2023-02-17 v2.0.2 update link Fix the problem of missing spaces in peer subtitle recognition 🎈2023-01-29 v1.1.10 update link Fix the error of empty index when converting frame index to timestamp 🧨2023-01-28 v1.1.9 update link Fix the problem of timeline misalignment 👊 2023-01-15 v1.1.4 update link Add the option of outputting txt format. Currently, the v1.1.4 version outputs srt and txt formats by default\nAdd the option to adjust the box size of subtitle selection according to the screen size of the running program\n🌈2023-01-10 v1.0.3 update link Replace decord with OpenCV because decord has a memory leak when processing MP4. For details, see: #208 🎄2022-12-04 update link Added interactive subtitle positioning function, which is enabled by default and is more user-friendly. For details, please refer to the GIF below. Thanks to @Johndirr for the suggestion. Optimize the code structure, put RapidOCR related models and configuration files in the rapidocr directory The configuration files of rapidvideocr are also placed in the corresponding directory 🌼2022-05-08 update link Add interactive determination of the threshold of the binary subtitle image, which only supports Windows and can be used by is_select_threshold = True Optimize the code 🎉2022-05-03 update link Add GPU support, for specific configuration tutorials, see: onnxruntime-gpu version inference configuration Added support for Japanese, which can support more languages. For details, see: Supported Language List 💡2022-05-01 update link Added speech module part is located in the branch asr_module\nAdded speech recognition module. Since the decoding part of this module can only run on Linux and Mac, if you want to use this module, please use Linux and Mac.\nCurrently, the speech recognition code comes from the RapidASR/python part. The model comes from PaddleSpeech\nAfter a simple test, the speech recognition module is not very accurate. -_-!\n2022-03-09 update link Added "
+            }
+        );
+    index.add(
+            {
+                id:  12 ,
+                href: "\/RapidVideOCR\/en\/docs\/",
+                title: "Docs",
+                description: "",
+                content: ""
+            }
+        );
+    search.addEventListener('input', show_results, true);
+
+    function show_results(){
+        const maxResult =  5 ;
+        const minlength =  1 ;
+        var searchQuery = sanitizeHTML(this.value);
+        var results = index.search(searchQuery, {limit: maxResult, enrich: true});
+
+        
+        const flatResults = new Map(); 
+        for (const result of results.flatMap(r => r.result)) {
+        if (flatResults.has(result.doc.href)) continue;
+        flatResults.set(result.doc.href, result.doc);
+        }
+
+        suggestions.innerHTML = "";
+        suggestions.classList.remove('d-none');
+
+        
+        if (searchQuery.length < minlength) {
+            const minCharMessage = document.createElement('div')
+            minCharMessage.innerHTML = `Please type at least <strong>${minlength}</strong> characters`
+            minCharMessage.classList.add("suggestion__no-results");
+            suggestions.appendChild(minCharMessage);
+            return;
+        } else {
+            
+            if (flatResults.size === 0 && searchQuery) {
+                const noResultsMessage = document.createElement('div')
+                noResultsMessage.innerHTML = "No results for" + ` "<strong>${searchQuery}</strong>"`
+                noResultsMessage.classList.add("suggestion__no-results");
+                suggestions.appendChild(noResultsMessage);
+                return;
+            }
+        }
+
+        
+        for(const [href, doc] of flatResults) {
+            const entry = document.createElement('div');
+            suggestions.appendChild(entry);
+
+            const a = document.createElement('a');
+            a.href = href;
+            entry.appendChild(a);
+
+            const title = document.createElement('span');
+            title.textContent = doc.title;
+            title.classList.add("suggestion__title");
+            a.appendChild(title);
+
+            const description = document.createElement('span');
+            description.textContent = doc.description;
+            description.classList.add("suggestion__description");
+            a.appendChild(description);
+
+            suggestions.appendChild(entry);
+
+            if(suggestions.childElementCount == maxResult) break;
+        }
+    }
+    }());
+</script>
+        
+    </body>
+</html>

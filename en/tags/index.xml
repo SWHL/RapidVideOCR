@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on RapidVideOCR Documentation</title>
+    <link>https://swhl.github.io/RapidVideOCR/en/tags/</link>
+    <description>Recent content in Tags on RapidVideOCR Documentation</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="https://swhl.github.io/RapidVideOCR/en/tags/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
