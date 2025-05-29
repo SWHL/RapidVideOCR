@@ -31,7 +31,7 @@ from rapid_videocr import RapidVideOCR
 # RapidVideOCRInput有两个初始化参数
 # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
 # concat_batch: 叠图识别的图像张数，默认10，可自行调节
-# out_format: 输出格式选择，[srt, txt, all], 默认是 all
+# out_format: 输出格式选择，[srt, ass, txt, all], 默认是 all
 # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
 ocr_input_params = RapidVideOCRInput(
 is_batch_rec=False, ocr_params={"Global.with_paddle": True}
@@ -42,7 +42,7 @@ rgb_dir = "tests/test_files/RGBImages"
 save_dir = "outputs"
 save_name = "a"
 
-# outputs/a.srt  outputs/a.t
+# outputs/a.srt  outputs/a.ass  outputs/a.t
 extractor(rgb_dir, save_dir, save_name=save_name)
 ```
 
@@ -89,7 +89,7 @@ rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubF
 ```bash {linenos=table}
 $ rapid_videocr -h
 usage: rapid_videocr [-h] [-video_dir VIDEO_DIR] [-i IMG_DIR] [-s SAVE_DIR]
-            [-o {srt,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p]
+            [-o {srt,ass,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p]
             [-vsf VSF_EXE_PATH] [-c] [-r] [-ccti] [-ces CREATE_EMPTY_SUB]
             [-cscti CREATE_SUB_FROM_CLEARED_TXT_IMAGES]
             [-cstxt CREATE_SUB_FROM_TXT_RESULTS] [-ovocv] [-ovffmpeg] [-uc]
@@ -111,7 +111,7 @@ VideOCRParameters:
 -s SAVE_DIR, --save_dir SAVE_DIR
                         The path of saving the recognition result. Default is
                         "outputs" under the current directory.
--o {srt,txt,all}, --out_format {srt,txt,all}
+-o {srt,ass,txt,all}, --out_format {srt,ass,txt,all}
                         Output file format. Default is "all".
 --is_concat_rec       Which mode to run (concat recognition or single
                         recognition). Default is False.
@@ -175,7 +175,7 @@ VSFParameters:
 
 前往`save_dir`目录下即可查看结果。
 
-{{< alert context="info" text="如果想要让视频播放软件自动挂载srt文件，需要更改srt文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。" />}}
+{{< alert context="info" text="如果想要让视频播放软件自动挂载srt文件或ass文件，需要更改srt或ass文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。" />}}
 
 <script src="https://giscus.app/client.js"
         data-repo="SWHL/RapidVideOCR"

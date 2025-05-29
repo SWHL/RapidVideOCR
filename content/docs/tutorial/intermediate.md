@@ -10,7 +10,7 @@ draft: false
 ## 引言
 
 - 本篇文章旨在帮助不会python编程的小伙伴，快速使用RapidVideOCR视频硬字幕提取工具。
-- 可以运行的操作系统: `Windows | Mac | Linux``
+- 可以运行的操作系统: `Windows | Mac | Linux`
 
 ## 配置环境
 
@@ -140,7 +140,7 @@ rapid_videocr -i RGBImages -s result -m concat
     # RapidVideOCRInput有两个初始化参数
     # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
     # concat_batch: 叠图识别的图像张数，默认10，可自行调节
-    # out_format: 输出格式选择，[srt, txt, all], 默认是 all
+    # out_format: 输出格式选择，[srt, ass, txt, all], 默认是 all
     # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
     ocr_input_params = RapidVideOCRInput(
         is_batch_rec=False, ocr_params={"Global.with_paddle": True}
@@ -151,7 +151,7 @@ rapid_videocr -i RGBImages -s result -m concat
     save_dir = "outputs"
     save_name = "a"
 
-    # outputs/a.srt  outputs/a.t
+    # outputs/a.srt  outputs/a.ass  outputs/a.t
     extractor(rgb_dir, save_dir, save_name=save_name)
     ```
 

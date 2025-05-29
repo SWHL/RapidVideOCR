@@ -40,7 +40,7 @@ rgb_dir = "test_files/RGBImagesTiny"
 save_dir = "outputs"
 save_name = "a"
 
-# outputs/a.srt  outputs/a.txt
+# outputs/a.srt  outputs/a.ass  outputs/a.txt
 extractor(rgb_dir, save_dir, save_name=save_name)
 ```
 

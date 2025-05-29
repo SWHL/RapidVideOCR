@@ -31,7 +31,7 @@ from rapid_videocr import RapidVideOCR
 # RapidVideOCRInput has two initialization parameters
 # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default.
 # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted
-# out_format: Output format selection, [srt, txt, all], the default is all
+# out_format: Output format selection, [srt, ass, txt, all], the default is all
 # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing
 ocr_input_params = RapidVideOCRInput(
 is_batch_rec=False, ocr_params={"Global.with_paddle": True}
@@ -42,7 +42,7 @@ rgb_dir = "tests/test_files/RGBImages"
 save_dir = "outputs"
 save_name = "a"
 
-# outputs/a.srt  outputs/a.t
+# outputs/a.srt  outputs/a.ass  outputs/a.t
 extractor(rgb_dir, save_dir, save_name=save_name)
 ```
 
@@ -89,7 +89,7 @@ Parameter details:
 ```bash {linenos=table}
 $ rapid_videocr -h
 usage: rapid_videocr [-h] [-video_dir VIDEO_DIR] [-i IMG_DIR] [-s SAVE_DIR]
-            [-o {srt,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p]
+            [-o {srt,ass,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p]
             [-vsf VSF_EXE_PATH] [-c] [-r] [-ccti] [-ces CREATE_EMPTY_SUB]
             [-cscti CREATE_SUB_FROM_CLEARED_TXT_IMAGES]
             [-cstxt CREATE_SUB_FROM_TXT_RESULTS] [-ovocv] [-ovffmpeg] [-uc]
@@ -111,7 +111,7 @@ VideOCRParameters:
 -s SAVE_DIR, --save_dir SAVE_DIR
                         The path of saving the recognition result. Default is
                         "outputs" under the current directory.
--o {srt,txt,all}, --out_format {srt,txt,all}
+-o {srt,ass,txt,all}, --out_format {srt,ass,txt,all}
                         Output file format. Default is "all".
 --is_concat_rec       Which mode to run (concat recognition or single
                         recognition). Default is False.
@@ -175,7 +175,7 @@ VSFParameters:
 
 Go to the `save_dir` directory to view the results.
 
-{{< alert context="info" text="If you want the video playback software to automatically mount the srt file, you need to change the srt filename to be the same as the video file and put it in the same directory, or manually specify it." />}}
+{{< alert context="info" text="If you want the video playback software to automatically mount the srt file or ass file, you need to change the srt or ass filename to be the same as the video file and put it in the same directory, or manually specify it." />}}
 
 <script src="https://giscus.app/client.js"
         data-repo="SWHL/RapidVideOCR"

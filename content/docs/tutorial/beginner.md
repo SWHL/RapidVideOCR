@@ -36,7 +36,7 @@ draft: false
 4. 界面各个部分介绍
     - RapidVideOCR:
         - **图像目录**：指的是**VideoSubFinder**软件生成的**RGBImages**或者**TXTImages**目录，必须是这两个目录之一
-        - **保存路径**：识别转换后的结果，包括srt文件和txt文件
+        - **保存路径**：识别转换后的结果，包括srt文件、ass文件、和txt文件
         - **叠图识别**：勾选后，识别速度会变快。准确率可能差些
     - VideoSubFinder + RapidVideOCR:
         - **VSF exe路径**：本地安装的VideoSubFinder全路径，例如:`G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe`

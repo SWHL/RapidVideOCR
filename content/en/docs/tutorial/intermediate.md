@@ -10,7 +10,7 @@ draft: false
 ## Introduction
 
 - This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool
-- Supported operating systems: `Windows | Mac | Linux``
+- Supported operating systems: `Windows | Mac | Linux`
 
 ## Environment Configuration
 
@@ -20,7 +20,7 @@ draft: false
 
 ### 2. Install python（used for running RapidVideOCR）
 
-{{< alert context="info" text="Disclaimer: Some of the following images are from [终极保姆教'stutorial on installing Python_3.10.7](https://www.cnblogs.com/zyc-666/p/16689739.html)" />}}
+{{< alert context="info" text="Disclaimer: Some of the following images are from [终极保姆教's tutorial on installing Python_3.10.7](https://www.cnblogs.com/zyc-666/p/16689739.html)" />}}
 
 #### 1. Download the Python installer
 
@@ -140,7 +140,7 @@ rapid_videocr -i RGBImages -s result -m concat
     # RapidVideOCRInput has two initialization parameters
     # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default.
     # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted
-    # out_format: Output format selection, [srt, txt, all], the default is all
+    # out_format: Output format selection, [srt, ass, txt, all], the default is all
     # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing
     ocr_input_params = RapidVideOCRInput(
         is_batch_rec=False, ocr_params={"Global.with_paddle": True}
@@ -151,7 +151,7 @@ rapid_videocr -i RGBImages -s result -m concat
     save_dir = "outputs"
     save_name = "a"
 
-    # outputs/a.srt  outputs/a.t
+    # outputs/a.srt  outputs/a.ass  outputs/a.t
     extractor(rgb_dir, save_dir, save_name=save_name)
     ```
 
