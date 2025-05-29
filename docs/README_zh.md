@@ -18,7 +18,7 @@
 
 ### 简介
 
-- 视频硬字幕提取，自动生成对应`srt | txt`文件。
+- 视频硬字幕提取，自动生成对应`srt | ass | txt`文件。
 - 支持字幕语言：中文 | 英文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
 - 优势如下：
     - **提取更快**：与[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件结合使用，提取关键字幕帧更快。
@@ -39,7 +39,7 @@
 ```mermaid
 flowchart LR
     A[/Video/] --Extract subtitle key frame--> B(VideoSubFinder) --OCR-->C(RapidVideOCR)
-    C --Convert--> D[/"SRT | TXT"/]
+    C --Convert--> D[/"SRT | ASS | TXT"/]
 ```
 
 ### 安装

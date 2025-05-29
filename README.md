@@ -18,7 +18,7 @@
 
 ### Introduction
 
-- Video hard subtitle extraction, automatically generate the corresponding `srt | txt` file.
+- Video hard subtitle extraction, automatically generate the corresponding `srt | ass | txt` file.
 - Supported subtitle languages: Chinese | English (For other supported languages, see: [List of supported languages](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
 - The advantages are as follows:
     - **Faster extraction**: Used in conjunction with [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software to extract key subtitle frames faster.
@@ -39,7 +39,7 @@
 ```mermaid
 flowchart LR
     A[/Video/] --Extract subtitle key frame--> B(VideoSubFinder) --OCR-->C(RapidVideOCR)
-    C --Convert--> D[/"SRT | TXT"/]
+    C --Convert--> D[/"SRT | ASS | TXT"/]
 ```
 
 ### Installation
