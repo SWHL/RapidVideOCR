@@ -30,14 +30,39 @@ class VideoSubFinderInput:
 
 
 class VideoSubFinder:
+    SHORT_FLAG_MAP = {
+        "clear_dirs": "-c",
+        "run_search": "-r",
+        "create_cleared_text_images": "-ccti",
+        "create_empty_sub": "-ces",
+        "create_sub_from_cleared_txt_images": "-cscti",
+        "create_sub_from_txt_results": "-cstxt",
+        "open_video_opencv": "-ovocv",
+        "open_video_ffmpeg": "-ovffmpeg",
+        "use_cuda": "-uc",
+        "start_time": "-s",
+        "end_time": "-e",
+        "top_video_image_percent_end": "-te",
+        "bottom_video_image_percent_end": "-be",
+        "left_video_image_percent_end": "-le",
+        "right_video_image_percent_end": "-re",
+        "general_settings": "-gs",
+        "num_threads": "-nthr",
+        "num_ocr_threads": "-nocrthr",
+    }
+
     def __init__(self, input_params: VideoSubFinderInput):
         param_dict = asdict(input_params)
         run_list = [input_params.vsf_exe_path]
         for k, v in param_dict.items():
+            if k == "vsf_exe_path":
+                continue
+
             if v is None or str(v) == "False":
                 continue
 
-            run_list.append(f"--{str(k)}" if str(v) == "True" else f"--{k} {v}")
+            flag = self.SHORT_FLAG_MAP[k]
+            run_list.append(f"{flag}" if str(v) == "True" else f"{flag} {v}")
         self.run_list = run_list
 
     def __call__(self, video_path: str, output_dir: str) -> str:
