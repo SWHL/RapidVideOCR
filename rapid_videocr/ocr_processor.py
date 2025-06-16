@@ -120,6 +120,18 @@ class OCRProcessor:
     def _generate_txt_result(rec_results: List[Tuple[int, str, str, str]]) -> List[str]:
         return [f"{txt}\n" for _, _, txt, _ in rec_results]
 
+    @staticmethod
+    def _is_same_line(points: List) -> List[bool]:
+        threshold = 5
+
+        align_points = list(zip(points, points[1:]))
+        bool_res = [False] * len(align_points)
+        for i, point in enumerate(align_points):
+            y0, y1 = point
+            if abs(y0 - y1) <= threshold:
+                bool_res[i] = True
+        return bool_res
+
     def batch_rec(self, img_list: List[Path]) -> List[Tuple[int, str, str, str]]:
         self.logger.info("[OCR] Running with concat recognition.")
 
@@ -234,20 +246,7 @@ class OCRProcessor:
 
     def _group_by_lines(self, y_centroids: List[float]) -> List[List[int]]:
         """将文本框按行分组"""
-
-        @staticmethod
-        def is_same_line(points: List) -> List[bool]:
-            threshold = 5
-
-            align_points = list(zip(points, points[1:]))
-            bool_res = [False] * len(align_points)
-            for i, point in enumerate(align_points):
-                y0, y1 = point
-                if abs(y0 - y1) <= threshold:
-                    bool_res[i] = True
-            return bool_res
-
-        bool_res = is_same_line(y_centroids)
+        bool_res = self._is_same_line(y_centroids)
         groups = []
         current_group = [0]
         for i, is_same in enumerate(bool_res, 1):
