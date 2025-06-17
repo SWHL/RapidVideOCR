@@ -74,15 +74,15 @@ class OCRProcessor:
     def _get_ass_timestamp(file_path: Path) -> str:
         s = file_path.stem
 
-        h1   = int(s[0:1])
-        m1   = int(s[2:4])
+        h1 = int(s[0:1])
+        m1 = int(s[2:4])
         sec1 = int(s[5:7])
-        ms1  = int(s[8:11])
+        ms1 = int(s[8:11])
 
-        h2   = int(s[13:14])
-        m2   = int(s[15:17])
+        h2 = int(s[13:14])
+        m2 = int(s[15:17])
         sec2 = int(s[18:20])
-        ms2  = int(s[21:24])
+        ms2 = int(s[21:24])
 
         # compute absolute times in milliseconds
         bt = (h1 * 3600 + m1 * 60 + sec1) * 1000 + ms1
@@ -90,7 +90,7 @@ class OCRProcessor:
 
         def to_ass(ts_ms: int) -> str:
             # centiseconds (drop the last digit, no rounding)
-            cs_total = ts_ms // 10  
+            cs_total = ts_ms // 10
             cs = cs_total % 100
             total_s = ts_ms // 1000
             s = total_s % 60
@@ -109,28 +109,23 @@ class OCRProcessor:
         return img
 
     @staticmethod
-    def _generate_srt_results(rec_results: List[Tuple[int, str, str, str]]) -> List[str]:
+    def _generate_srt_results(
+        rec_results: List[Tuple[int, str, str, str]],
+    ) -> List[str]:
         return [f"{i+1}\n{time_str}\n{txt}\n" for i, time_str, txt, _ in rec_results]
 
     @staticmethod
-    def _generate_ass_results(rec_results: List[Tuple[int, str, str, str]]) -> List[str]:
-        return [f"Dialogue: 0,{ass_time_str},Default,,0,0,0,,{txt}" for _, _, txt, ass_time_str in rec_results]
+    def _generate_ass_results(
+        rec_results: List[Tuple[int, str, str, str]],
+    ) -> List[str]:
+        return [
+            f"Dialogue: 0,{ass_time_str},Default,,0,0,0,,{txt}"
+            for _, _, txt, ass_time_str in rec_results
+        ]
 
     @staticmethod
     def _generate_txt_result(rec_results: List[Tuple[int, str, str, str]]) -> List[str]:
         return [f"{txt}\n" for _, _, txt, _ in rec_results]
-
-    @staticmethod
-    def _is_same_line(points: List) -> List[bool]:
-        threshold = 5
-
-        align_points = list(zip(points, points[1:]))
-        bool_res = [False] * len(align_points)
-        for i, point in enumerate(align_points):
-            y0, y1 = point
-            if abs(y0 - y1) <= threshold:
-                bool_res[i] = True
-        return bool_res
 
     def batch_rec(self, img_list: List[Path]) -> List[Tuple[int, str, str, str]]:
         self.logger.info("[OCR] Running with concat recognition.")
@@ -258,6 +253,18 @@ class OCRProcessor:
 
         groups.append(current_group)
         return groups
+
+    @staticmethod
+    def _is_same_line(points: List) -> List[bool]:
+        threshold = 5
+
+        align_points = list(zip(points, points[1:]))
+        bool_res = [False] * len(align_points)
+        for i, point in enumerate(align_points):
+            y0, y1 = point
+            if abs(y0 - y1) <= threshold:
+                bool_res[i] = True
+        return bool_res
 
     def _merge_line_text(self, line_groups: List[List[int]], rec_res: List[str]) -> str:
         lines = []
