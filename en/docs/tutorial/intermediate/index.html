@@ -718,14 +718,14 @@ extractor(rgb_dir, save_dir, save_name=save_name)</code>
 		
 
 		<a class="nav-link  active"
-		   id="dcbeafTab" data-bs-toggle="tab" data-bs-target="#dcbeaf"
-		   type="button" role="tab" aria-controls="dcbeaf" aria-selected="true">Windows path style</a>
+		   id="bcdfeaTab" data-bs-toggle="tab" data-bs-target="#bcdfea"
+		   type="button" role="tab" aria-controls="bcdfea" aria-selected="true">Windows path style</a>
 
 		
 
 		<a class="nav-link "
-		   id="fbcdaeTab" data-bs-toggle="tab" data-bs-target="#fbcdae"
-		   type="button" role="tab" aria-controls="fbcdae" aria-selected="true">Linux/Mac path style</a>
+		   id="fcbdaeTab" data-bs-toggle="tab" data-bs-target="#fcbdae"
+		   type="button" role="tab" aria-controls="fcbdae" aria-selected="true">Linux/Mac path style</a>
 
 		
 
@@ -741,7 +741,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)</code>
 
 
 
-<div class="tab-pane fade show active" id="dcbeaf" role="tabpanel" aria-labelledby="nav-1">
+<div class="tab-pane fade show active" id="bcdfea" role="tabpanel" aria-labelledby="nav-1">
 
 	
 
@@ -774,7 +774,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)</code>
 
 
 
-<div class="tab-pane fade" id="fbcdae" role="tabpanel" aria-labelledby="nav-1">
+<div class="tab-pane fade" id="fcbdae" role="tabpanel" aria-labelledby="nav-1">
 
 	
 
@@ -1264,7 +1264,7 @@ $ python rapid_videocr.py</code>
                 href: "\/RapidVideOCR\/en\/docs\/blog\/-rec_other_lan\/",
                 title: "How can I do OCR for subtitles in languages other than Chinese and English?",
                 description: "Introduction link Currently, RapidVideOCR directly uses the default configuration of rapidocr_onnxruntime, so it can only do OCR for subtitles in Chinese and English. Since rapidocr_onnxruntime has an interface for passing in other multilingual recognition models, RapidVieOCR has scalability. This article is here to explain how to use it. This article takes the French OCR solution proposed in discussions #40 as an example, and other languages can be done in the same way. 1. Correctly install and use RapidVideOCR linkPlease refer to this link\n",
-                content: "Introduction link Currently, RapidVideOCR directly uses the default configuration of rapidocr_onnxruntime, so it can only do OCR for subtitles in Chinese and English. Since rapidocr_onnxruntime has an interface for passing in other multilingual recognition models, RapidVieOCR has scalability. This article is here to explain how to use it. This article takes the French OCR solution proposed in discussions #40 as an example, and other languages can be done in the same way. 1. Correctly install and use RapidVideOCR linkPlease refer to this link\n2. Use PaddleOCR Convert tool to convert French recognition model to ONNX link notifications Refer to the tutorial link Using,\nModel path: https://paddleocr.bj.bcebos.com/dygraph_v2.0/multilingual/french_mobile_v2.0_rec_infer.tar, Dictionary path: https://raw.githubusercontent.com/PaddlePaddle/PaddleOCR/dygraph/ppocr/utils/dict/french_dict.txt For model download links for other languages, please refer to: paddleocr whl in the source paddleocr.py file\nFor dictionary models, see: link\nFinally, a French recognition model can be obtained: french_mobile_v2.0_rec_infer.onnx\n3. OCR French subtitles link info rapid_videocr\u003e=v2.2.8 from rapid_videocr import RapidVideOCR, RapidVideOCRInput\rinput_args = RapidVideOCRInput(\ris_batch_rec=False,\rocr_params={\"Rec.model_path\": \"french_mobile_v2.0_rec_infer.onnx\"},\r)\rextractor = RapidVideOCR(input_args)\rrgb_dir = \"test_files/RGBImagesTiny\"\rsave_dir = \"outputs\"\rsave_name = \"a\"\r# outputs/a.srt outputs/a.ass outputs/a.txt\rextractor(rgb_dir, save_dir, save_name=save_name) "
+                content: "Introduction link Currently, RapidVideOCR directly uses the default configuration of rapidocr_onnxruntime, so it can only do OCR for subtitles in Chinese and English. Since rapidocr_onnxruntime has an interface for passing in other multilingual recognition models, RapidVieOCR has scalability. This article is here to explain how to use it. This article takes the French OCR solution proposed in discussions #40 as an example, and other languages can be done in the same way. 1. Correctly install and use RapidVideOCR linkPlease refer to this link\n2. Use PaddleOCR Convert tool to convert French recognition model to ONNX link notifications Refer to the tutorial link Using,\nModel path: https://paddleocr.bj.bcebos.com/dygraph_v2.0/multilingual/french_mobile_v2.0_rec_infer.tar, Dictionary path: https://raw.githubusercontent.com/PaddlePaddle/PaddleOCR/dygraph/ppocr/utils/dict/french_dict.txt For model download links for other languages, please refer to: paddleocr whl in the source paddleocr.py file\nFor dictionary models, see: link\nFinally, a French recognition model can be obtained: french_mobile_v2.0_rec_infer.onnx\n3. OCR French subtitles link info rapid_videocr\u003e=v3.0.0 from rapid_videocr import RapidVideOCR, RapidVideOCRInput\rinput_args = RapidVideOCRInput(\ris_batch_rec=False,\rocr_params={\"Rec.model_path\": \"french_mobile_v2.0_rec_infer.onnx\"},\r)\rextractor = RapidVideOCR(input_args)\rrgb_dir = \"test_files/RGBImagesTiny\"\rsave_dir = \"outputs\"\rsave_name = \"a\"\r# outputs/a.srt outputs/a.ass outputs/a.txt\rextractor(rgb_dir, save_dir, save_name=save_name) "
             }
         );
     index.add(
