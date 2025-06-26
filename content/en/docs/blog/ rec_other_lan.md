@@ -29,7 +29,7 @@ For dictionary models, see: [link](https://github.com/PaddlePaddle/PaddleOCR/tre
 Finally, a French recognition model can be obtained: `french_mobile_v2.0_rec_infer.onnx`
 
 ### 3. OCR French subtitles
-{{< alert context="info" text="`rapid_videocr>=v2.2.8`" />}}
+{{< alert context="info" text="`rapid_videocr>=v3.0.0`" />}}
 
 ```python {linenos=table}
 from rapid_videocr import RapidVideOCR, RapidVideOCRInput

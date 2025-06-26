@@ -29,7 +29,7 @@ draft: false
 最终可以得到一个法语识别模型：`french_mobile_v2.0_rec_infer.onnx`
 
 ### 3. 识别法语字幕
-{{< alert context="info" text="`rapid_videocr>=v2.2.8`" />}}
+{{< alert context="info" text="`rapid_videocr>=v3.0.0`" />}}
 
 ```python {linenos=table}
 from rapid_videocr import RapidVideOCR, RapidVideOCRInput
