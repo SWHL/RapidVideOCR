@@ -30,15 +30,17 @@ rapid_videocr -i test_files/RGBImages
 {{% tab tabName="Python" %}}
 
 ```python {linenos=table}
-from rapid_videocr import RapidVideOCR
+from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
-extractor = RapidVideOCR(is_concat_rec=False,
-                         out_format='all',
-                         is_print_console=False)
+input_args = RapidVideOCRInput(is_batch_rec=False)
+extractor = RapidVideOCR(input_args)
 
-rgb_dir = 'test_files/RGBImages'
-save_dir = 'result'
-extractor(rgb_dir, save_dir)
+rgb_dir = "tests/test_files/RGBImages"
+save_dir = "outputs"
+save_name = "a"
+
+# outputs/a.srt  outputs/a.ass  outputs/a.txt
+extractor(rgb_dir, save_dir, save_name=save_name)
 ```
 
 {{% /tab %}}

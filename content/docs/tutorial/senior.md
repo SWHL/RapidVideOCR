@@ -33,10 +33,10 @@ from rapid_videocr import RapidVideOCR
 # concat_batch: 叠图识别的图像张数，默认10，可自行调节
 # out_format: 输出格式选择，[srt, ass, txt, all], 默认是 all
 # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
-ocr_input_params = RapidVideOCRInput(
+input_args = RapidVideOCRInput(
 is_batch_rec=False, ocr_params={"Global.with_paddle": True}
 )
-extractor = RapidVideOCR(ocr_input_params)
+extractor = RapidVideOCR(input_args)
 
 rgb_dir = "tests/test_files/RGBImages"
 save_dir = "outputs"

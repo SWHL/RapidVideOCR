@@ -142,10 +142,10 @@ rapid_videocr -i RGBImages -s result -m concat
     # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted
     # out_format: Output format selection, [srt, ass, txt, all], the default is all
     # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing
-    ocr_input_params = RapidVideOCRInput(
+    input_args = RapidVideOCRInput(
         is_batch_rec=False, ocr_params={"Global.with_paddle": True}
     )
-    extractor = RapidVideOCR(ocr_input_params)
+    extractor = RapidVideOCR(input_args)
 
     rgb_dir = "tests/test_files/RGBImages"
     save_dir = "outputs"
