@@ -58,6 +58,22 @@ pip install rapid_videocr
 rapid_videocr -i RGBImages
 ```
 
+或者python脚本：
+
+```python
+from rapid_videocr import RapidVideOCR, RapidVideOCRInput
+
+input_args = RapidVideOCRInput(is_batch_rec=False)
+extractor = RapidVideOCR(input_args)
+
+rgb_dir = "tests/test_files/RGBImages"
+save_dir = "outputs"
+save_name = "a"
+
+# outputs/a.srt  outputs/a.ass  outputs/a.txt
+extractor(rgb_dir, save_dir, save_name=save_name)
+```
+
 ### 文档
 
 完整文档请移步：[docs](https://swhl.github.io/RapidVideOCR/docs)
