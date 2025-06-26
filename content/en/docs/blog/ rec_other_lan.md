@@ -32,9 +32,13 @@ Finally, a French recognition model can be obtained: `french_mobile_v2.0_rec_inf
 {{< alert context="info" text="`rapid_videocr>=v2.2.8`" />}}
 
 ```python {linenos=table}
-from rapid_videocr import RapidVideOCR
+from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
-extractor = RapidVideOCR(rec_model_path="french_mobile_v2.0_rec_infer.onnx")
+input_args = RapidVideOCRInput(
+    is_batch_rec=False,
+    ocr_params={"Rec.model_path": "french_mobile_v2.0_rec_infer.onnx"},
+)
+extractor = RapidVideOCR(input_args)
 
 rgb_dir = "test_files/RGBImagesTiny"
 save_dir = "outputs"
@@ -44,18 +48,18 @@ save_name = "a"
 extractor(rgb_dir, save_dir, save_name=save_name)
 ```
 
-<script src="https://giscus.app/client.js" 
-data-repo="SWHL/RapidVideOCR" 
-data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk=" data-category="Q&A" 
-data-category-id="DIC_kwDOGCzMJc4CUluM" 
-data-mapping="title" 
-data-strict="0" 
-data-reactions-enabled="1" 
-data-emit-metadata="0" 
-data-input-position="top" 
-data-theme="preferred_color_scheme" 
-data-lang="en" 
-data-loading="lazy" 
-crossorigin="anonymous" 
+<script src="https://giscus.app/client.js"
+data-repo="SWHL/RapidVideOCR"
+data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk=" data-category="Q&A"
+data-category-id="DIC_kwDOGCzMJc4CUluM"
+data-mapping="title"
+data-strict="0"
+data-reactions-enabled="1"
+data-emit-metadata="0"
+data-input-position="top"
+data-theme="preferred_color_scheme"
+data-lang="en"
+data-loading="lazy"
+crossorigin="anonymous"
 async>
 </script>
