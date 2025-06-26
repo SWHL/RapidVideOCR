@@ -56,7 +56,7 @@ Environment Configuration link1. Install VideoSubFinder (used for extracting sub
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://swhl.github.io/RapidVideOCR/en/docs/tutorial/intermediate/" /><meta property="og:image" content="https://swhl.github.io/RapidVideOCR/opengraph/card-base-2_hu_acedd66f1a4e4ad4.png"/><meta property="article:section" content="docs" />
 <meta property="article:published_time" content="2023-10-08T00:00:00+00:00" />
-<meta property="article:modified_time" content="2025-05-29T10:02:18-06:00" /><meta name="twitter:card" content="summary_large_image"/>
+<meta property="article:modified_time" content="2025-06-26T08:19:15+08:00" /><meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://swhl.github.io/RapidVideOCR/opengraph/card-base-2_hu_acedd66f1a4e4ad4.png"/>
 <meta name="twitter:title" content="Intermediate Tutorial (Beginner Python)"/>
 <meta name="twitter:description" content="Introduction link
@@ -682,7 +682,7 @@ Environment Configuration link1. Install VideoSubFinder (used for extracting sub
   
 
   <div class="prism-codeblock  linenos">
-  <pre id="93db2b0" class="language-python  line-numbers">
+  <pre id="3312c5e" class="language-python  line-numbers">
   <code>from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
 # RapidVideOCRInput has two initialization parameters
@@ -690,10 +690,10 @@ Environment Configuration link1. Install VideoSubFinder (used for extracting sub
 # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted
 # out_format: Output format selection, [srt, ass, txt, all], the default is all
 # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing
-ocr_input_params = RapidVideOCRInput(
+input_args = RapidVideOCRInput(
     is_batch_rec=False, ocr_params={&#34;Global.with_paddle&#34;: True}
 )
-extractor = RapidVideOCR(ocr_input_params)
+extractor = RapidVideOCR(input_args)
 
 rgb_dir = &#34;tests/test_files/RGBImages&#34;
 save_dir = &#34;outputs&#34;
@@ -718,14 +718,14 @@ extractor(rgb_dir, save_dir, save_name=save_name)</code>
 		
 
 		<a class="nav-link  active"
-		   id="acdfbeTab" data-bs-toggle="tab" data-bs-target="#acdfbe"
-		   type="button" role="tab" aria-controls="acdfbe" aria-selected="true">Windows path style</a>
+		   id="eadbcfTab" data-bs-toggle="tab" data-bs-target="#eadbcf"
+		   type="button" role="tab" aria-controls="eadbcf" aria-selected="true">Windows path style</a>
 
 		
 
 		<a class="nav-link "
-		   id="fedbacTab" data-bs-toggle="tab" data-bs-target="#fedbac"
-		   type="button" role="tab" aria-controls="fedbac" aria-selected="true">Linux/Mac path style</a>
+		   id="abefdcTab" data-bs-toggle="tab" data-bs-target="#abefdc"
+		   type="button" role="tab" aria-controls="abefdc" aria-selected="true">Linux/Mac path style</a>
 
 		
 
@@ -741,7 +741,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)</code>
 
 
 
-<div class="tab-pane fade show active" id="acdfbe" role="tabpanel" aria-labelledby="nav-1">
+<div class="tab-pane fade show active" id="eadbcf" role="tabpanel" aria-labelledby="nav-1">
 
 	
 
@@ -774,7 +774,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)</code>
 
 
 
-<div class="tab-pane fade" id="fedbac" role="tabpanel" aria-labelledby="nav-1">
+<div class="tab-pane fade" id="abefdc" role="tabpanel" aria-labelledby="nav-1">
 
 	
 
@@ -888,9 +888,9 @@ $ python rapid_videocr.py</code>
     <div id="last-modified" class="mt-1">
         <p class="mb-0 fw-semibold">Last updated <span
             id="relativetime"
-            data-authdate="2025-05-29T10:02:18-0600"
-            title="29 May 2025, 10:02 -0600">
-            29 May 2025, 10:02 -0600
+            data-authdate="2025-06-26T08:19:15&#43;0800"
+            title="26 Jun 2025, 08:19 &#43;0800">
+            26 Jun 2025, 08:19 &#43;0800
         </span>. <span class="material-icons size-20 align-text-bottom opacity-75">history</span>
         </p>
     </div>
@@ -1201,7 +1201,7 @@ $ python rapid_videocr.py</code>
                 href: "\/RapidVideOCR\/en\/docs\/quickstart\/",
                 title: "Quickstart",
                 description: "Begin your story, with only 3 steps.",
-                content: " notifications The input for this library must be a path to an RGBImages or TXTImages directory outputted by VideoSubFinder. VideoSubFinder tutorial (note: this blog post is written in Chinese)：link 1. Installation link pip install rapid_videocr 2. Usage link Terminal Python rapid_videocr -i test_files/RGBImages from rapid_videocr import RapidVideOCR extractor = RapidVideOCR(is_concat_rec=False, out_format='all', is_print_console=False) rgb_dir = 'test_files/RGBImages' save_dir = 'result' extractor(rgb_dir, save_dir) "
+                content: " notifications The input for this library must be a path to an RGBImages or TXTImages directory outputted by VideoSubFinder. VideoSubFinder tutorial (note: this blog post is written in Chinese)：link 1. Installation link pip install rapid_videocr 2. Usage link Terminal Python rapid_videocr -i test_files/RGBImages from rapid_videocr import RapidVideOCR, RapidVideOCRInput input_args = RapidVideOCRInput(is_batch_rec=False) extractor = RapidVideOCR(input_args) rgb_dir = \"tests/test_files/RGBImages\" save_dir = \"outputs\" save_name = \"a\" # outputs/a.srt outputs/a.ass outputs/a.txt extractor(rgb_dir, save_dir, save_name=save_name) "
             }
         );
     index.add(
@@ -1237,7 +1237,7 @@ $ python rapid_videocr.py</code>
                 href: "\/RapidVideOCR\/en\/docs\/tutorial\/intermediate\/",
                 title: "Intermediate Tutorial (Beginner Python)",
                 description: "Introduction link This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool Supported operating systems: Windows | Mac | Linux Environment Configuration link1. Install VideoSubFinder (used for extracting subtitle keyframes) link [RapidVideOCR extras] VideoSubFinder subtitle keyframe extraction tutorial 2. Install python（used for running RapidVideOCR） link info Disclaimer: Some of the following images are from 终极保姆教’s tutorial on installing Python_3.10.7 1. Download the Python installer linkOpen the official Python website → https://www.python.org, and select the installer for your own operating system (VideoSubFinder is currently only available for Windows)\u003e\n",
-                content: "Introduction link This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool Supported operating systems: Windows | Mac | Linux Environment Configuration link1. Install VideoSubFinder (used for extracting subtitle keyframes) link [RapidVideOCR extras] VideoSubFinder subtitle keyframe extraction tutorial 2. Install python（used for running RapidVideOCR） link info Disclaimer: Some of the following images are from 终极保姆教’s tutorial on installing Python_3.10.7 1. Download the Python installer linkOpen the official Python website → https://www.python.org, and select the installer for your own operating system (VideoSubFinder is currently only available for Windows)\u003e\n2. Find the version you want linkTake Python 3.10.7 for example, if the download speed is too slow you can join the RapidVideOCR QQ group: (706807542) to download the files.\n3. After the download is complete, double-click to open the exe and start the installation linkClick Customize installation and select the installation location. Also, remember to check the last item Add Python 3.10 to PATH\n4. Click Next link 5. Check the installation path link 6. Click install, and wait for the installation to finish link 7. Press Win + r input cmd, and press Enter to open the command prompt link 8. Enter python and see if an output something similar to the following image appears. If so, then the installation was successful link 9. Add the Scripts directory to the environment variables link Press Win + q enter Edit the system→ Click Edit the system environment variables\nClick Environment Variables → User variables → Path → Edit\nCreate a new entry for the Script directory under the Python installation directory, as shown in the image below, and remember to click save.\n3. Install RapidVideOCR link1. Press Win + r input cmd, and press Enter to open the command prompt link 2. Install rapid_videocr link pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/ 3. To test whether the installation was successful, enter rapid_videocr -h link 4. Command line usage linkPress Win + r input cmd, and press Enter to open the command prompt\nrapid_videocr -i RGBImages -s result -m concat RGBImages is generated by VideoSubFinder and its output path can be customized, for example: G:\\ProgramFiles\\_self\\RapidVideOCR\\test_files\\RGBImages and so on.\n5. Script usage link Create a new TXT file on the desktop and name it rapid_videocr.py. Note that the file extension is changed to *.py.\nOpen rapid_videocr.py with Notepad and copy the following code into it\nfrom rapid_videocr import RapidVideOCR, RapidVideOCRInput # RapidVideOCRInput has two initialization parameters # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default. # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted # out_format: Output format selection, [srt, ass, txt, all], the default is all # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing ocr_input_params = RapidVideOCRInput( is_batch_rec=False, ocr_params={\"Global.with_paddle\": True} ) extractor = RapidVideOCR(ocr_input_params) rgb_dir = \"tests/test_files/RGBImages\" save_dir = \"outputs\" save_name = \"a\" # outputs/a.srt outputs/a.ass outputs/a.t extractor(rgb_dir, save_dir, save_name=save_name) Change rgb_dir to the path to the RGBImages directory generated by VideoSubFinder。 Windows path style Linux/Mac path style rgb_dir = r'G:\\ProgramFiles\\_self\\RapidVideOCR\\test_files\\RGBImages' rgb_dir = 'test_files/TXTImages' Press Win + r and open the command prompt, and run the following commands\n$ cd Desktop $ python rapid_videocr.py "
+                content: "Introduction link This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool Supported operating systems: Windows | Mac | Linux Environment Configuration link1. Install VideoSubFinder (used for extracting subtitle keyframes) link [RapidVideOCR extras] VideoSubFinder subtitle keyframe extraction tutorial 2. Install python（used for running RapidVideOCR） link info Disclaimer: Some of the following images are from 终极保姆教’s tutorial on installing Python_3.10.7 1. Download the Python installer linkOpen the official Python website → https://www.python.org, and select the installer for your own operating system (VideoSubFinder is currently only available for Windows)\u003e\n2. Find the version you want linkTake Python 3.10.7 for example, if the download speed is too slow you can join the RapidVideOCR QQ group: (706807542) to download the files.\n3. After the download is complete, double-click to open the exe and start the installation linkClick Customize installation and select the installation location. Also, remember to check the last item Add Python 3.10 to PATH\n4. Click Next link 5. Check the installation path link 6. Click install, and wait for the installation to finish link 7. Press Win + r input cmd, and press Enter to open the command prompt link 8. Enter python and see if an output something similar to the following image appears. If so, then the installation was successful link 9. Add the Scripts directory to the environment variables link Press Win + q enter Edit the system→ Click Edit the system environment variables\nClick Environment Variables → User variables → Path → Edit\nCreate a new entry for the Script directory under the Python installation directory, as shown in the image below, and remember to click save.\n3. Install RapidVideOCR link1. Press Win + r input cmd, and press Enter to open the command prompt link 2. Install rapid_videocr link pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/ 3. To test whether the installation was successful, enter rapid_videocr -h link 4. Command line usage linkPress Win + r input cmd, and press Enter to open the command prompt\nrapid_videocr -i RGBImages -s result -m concat RGBImages is generated by VideoSubFinder and its output path can be customized, for example: G:\\ProgramFiles\\_self\\RapidVideOCR\\test_files\\RGBImages and so on.\n5. Script usage link Create a new TXT file on the desktop and name it rapid_videocr.py. Note that the file extension is changed to *.py.\nOpen rapid_videocr.py with Notepad and copy the following code into it\nfrom rapid_videocr import RapidVideOCR, RapidVideOCRInput # RapidVideOCRInput has two initialization parameters # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default. # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted # out_format: Output format selection, [srt, ass, txt, all], the default is all # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing input_args = RapidVideOCRInput( is_batch_rec=False, ocr_params={\"Global.with_paddle\": True} ) extractor = RapidVideOCR(input_args) rgb_dir = \"tests/test_files/RGBImages\" save_dir = \"outputs\" save_name = \"a\" # outputs/a.srt outputs/a.ass outputs/a.t extractor(rgb_dir, save_dir, save_name=save_name) Change rgb_dir to the path to the RGBImages directory generated by VideoSubFinder。 Windows path style Linux/Mac path style rgb_dir = r'G:\\ProgramFiles\\_self\\RapidVideOCR\\test_files\\RGBImages' rgb_dir = 'test_files/TXTImages' Press Win + r and open the command prompt, and run the following commands\n$ cd Desktop $ python rapid_videocr.py "
             }
         );
     index.add(
