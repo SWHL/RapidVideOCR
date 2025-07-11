@@ -17,6 +17,7 @@ from .utils.utils import (
     padding_img,
     read_img,
 )
+from collections import defaultdict
 
 
 class OCRProcessor:
@@ -33,7 +34,7 @@ class OCRProcessor:
     ) -> Tuple[List[str], List[str], List[str]]:
         self.is_txt_dir = is_txt_dir
         self.is_batch_rec = is_batch_rec
-        self.ocr_engines = [self._init_ocr_engine(self.ocr_params_list[0])] if is_batch_rec else [self._init_ocr_engine(p) for p in self.ocr_params_list]
+        self.ocr_engines = [self._init_ocr_engine(p) for p in self.ocr_params_list]
         process_func = self.batch_rec if is_batch_rec else self.single_rec
         rec_results = process_func(img_list)
         srt_results = self._generate_srt_results(rec_results)
@@ -140,20 +141,42 @@ class OCRProcessor:
 
         img_nums = len(img_list)
         rec_results = []
+
         for start_i in tqdm(range(0, img_nums, self.batch_size), desc="Concat Rec"):
             end_i = min(img_nums, start_i + self.batch_size)
 
             concat_img, img_coordinates, img_paths = self._prepare_batch(
                 img_list[start_i:end_i]
             )
-            dt_boxes, rec_res = self.get_ocr_result(concat_img)
-            if rec_res is None or dt_boxes is None:
-                continue
+            results = self.get_ocr_result(concat_img)
+            all_batch_results = defaultdict(list)
 
-            one_batch_rec_results = self._process_batch_results(
-                start_i, img_coordinates, dt_boxes, rec_res, img_paths
-            )
-            rec_results.extend(one_batch_rec_results)
+            for idx, (dt_boxes, rec_res) in enumerate(results):
+                if rec_res is None or dt_boxes is None:
+                    continue
+                one_batch_rec_results = self._process_batch_results(
+                    start_i, img_coordinates, dt_boxes, rec_res, img_paths
+                )
+                for i, row in enumerate(one_batch_rec_results):
+                    # row = [cur_frame_idx, time_str, txts, ass_time_str]
+                    all_batch_results[i].append(row)
+
+            # Compare and select the best (longest) recognized text for each image
+            for i in range(len(img_paths)):
+                batch_result = all_batch_results[i]
+                max_txt_len = 0
+                final_row = None
+                for row in batch_result:
+                    txts = row[2]  # get text
+                    if len(txts) > max_txt_len:
+                        max_txt_len = len(txts)
+                        final_row = row
+                if final_row is None:
+                    time_str = self._get_srt_timestamp(img_paths[i])
+                    ass_time_str = self._get_ass_timestamp(img_paths[i])
+                    final_row = [start_i + i, time_str, "", ass_time_str]
+                rec_results.append(final_row)
+
         return rec_results
 
     def _prepare_batch(
@@ -233,24 +256,16 @@ class OCRProcessor:
 
     def get_ocr_result(
         self, img: np.ndarray
-    ) -> Tuple[Optional[np.ndarray], Optional[Tuple[str]]]:
+    ) -> List[Tuple[Optional[np.ndarray], Optional[Tuple[str]]]]:
 
-        if self.is_batch_rec:
-            ocr_result = self.ocr_engines[0](img)
+        results = []
+        for engine in self.ocr_engines:
+            ocr_result = engine(img)
             if ocr_result.boxes is None:
-                return None, None
-            return (
-                    ocr_result.boxes, ocr_result.txts,
-            )
-        else:
-            results = []
-            for engine in self.ocr_engines:
-                ocr_result = engine(img)
-                if ocr_result.boxes is None:
-                    results.append((None, None))
-                else:
-                    results.append((ocr_result.boxes, ocr_result.txts))
-            return results
+                results.append((None, None))
+            else:
+                results.append((ocr_result.boxes, ocr_result.txts))
+        return results
 
     def process_same_line(self, dt_boxes: np.ndarray, rec_res: List[str]) -> str:
         if len(rec_res) == 1:
