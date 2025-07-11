@@ -54,7 +54,7 @@ class OCRProcessor:
             max_txt_len = 0
             final_txts = ""
 
-            # Iterate over all OCR results from different configurations.
+            # Iterate over all OCR results from different configs.
             for idx, (dt_boxes, rec_res) in enumerate(results):
                 txts = (
                     self.process_same_line(dt_boxes, rec_res)
@@ -152,9 +152,19 @@ class OCRProcessor:
                 img_list[start_i:end_i]
             )
             results = self.get_ocr_results(concat_img)
-            all_batch_results = defaultdict(list)
 
-            # Iterate over all OCR results from different configurations.
+            if len(results) == 1:
+                dt_boxes, rec_res = results[0]
+                if rec_res is None or dt_boxes is None:
+                    continue
+                one_batch_rec_results = self._process_batch_results(
+                    start_i, img_coordinates, dt_boxes, rec_res, img_paths
+                )
+                rec_results.extend(one_batch_rec_results)
+                continue
+
+            all_batch_results = defaultdict(list)
+            # Iterate over all OCR results from different configs.
             for idx, (dt_boxes, rec_res) in enumerate(results):
                 if rec_res is None or dt_boxes is None:
                     continue
@@ -165,7 +175,7 @@ class OCRProcessor:
                     # row = [cur_frame_idx, time_str, txts, ass_time_str]
                     all_batch_results[i].append(row)
 
-            # Compare and select the best (longest) recognized text for each image
+            # Compare and select the best (longest) recognized text for each image.
             for i in range(len(img_paths)):
                 batch_result = all_batch_results[i]
                 max_txt_len = 0
