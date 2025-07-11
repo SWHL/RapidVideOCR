@@ -50,7 +50,7 @@ class OCRProcessor:
             time_str = self._get_srt_timestamp(img_path)
             ass_time_str = self._get_ass_timestamp(img_path)
             img = self._preprocess_image(img_path)
-            results = self.get_ocr_result(img)
+            results = self.get_ocr_results(img)
             max_txt_len = 0
             final_txts = ""
             for idx, (dt_boxes, rec_res) in enumerate(results):
@@ -148,7 +148,7 @@ class OCRProcessor:
             concat_img, img_coordinates, img_paths = self._prepare_batch(
                 img_list[start_i:end_i]
             )
-            results = self.get_ocr_result(concat_img)
+            results = self.get_ocr_results(concat_img)
             all_batch_results = defaultdict(list)
 
             for idx, (dt_boxes, rec_res) in enumerate(results):
@@ -254,7 +254,7 @@ class OCRProcessor:
         box_iou = compute_poly_iou(frame_boxes, dt_box)
         return is_inclusive_each_other(frame_boxes, dt_box) or box_iou > 0.1
 
-    def get_ocr_result(
+    def get_ocr_results(
         self, img: np.ndarray
     ) -> List[Tuple[Optional[np.ndarray], Optional[Tuple[str]]]]:
 
