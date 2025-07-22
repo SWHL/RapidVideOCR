@@ -148,3 +148,35 @@ def test_out_only_txt(setup_and_teardown):
     txt_data = read_txt(txt_path)
     assert len(txt_data) == 8
     assert txt_data[-2] == "你们接着善后"
+
+@pytest.mark.parametrize("img_dir", [test_dir / "RGBImages"])
+def test_ocr_multi_configs(setup_and_teardown, img_dir):
+    save_dir, srt_path, ass_path, txt_path = setup_and_teardown
+
+    ocr_params_list = [
+        {
+            "Det.limit_side_len": 4000,
+            "Det.limit_type": "max",
+        },
+        {
+            "Det.limit_side_len": 640,
+            "Det.limit_type": "min",
+        }
+    ]
+    input_param = RapidVideOCRInput(is_batch_rec=False, ocr_params_list=ocr_params_list)
+    extractor = RapidVideOCR(input_param)
+    extractor(img_dir, save_dir)
+
+    srt_data = read_txt(srt_path)
+    assert len(srt_data) == 16
+    assert srt_data[2] == "空间里面他绝对赢不了的"
+    assert srt_data[-2] == "你们接着善后"
+
+    ass_data = read_txt(ass_path)
+    assert len(ass_data) == 17
+    assert ass_data[13].split(",", 9)[-1] == "空间里面他绝对赢不了的"
+    assert ass_data[-1].split(",", 9)[-1] == "你们接着善后"
+
+    txt_data = read_txt(txt_path)
+    assert len(txt_data) == 8
+    assert txt_data[-2] == "你们接着善后"
