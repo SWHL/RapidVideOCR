@@ -119,7 +119,7 @@ comments: true
 
 #### 2022-03-09 update
 
-- Added [FAQ module](./FAQ.md) to help everyone skip common small problems
+- Added [FAQ module](./faq.md) to help everyone skip common small problems
 
 #### 2021-12-14 update
 
