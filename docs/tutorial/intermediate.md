@@ -152,27 +152,26 @@ rapid_videocr -i RGBImages -s result -m concat
     ```
 
 3. 更改`rgb_dir` 后面的目录为VideoSubFinder生成的`RGBImages`目录路径。
-{{< tabs tabTotal="2">}}
-{{% tab tabName="Windows下路径写法" %}}
 
-```python linenums="1"
-rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
-```
+    === "Windows下路径写法"
 
-{{% /tab %}}
-{{% tab tabName="Linux/Mac下路径写法" %}}
+        ```python linenums="1"
+        rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
+        ```
 
-```python linenums="1"
-rgb_dir = 'test_files/TXTImages'
-```
+    === "Linux/Mac下路径写法"
 
-{{% /tab %}}
-{{< /tabs >}}
+        ```python linenums="1"
+        rgb_dir = 'test_files/TXTImages'
+        ```
+
 4. `Win + r` 打开终端输入以下代码，回车执行即可。
+
     ```bash linenums="1"
-    $ cd Desktop
-    $ python rapid_videocr.py
+    cd Desktop
+    python rapid_videocr.py
     ```
+
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/16.png">
     </div>
