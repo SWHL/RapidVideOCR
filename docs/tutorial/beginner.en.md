@@ -2,7 +2,7 @@
 comments: true
 ---
 
-## Introduction
+### Introduction
 
 Considering that most people who extract video subtitles are not programmers, in order to lower the threshold of use, we hereby launch the GUI version of RapidVideOCR Desktop.
 
@@ -13,11 +13,11 @@ flowchart LR
     A[VideoSubFinder] -- Extract subtitle keyframes --> B[RapidVideOCR] -- OCR --> C(SRT)
 ```
 
-## [VideoSubFinder Tutorial (in Chinese)](https://blog.csdn.net/shiwanghualuo/article/details/129174857)
+### [VideoSubFinder Tutorial (in Chinese)](https://blog.csdn.net/shiwanghualuo/article/details/129174857)
 
-## RapidVideOCR Desktop Tutorial
+### RapidVideOCR Desktop Tutorial
 
-### Step 1: Download the **RapidVideOCR Desktop** release archive for your corresponding platform
+#### Step 1: Download the **RapidVideOCR Desktop** release archive for your corresponding platform
 
 - [Download the latest version from Github](https://github.com/SWHL/RapidVideOCRDesktop/releases)
 - Download from QQ Group shared file, QQ Group number: 706807542, or scan the QR code to join：
@@ -26,15 +26,15 @@ flowchart LR
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.png" width="15%" height="15%" align="center">
 </div>
 
-### Step 2: Uncompress the zip archive, and double-click `RapidVideOCR.exe` (using Windows for example)
+#### Step 2: Uncompress the zip archive, and double-click `RapidVideOCR.exe` (using Windows for example)
 
-### Step 3: The GUI is shown below
+#### Step 3: The GUI is shown below
 
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/DesktopUI.png" width=50%>
 </div>
 
-### Step 4: Introduction to each part of the GUI
+#### Step 4: Introduction to each part of the GUI
 
 RapidVideOCR:
 
@@ -49,4 +49,4 @@ VideoSubFinder + RapidVideOCR:
 - **Video path**: The path to where the video to extract hard subtitles from is located
 - **Output directory**：The directory where the extraction results are saved
 
-### Step 5: After filling in the above, click the OK button to start recognition
+#### Step 5: After filling in the above, click the OK button to start recognition
