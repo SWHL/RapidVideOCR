@@ -1,0 +1,160 @@
+site_name: RapidVideOCR 文档
+site_url: https://swhl.github.io/RapidVideOCR/
+site_author: SWHL
+site_description:
+  🎦 Extract video hard subtitles and automatically generate corresponding srt files.
+
+repo_name: SWHL/RapidVideOCR
+repo_url: https://github.com/SWHL/RapidVideOCR
+
+copyright: Copyright &copy; 2025 Maintained by SWHL.
+
+theme:
+  name: material
+  language: zh
+  custom_dir: overrides
+  features:
+    - announce.dismiss
+    - content.tooltips
+    - content.code.copy
+    - content.tabs.link
+    - content.footnote.tooltips
+    - navigation.expand  # 默认打开所有的子节
+    - navigation.tabs # 顶级索引被作为tab
+    - navigation.tabs.sticky # tab始终可见
+    - navigation.top # 开启顶部导航栏
+    - navigation.tracking # 导航栏跟踪
+    - navigation.footer
+    - navigation.indexes
+    - search.highlight # 搜索高亮
+    - search.share # 搜索分享
+    - search.suggest # 搜索建议
+    - toc.follow # 目录跟踪-页面右侧的小目录
+
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+  icon:
+    logo: logo
+    previous: fontawesome/solid/angle-left
+    next: fontawesome/solid/angle-right
+    repo: fontawesome/brands/github
+    tag:
+      default-tag: fontawesome/solid/tag
+      hardware-tag: fontawesome/solid/microchip
+      software-tag: fontawesome/solid/laptop-code
+
+plugins:
+  - tags
+  - blog:
+      archive: false
+      post_date_format: short
+      blog_toc: true
+      categories_toc: true
+      pagination: false
+  - search:
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: zh
+          name: 简体中文
+          default: true
+          build: true
+        - locale: en
+          name: English
+          site_name: RapidVideOCR Documentation
+          link: /en/
+          nav_translations:
+            概览: Overview
+            快速开始: Quick Start
+            在线demo: Online Demo
+            使用教程: Tutorial
+            初级教程: Beginner Tutorial
+            中级教程: Intermediate Tutorial
+            高级教程: Senior Tutorial
+            博客: Blog
+            常见问题: FAQ
+            赞助: Sponsor
+            更新日志: Changelog
+  - git-committers:
+      repository: SWHL/RapidVideOCR
+      branch: main
+      token: !!python/object/apply:os.getenv ["MKDOCS_GIT_COMMITTERS_APIKEY"]
+  - git-revision-date-localized:
+      enable_creation_date: true
+
+
+markdown_extensions:
+  - abbr
+  - attr_list
+  - pymdownx.snippets
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - footnotes
+  - def_list
+  - md_in_html
+  - tables
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+        anchor_linenums: true
+        line_spans: __span
+        pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+
+extra:
+  version:
+    provider: mike
+
+nav:
+  - 概览: index.md
+  - 快速开始: quickstart.md
+  - 在线demo: online_demo.md
+  - 使用教程:
+    - 初级教程: tutorial/beginner.md
+    - 中级教程: tutorial/intermediate.md
+    - 高级教程: tutorial/senior.md
+  - 常见问题: faq.md
+  - 周边项目: related_projects.md
+  - 博客:
+    - blog/index.md
+  - 赞助: sponsor.md
+  - 更新日志: changelog.md
