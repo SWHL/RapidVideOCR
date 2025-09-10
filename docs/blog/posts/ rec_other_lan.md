@@ -1,4 +1,10 @@
 ---
+title: 如何识别其他语言字幕？
+date: 2025-09-10
+authors: [SWHL]
+slug: how-to-rec-other-lan
+categories:
+  - General
 comments: true
 ---
 

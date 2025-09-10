@@ -1,7 +1,12 @@
 ---
+title: How to recognize other language subtitle?
+date: 2025-09-10
+authors: [SWHL]
+slug: how-to-rec-other-lan
+categories:
+  - General
 comments: true
 ---
-
 ### Introduction
 
 Currently, RapidVideOCR directly uses the default configuration of `rapidocr_onnxruntime`, so it can only do OCR for subtitles in Chinese and English.
