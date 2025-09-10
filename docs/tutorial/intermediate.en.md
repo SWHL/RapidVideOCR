@@ -1,11 +1,7 @@
 ---
-weight: 3502
-title: "Intermediate Tutorial (Beginner Python)"
-description: ""
-icon: local_library
-date: 2023-10-08
-draft: false
+comments: true
 ---
+
 
 ## Introduction
 
@@ -101,7 +97,7 @@ Click Customize installation and select the installation location. Also, remembe
 
 #### 2. Install `rapid_videocr`
 
-```bash {linenos=table}
+```bash linenums="1"
 pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
@@ -119,7 +115,7 @@ pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 Press `Win + r` input `cmd`, and press Enter to open the command prompt
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -i RGBImages -s result -m concat
 ```
 
@@ -134,7 +130,7 @@ rapid_videocr -i RGBImages -s result -m concat
 1. Create a new TXT file on the desktop and name it `rapid_videocr.py`. Note that the file extension is changed to `*.py`.
 2. Open `rapid_videocr.py` with Notepad and copy the following code into it
 
-    ```python {linenos=table}
+    ```python linenums="1"
     from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
     # RapidVideOCRInput has two initialization parameters
@@ -159,41 +155,24 @@ rapid_videocr -i RGBImages -s result -m concat
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Windows path style" %}}
 
-```python {linenos=table}
+```python linenums="1"
 rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
 ```
 
 {{% /tab %}}
 {{% tab tabName="Linux/Mac path style" %}}
 
-```python {linenos=table}
+```python linenums="1"
 rgb_dir = 'test_files/TXTImages'
 ```
 
 {{% /tab %}}
 {{< /tabs >}}
 4. Press `Win + r` and open the command prompt, and run the following commands
-    ```bash {linenos=table}
+    ```bash linenums="1"
     $ cd Desktop
     $ python rapid_videocr.py
     ```
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/16.png">
     </div>
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>

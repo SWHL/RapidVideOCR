@@ -1,10 +1,5 @@
 ---
-weight: 3503
-title: "高级教程（有python基础的小伙伴）"
-description: ""
-icon: local_library
-date: 2023-10-08
-draft: false
+comments: true
 ---
 
 ### 1. 安装使用VideoSubFinder软件
@@ -16,7 +11,7 @@ draft: false
 
 ### 2. 安装rapid_videocr
 
-```bash {linenos=table}
+```bash linenums="1"
 pip install rapid_videocr
 ```
 
@@ -25,7 +20,7 @@ pip install rapid_videocr
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Only OCR" %}}
 
-```python {linenos=table}
+```python linenums="1"
 from rapid_videocr import RapidVideOCR
 
 # RapidVideOCRInput有两个初始化参数
@@ -49,7 +44,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 {{% /tab %}}
 {{% tab tabName="Extract + OCR" %}}
 
-```python {linenos=table}
+```python linenums="1"
 from rapid_videocr import RapidVideoSubFinderOCR
 
 vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
@@ -69,14 +64,14 @@ extractor(video_path, save_dir)
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Only OCR" %}}
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -i RGBImages
 ```
 
 {{% /tab %}}
 {{% tab tabName="Extract + OCR" %}}
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe -video_dir G:\ProgramFiles\RapidVideOCR\test_files\tiny
 ```
 
@@ -86,7 +81,7 @@ rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubF
 详细参数:
 <details>
 
-```bash {linenos=table}
+```bash linenums="1"
 $ rapid_videocr -h
 usage: rapid_videocr [-h] [-video_dir VIDEO_DIR] [-i IMG_DIR] [-s SAVE_DIR]
             [-o {srt,ass,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p]
@@ -176,20 +171,3 @@ VSFParameters:
 前往`save_dir`目录下即可查看结果。
 
 {{< alert context="info" text="如果想要让视频播放软件自动挂载srt文件或ass文件，需要更改srt或ass文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。" />}}
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>

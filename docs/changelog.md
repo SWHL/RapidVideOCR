@@ -1,13 +1,7 @@
 ---
-weight: 6000
-lastmod: "2022-10-08"
-draft: false
-author: "SWHL"
-title: "更新日志"
-icon: "update"
-toc: true
-description: ""
+comments: true
 ---
+
 
 ### 📣 后续更新日志将移步到[Release](https://github.com/SWHL/RapidVideOCR/releases)界面，这里不再更新
 
@@ -134,20 +128,3 @@ description: ""
 - [x] 添加具体参数说明
 - [x] 制作项目Logo
 - [ ] 更多的测试
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>

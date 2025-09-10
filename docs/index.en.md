@@ -1,13 +1,10 @@
 ---
-weight: 1000
-lastmod: "2022-08-01"
-draft: false
-author: "SWHL"
-title: "Overview"
-icon: "circle"
-toc: true
-description: ""
+comments: true
+hide:
+  - navigation
+  - toc
 ---
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/SWHL/RapidVideOCR/main/assets/logo.png" width="55%" height="55%"/>
 
@@ -23,7 +20,6 @@ description: ""
 <a href="https://semver.org/"><img alt="SemVer2.0" src="https://img.shields.io/badge/SemVer-2.0-brightgreen"></a>
 <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
-[简体中文](https://github.com/SWHL/RapidVideOCR/blob/main/docs/README_zh.md) | English
 </div>
 
 ### Introduction
@@ -45,19 +41,3 @@ flowchart LR
     A[/Video/] --Extract subtitle key frame--> B(VideoSubFinder) --OCR-->C(RapidVideOCR)
     C --Convert--> D[/"SRT | ASS | TXT"/]
 ```
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>

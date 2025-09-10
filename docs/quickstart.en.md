@@ -1,19 +1,15 @@
 ---
-weight: 2000
-lastmod: "2022-08-10"
-draft: false
-author: "SWHL"
-title: "Quickstart"
-icon: "rocket_launch"
-description: "Begin your story, with only 3 steps."
-toc: true
+comments: true
+hide:
+  - navigation
+  - toc
 ---
 
 {{< alert text="The input for this library must be a path to an RGBImages or TXTImages directory outputted by VideoSubFinder. VideoSubFinder tutorial (note: this blog post is written in Chinese)：[link](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)" />}}
 
 ### 1. Installation
 
-```bash {linenos=table}
+```bash linenums="1"
 pip install rapid_videocr
 ```
 
@@ -22,14 +18,14 @@ pip install rapid_videocr
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Terminal" %}}
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -i test_files/RGBImages
 ```
 
 {{% /tab %}}
 {{% tab tabName="Python" %}}
 
-```python {linenos=table}
+```python linenums="1"
 from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
 input_args = RapidVideOCRInput(is_batch_rec=False)
@@ -45,21 +41,3 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 {{% /tab %}}
 {{< /tabs >}}
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>
-

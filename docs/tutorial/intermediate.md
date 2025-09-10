@@ -1,11 +1,7 @@
 ---
-weight: 3502
-title: "中级教程（python小白）"
-description: ""
-icon: local_library
-date: 2023-10-08
-draft: false
+comments: true
 ---
+
 
 ## 引言
 
@@ -101,7 +97,7 @@ draft: false
 
 #### 2. 安装`rapid_videocr`
 
-```bash {linenos=table}
+```bash linenums="1"
 pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
@@ -119,7 +115,7 @@ pip install rapid_videocr -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 `Win + r` 输入`cmd`，回车，进入命令行窗口
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -i RGBImages -s result -m concat
 ```
 
@@ -134,7 +130,7 @@ rapid_videocr -i RGBImages -s result -m concat
 1. 在桌面上新建TXT文件，命名为`rapid_videocr.py`，注意后缀名改为`*.py`。
 2. 用记事本打开，将以下代码拷贝到`rapid_videocr.py`里面
 
-    ```python {linenos=table}
+    ```python linenums="1"
     from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
     # RapidVideOCRInput有两个初始化参数
@@ -159,41 +155,24 @@ rapid_videocr -i RGBImages -s result -m concat
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Windows下路径写法" %}}
 
-```python {linenos=table}
+```python linenums="1"
 rgb_dir = r'G:\ProgramFiles\_self\RapidVideOCR\test_files\RGBImages'
 ```
 
 {{% /tab %}}
 {{% tab tabName="Linux/Mac下路径写法" %}}
 
-```python {linenos=table}
+```python linenums="1"
 rgb_dir = 'test_files/TXTImages'
 ```
 
 {{% /tab %}}
 {{< /tabs >}}
 4. `Win + r` 打开终端输入以下代码，回车执行即可。
-    ```bash {linenos=table}
+    ```bash linenums="1"
     $ cd Desktop
     $ python rapid_videocr.py
     ```
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/16.png">
     </div>
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>

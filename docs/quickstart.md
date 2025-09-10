@@ -1,19 +1,16 @@
 ---
-weight: 2000
-lastmod: "2022-08-10"
-draft: false
-author: "SWHL"
-title: "快速开始"
-icon: "rocket_launch"
-description: "故事的开始，只需3步。"
-toc: true
+comments: true
+hide:
+  - navigation
+  - toc
 ---
+
 
 {{< alert text="该库的输入必须是来自VideoSubFinder软件输出的RGBImages或者TXTImages目录的路径。VideoSubFinder教程：[link](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)" />}}
 
 ### 1. 安装
 
-```bash {linenos=table}
+```bash linenums="1"
 pip install rapid_videocr
 ```
 
@@ -22,14 +19,14 @@ pip install rapid_videocr
 {{< tabs tabTotal="2">}}
 {{% tab tabName="终端使用" %}}
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -i test_files/RGBImages
 ```
 
 {{% /tab %}}
 {{% tab tabName="Python使用" %}}
 
-```python {linenos=table}
+```python linenums="1"
 from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
 input_args = RapidVideOCRInput(is_batch_rec=False)
@@ -45,20 +42,3 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 {{% /tab %}}
 {{< /tabs >}}
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>

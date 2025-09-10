@@ -1,12 +1,5 @@
 ---
-weight: 6000
-lastmod: "2022-10-08"
-draft: false
-author: "SWHL"
-title: "Changelog"
-icon: "update"
-toc: true
-description: ""
+comments: true
 ---
 
 ### 📣 Subsequent update logs will be moved to [Release](https://github.com/SWHL/RapidVideOCR/releases), and will no longer be updated here
@@ -148,18 +141,18 @@ description: ""
 
 <script src="https://giscus.app/client.js"
 
-data-repo="SWHL/RapidVideOCR" 
-data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk=" 
-data-category="Q&A" 
-data-category-id="DIC_kwDOGCzMJc4CUluM" 
-data-mapping="title" 
-data-strict="0" 
-data-reactions-enabled="1" 
-data-emit-metadata="0" 
-data-input-position="top" 
-data-theme="preferred_color_scheme" 
-data-lang="en" 
-data-loading="lazy" 
-crossorigin="anonymous" 
+data-repo="SWHL/RapidVideOCR"
+data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
+data-category="Q&A"
+data-category-id="DIC_kwDOGCzMJc4CUluM"
+data-mapping="title"
+data-strict="0"
+data-reactions-enabled="1"
+data-emit-metadata="0"
+data-input-position="top"
+data-theme="preferred_color_scheme"
+data-lang="en"
+data-loading="lazy"
+crossorigin="anonymous"
 async>
 </script>

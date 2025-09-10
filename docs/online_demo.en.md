@@ -1,12 +1,7 @@
 ---
-weight: 3000
-title: "Online Demo"
-description:
-icon: language
-lastmod: "2022-08-15"
-draft: false
-toc: true
+comments: true
 ---
+
 
 #### Introduction
 
@@ -28,20 +23,3 @@ toc: true
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" width="100%" height="100%">
 </div>
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>

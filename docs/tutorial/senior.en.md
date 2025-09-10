@@ -1,10 +1,5 @@
 ---
-weight: 3503
-title: "Advanced Tutorial (For those with Python basics)"
-description: ""
-icon: local_library
-date: 2023-10-08
-draft: false
+comments: true
 ---
 
 ### 1. Install and use VideoSubFinder
@@ -16,7 +11,7 @@ draft: false
 
 ### 2. Install rapid_videocr
 
-```bash {linenos=table}
+```bash linenums="1"
 pip install rapid_videocr
 ```
 
@@ -25,7 +20,7 @@ pip install rapid_videocr
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Only OCR" %}}
 
-```python {linenos=table}
+```python linenums="1"
 from rapid_videocr import RapidVideOCR
 
 # RapidVideOCRInput has two initialization parameters
@@ -49,7 +44,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 {{% /tab %}}
 {{% tab tabName="Extract + OCR" %}}
 
-```python {linenos=table}
+```python linenums="1"
 from rapid_videocr import RapidVideoSubFinderOCR
 
 vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
@@ -69,14 +64,14 @@ extractor(video_path, save_dir)
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Only OCR" %}}
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -i RGBImages
 ```
 
 {{% /tab %}}
 {{% tab tabName="Extract + OCR" %}}
 
-```bash {linenos=table}
+```bash linenums="1"
 rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe -video_dir G:\ProgramFiles\RapidVideOCR\test_files\tiny
 ```
 
@@ -86,7 +81,7 @@ rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubF
 Parameter details:
 <details>
 
-```bash {linenos=table}
+```bash linenums="1"
 $ rapid_videocr -h
 usage: rapid_videocr [-h] [-video_dir VIDEO_DIR] [-i IMG_DIR] [-s SAVE_DIR]
             [-o {srt,ass,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p]
@@ -176,20 +171,3 @@ VSFParameters:
 Go to the `save_dir` directory to view the results.
 
 {{< alert context="info" text="If you want the video playback software to automatically mount the srt file or ass file, you need to change the srt or ass filename to be the same as the video file and put it in the same directory, or manually specify it." />}}
-
-<script src="https://giscus.app/client.js"
-        data-repo="SWHL/RapidVideOCR"
-        data-repo-id="MDEwOlJlcG9zaXRvcnk0MDU1ODkwMjk="
-        data-category="Q&A"
-        data-category-id="DIC_kwDOGCzMJc4CUluM"
-        data-mapping="title"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>
