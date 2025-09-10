@@ -1,0 +1,180 @@
+site_name: RapidVideOCR 文档
+site_url: https://swhl.github.io/RapidVideOCR/
+site_author: SWHL
+site_description:
+  🎦 Extract video hard subtitles and automatically generate corresponding srt files.
+
+repo_name: SWHL/RapidVideOCR
+repo_url: https://github.com/SWHL/RapidVideOCR
+
+copyright: Copyright &copy; 2025 Maintained by SWHL.
+
+theme:
+  name: material
+  language: zh
+  custom_dir: overrides
+  features:
+    - announce.dismiss
+    - content.tooltips
+    - content.code.copy
+    - content.tabs.link
+    - content.footnote.tooltips
+    - navigation.expand  # 默认打开所有的子节
+    - navigation.tabs # 顶级索引被作为tab
+    - navigation.tabs.sticky # tab始终可见
+    - navigation.top # 开启顶部导航栏
+    - navigation.tracking # 导航栏跟踪
+    - navigation.footer
+    - navigation.indexes
+    - search.highlight # 搜索高亮
+    - search.share # 搜索分享
+    - search.suggest # 搜索建议
+    - toc.follow # 目录跟踪-页面右侧的小目录
+
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+  icon:
+    logo: logo
+    previous: fontawesome/solid/angle-left
+    next: fontawesome/solid/angle-right
+    repo: fontawesome/brands/github
+    tag:
+      default-tag: fontawesome/solid/tag
+      hardware-tag: fontawesome/solid/microchip
+      software-tag: fontawesome/solid/laptop-code
+
+plugins:
+  - tags
+  - blog:
+      archive: false
+      post_date_format: short
+      blog_toc: true
+      categories_toc: true
+      pagination: false
+  - search:
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: zh
+          name: 简体中文
+          default: true
+          build: true
+        - locale: en
+          name: English
+          site_name: RapidVideOCR Documentation
+          link: /en/
+          nav_translations:
+            文档合集: Documentation Collention
+            谷歌工程实践文档: Google Engineering Practices Documentation
+            概述: Overview
+            开发者指南: Developer Guide
+            CL开发者指南: CL Developer Guide
+            写好CL描述: Writing Good CL Descriptions
+            简短化CL: Small CLs
+            如何处理评审者的建议？: How to Handle Reviewer Comments
+            评审者指南: Reviewer Guide
+            如何做代码评审？: How to Do a Code Review
+            代码评审标准: Code Review Standards
+            代码评审应该关注什么？: What to Look for in a Code Review
+            代码评审的步骤: How to Navigate a Large CL
+            代码评审的速度: Speed of Code Reviews
+            在代码评审中如何写评论: How to Write Code Review Comments
+            处理代码评审中的反驳: How to Handle Pushback in Code Reviews
+            紧急情况: Emergency Procedures
+  - git-committers:
+      repository: SWHL/RapidVideOCR
+      branch: main
+      token: !!python/object/apply:os.getenv ["MKDOCS_GIT_COMMITTERS_APIKEY"]
+  - git-revision-date-localized:
+      enable_creation_date: true
+
+
+markdown_extensions:
+  - abbr
+  - attr_list
+  - pymdownx.snippets
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - footnotes
+  - def_list
+  - md_in_html
+  - tables
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+        anchor_linenums: true
+        line_spans: __span
+        pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+
+extra:
+  version:
+    provider: mike
+
+nav:
+  - 概览: index.md
+  - 快速开始: quickstart.md
+  - 在线demo: online_demo.md
+  - 模型列表: model_list.md
+  - 安装及使用:
+    - rapidocr:
+      - 安装: install_usage/rapidocr/install.md
+      - 使用: install_usage/rapidocr/usage.md
+      - 参数介绍: install_usage/rapidocr/parameters.md
+    - rapidocr_web:
+      - 安装及使用: install_usage/rapidocr_web/usage.md
+      - 更新日志: install_usage/rapidocr_web/changelog.md
+      - 桌面版使用教程: install_usage/rapidocr_web/desktop_usage.md
+      - Nuitka打包: install_usage/rapidocr_web/nuitka_package.md
+      - PyInstaller打包: install_usage/rapidocr_web/pyinstaller.md
+      - 多语言版本部署: install_usage/rapidocr_web/ocrweb_multi.md
+    - rapidocr_api:
+      - 安装及使用: install_usage/rapidocr_api/usage.md
+      - 更新日志: install_usage/rapidocr_api/changelog.md
+  - 常见问题: faq/faq.md
+  - 周边项目: related_projects.md
+  - 博客:
+    - blog/index.md
+  - 交流群: communicate.md
+  - 赞助: sponsor.md
+  - 商业支持: business_support.md
