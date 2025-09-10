@@ -84,23 +84,17 @@ plugins:
           site_name: RapidVideOCR Documentation
           link: /en/
           nav_translations:
-            文档合集: Documentation Collention
-            谷歌工程实践文档: Google Engineering Practices Documentation
-            概述: Overview
-            开发者指南: Developer Guide
-            CL开发者指南: CL Developer Guide
-            写好CL描述: Writing Good CL Descriptions
-            简短化CL: Small CLs
-            如何处理评审者的建议？: How to Handle Reviewer Comments
-            评审者指南: Reviewer Guide
-            如何做代码评审？: How to Do a Code Review
-            代码评审标准: Code Review Standards
-            代码评审应该关注什么？: What to Look for in a Code Review
-            代码评审的步骤: How to Navigate a Large CL
-            代码评审的速度: Speed of Code Reviews
-            在代码评审中如何写评论: How to Write Code Review Comments
-            处理代码评审中的反驳: How to Handle Pushback in Code Reviews
-            紧急情况: Emergency Procedures
+            概览: Overview
+            快速开始: Quick Start
+            在线demo: Online Demo
+            使用教程: Tutorial
+            初级教程: Beginner Tutorial
+            中级教程: Intermediate Tutorial
+            高级教程: Senior Tutorial
+            博客: Blog
+            常见问题: FAQ
+            赞助: Sponsor
+            更新日志: Changelog
   - git-committers:
       repository: SWHL/RapidVideOCR
       branch: main
@@ -133,7 +127,6 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-  - attr_list
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -155,26 +148,13 @@ nav:
   - 概览: index.md
   - 快速开始: quickstart.md
   - 在线demo: online_demo.md
-  - 模型列表: model_list.md
-  - 安装及使用:
-    - rapidocr:
-      - 安装: install_usage/rapidocr/install.md
-      - 使用: install_usage/rapidocr/usage.md
-      - 参数介绍: install_usage/rapidocr/parameters.md
-    - rapidocr_web:
-      - 安装及使用: install_usage/rapidocr_web/usage.md
-      - 更新日志: install_usage/rapidocr_web/changelog.md
-      - 桌面版使用教程: install_usage/rapidocr_web/desktop_usage.md
-      - Nuitka打包: install_usage/rapidocr_web/nuitka_package.md
-      - PyInstaller打包: install_usage/rapidocr_web/pyinstaller.md
-      - 多语言版本部署: install_usage/rapidocr_web/ocrweb_multi.md
-    - rapidocr_api:
-      - 安装及使用: install_usage/rapidocr_api/usage.md
-      - 更新日志: install_usage/rapidocr_api/changelog.md
-  - 常见问题: faq/faq.md
+  - 使用教程:
+    - 初级教程: tutorial/beginner.md
+    - 中级教程: tutorial/intermediate.md
+    - 高级教程: tutorial/senior.md
+  - 常见问题: faq.md
   - 周边项目: related_projects.md
   - 博客:
     - blog/index.md
-  - 交流群: communicate.md
   - 赞助: sponsor.md
-  - 商业支持: business_support.md
+  - 更新日志: changelog.md
