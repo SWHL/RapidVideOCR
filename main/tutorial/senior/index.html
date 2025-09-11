@@ -483,6 +483,8 @@ You're not viewing the latest version.
           
             
               
+                
+              
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -935,7 +937,9 @@ You're not viewing the latest version.
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1009,6 +1013,8 @@ You're not viewing the latest version.
               <article class="md-content__inner md-typeset">
                 
                   
+  
+
 
 
   
@@ -1018,18 +1024,17 @@ You're not viewing the latest version.
   <h1>高级教程</h1>
 
 <h3 id="1-videosubfinder">1. 安装使用VideoSubFinder软件<a class="headerlink" href="#1-videosubfinder" title="Permanent link">&para;</a></h3>
-<ul>
-<li>下载地址：Windows &amp; Linux (<a href="https://sourceforge.net/projects/videosubfinder/">videosubfinder官网</a> / QQ群（706807542）共享文件) | <a href="https://github.com/eritpchy/videosubfinder-cli">Mac版</a></li>
-<li>使用教程：<a href="https://juejin.cn/post/7203362527082053691">VideoSubFinder提取字幕关键帧教程</a></li>
-<li>最终生成的<code>RGBImages</code>和<code>TXTImages</code>目录一般会在软件安装目录下</li>
-<li>✧ 推荐用<code>RGBImages</code>目录中图像（感谢小伙伴<a href="https://github.com/dyphire">dyphire</a>在<a href="https://github.com/SWHL/RapidVideOCR/issues/21">#21</a>的反馈）</li>
-</ul>
+<p>下载地址：Windows &amp; Linux (<a href="https://sourceforge.net/projects/videosubfinder/">videosubfinder官网</a> / QQ群（706807542）共享文件) | <a href="https://github.com/eritpchy/videosubfinder-cli">Mac版</a></p>
+<p>使用教程：<a href="https://juejin.cn/post/7203362527082053691">VideoSubFinder提取字幕关键帧教程</a></p>
+<p>最终生成的<code>RGBImages</code>和<code>TXTImages</code>目录一般会在软件安装目录下</p>
+<p>✧ 推荐用<code>RGBImages</code>目录中图像（感谢小伙伴<a href="https://github.com/dyphire">dyphire</a>在<a href="https://github.com/SWHL/RapidVideOCR/issues/21">#21</a>的反馈）</p>
 <h3 id="2-rapid_videocr">2. 安装rapid_videocr<a class="headerlink" href="#2-rapid_videocr" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>rapid_videocr
 </span></code></pre></div></td></tr></table></div>
 <h3 id="3-python">3. Python使用<a class="headerlink" href="#3-python" title="Permanent link">&para;</a></h3>
-<p>{{&lt; tabs tabTotal="2"&gt;}}
-{{% tab tabName="Only OCR" %}}</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Only OCR</label><label for="__tabbed_1_2">Extract + OCR</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
@@ -1066,8 +1071,8 @@ You're not viewing the latest version.
 </span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="c1"># outputs/a.srt  outputs/a.ass  outputs/a.t</span>
 </span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="n">extractor</span><span class="p">(</span><span class="n">rgb_dir</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">save_name</span><span class="o">=</span><span class="n">save_name</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-<p>{{% /tab %}}
-{{% tab tabName="Extract + OCR" %}}</p>
+</div>
+<div class="tabbed-block">
 <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
 <span class="normal"><a href="#__codelineno-2-2">2</a></span>
 <span class="normal"><a href="#__codelineno-2-3">3</a></span>
@@ -1086,19 +1091,22 @@ You're not viewing the latest version.
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="n">save_dir</span> <span class="o">=</span> <span class="s1">&#39;outputs&#39;</span>
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="n">extractor</span><span class="p">(</span><span class="n">video_path</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-<p>{{% /tab %}}
-{{&lt; /tabs &gt;}}</p>
+</div>
+</div>
+</div>
 <h3 id="4">4. 命令行使用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
-<p>{{&lt; tabs tabTotal="2"&gt;}}
-{{% tab tabName="Only OCR" %}}</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Only OCR</label><label for="__tabbed_2_2">Extract + OCR</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>rapid_videocr<span class="w"> </span>-i<span class="w"> </span>RGBImages
 </span></code></pre></div></td></tr></table></div>
-<p>{{% /tab %}}
-{{% tab tabName="Extract + OCR" %}}</p>
+</div>
+<div class="tabbed-block">
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>rapid_videocr<span class="w"> </span>-vsf<span class="w"> </span>G:<span class="se">\P</span>rogramFiles<span class="se">\V</span>ideoSubFinder_6.10_x64<span class="se">\R</span>elease_x64<span class="se">\V</span>ideoSubFinderWXW.exe<span class="w"> </span>-video_dir<span class="w"> </span>G:<span class="se">\P</span>rogramFiles<span class="se">\R</span>apidVideOCR<span class="se">\t</span>est_files<span class="se">\t</span>iny
 </span></code></pre></div></td></tr></table></div>
-<p>{{% /tab %}}
-{{&lt; /tabs &gt;}}</p>
+</div>
+</div>
+</div>
 <p>详细参数:</p>
 <details>
 
@@ -1267,7 +1275,10 @@ You're not viewing the latest version.
 
 <h3 id="5">5. 查看结果<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
 <p>前往<code>save_dir</code>目录下即可查看结果。</p>
-<p>{{&lt; alert context="info" text="如果想要让视频播放软件自动挂载srt文件或ass文件，需要更改srt或ass文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。" /&gt;}}</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>"如果想要让视频播放软件自动挂载srt文件或ass文件，需要更改srt或ass文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。</p>
+</div>
 
 
 
@@ -1290,7 +1301,7 @@ You're not viewing the latest version.
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年9月10日 13:31:21 UTC">2025年9月10日</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年9月11日 00:27:52 UTC">2025年9月11日</span>
   </span>
 
     
@@ -1332,6 +1343,8 @@ You're not viewing the latest version.
   </aside>
 
 
+
+  
 
 
 
@@ -1402,6 +1415,8 @@ You're not viewing the latest version.
         <footer class="md-footer">
   
     
+      
+        
       
       <nav class="md-footer__inner md-grid" aria-label="页脚" >
         

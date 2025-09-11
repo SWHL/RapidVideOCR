@@ -483,6 +483,8 @@ You're not viewing the latest version.
           
             
               
+                
+              
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -1079,7 +1081,9 @@ You're not viewing the latest version.
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1297,6 +1301,8 @@ You're not viewing the latest version.
               <article class="md-content__inner md-typeset">
                 
                   
+  
+
 
 
   
@@ -1312,13 +1318,14 @@ You're not viewing the latest version.
 </ul>
 <h2 id="_2">配置环境<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="1-videosubfinder">1. 安装VideoSubFinder软件（用于提取字幕关键帧）<a class="headerlink" href="#1-videosubfinder" title="Permanent link">&para;</a></h3>
-<ul>
-<li><a href="https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501">[RapidVideOCR周边] VideoSubFinder提取字幕关键帧教程</a></li>
-</ul>
+<p><a href="https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501">[RapidVideOCR周边] VideoSubFinder提取字幕关键帧教程</a></p>
 <h3 id="2-pythonrapidvideocr">2. 安装python软件（用于运行RapidVideOCR）<a class="headerlink" href="#2-pythonrapidvideocr" title="Permanent link">&para;</a></h3>
-<p>{{&lt; alert context="info" text="声明：以下部分图像来自<a href="https://www.cnblogs.com/zyc-666/p/16689739.html">终极保姆教程之安装python的教程_3.10.7版本</a>" /&gt;}}</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>声明：以下部分图像来自<a href="https://www.cnblogs.com/zyc-666/p/16689739.html">终极保姆教程之安装python的教程_3.10.7版本</a></p>
+</div>
 <h4 id="1-python">1. 下载python安装包<a class="headerlink" href="#1-python" title="Permanent link">&para;</a></h4>
-<p>打开python官网 → <a href="https://www.python.org">https://www.python.org</a>，选择自己系统进入下载界面（VideoSubFinder工具目前只有Windows的）&gt;</p>
+<p>打开python官网 → <a href="https://www.python.org">https://www.python.org</a>，选择自己系统进入下载界面（VideoSubFinder工具目前只有Windows的）</p>
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/1.png">
 </div>
@@ -1361,27 +1368,26 @@ You're not viewing the latest version.
 </div>
 
 <h4 id="9-scripts">9. 添加<code>Scripts</code>目录到环境变量中<a class="headerlink" href="#9-scripts" title="Permanent link">&para;</a></h4>
-<ul>
+<ol>
 <li>
-<p><code>Win + q</code> 输入“编辑” → 点击**编辑系统环境变量**
+<p><code>Win + q</code> 输入“编辑” → 点击 <strong>编辑系统环境变量</strong>
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/9.png" width=80%>
     </div></p>
 </li>
 <li>
-<p>打开**环境变量** → <strong>用户变量</strong> → <strong>Path</strong> → <strong>编辑</strong>
+<p>打开 <strong>环境变量</strong> → <strong>用户变量</strong> → <strong>Path</strong> → <strong>编辑</strong>
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/10.png">
     </div></p>
 </li>
 <li>
 <p>新建Python安装目录下的Script目录路径，如下图所示，记得点击保存哈。</p>
-</li>
-</ul>
-<div align="center">
+<p><div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/11.png">
-</div>
-
+</div></p>
+</li>
+</ol>
 <h3 id="3-rapidvideocr">3. 安装RapidVideOCR工具<a class="headerlink" href="#3-rapidvideocr" title="Permanent link">&para;</a></h3>
 <h4 id="1-win-r-cmd">1. <code>Win + r</code> 输入<code>cmd</code>，回车，进入命令窗口<a class="headerlink" href="#1-win-r-cmd" title="Permanent link">&para;</a></h4>
 <div align="center">
@@ -1411,7 +1417,7 @@ You're not viewing the latest version.
 
 <h4 id="5_1">5. 脚本使用<a class="headerlink" href="#5_1" title="Permanent link">&para;</a></h4>
 <ol>
-<li>在桌面上新建TXT文件，命名为<code>rapid_videocr.py</code>，注意后缀名改为<code>*.py</code>。</li>
+<li>在桌面上新建TXT文件，命名为<code>rapid_videocr.py</code>，注意后缀名改为<code>.py</code>。</li>
 <li>
 <p>用记事本打开，将以下代码拷贝到<code>rapid_videocr.py</code>里面</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
@@ -1499,7 +1505,7 @@ You're not viewing the latest version.
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年9月10日 15:04:55 UTC">2025年9月10日</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年9月11日 00:27:52 UTC">2025年9月11日</span>
   </span>
 
     
@@ -1541,6 +1547,8 @@ You're not viewing the latest version.
   </aside>
 
 
+
+  
 
 
 
@@ -1611,6 +1619,8 @@ You're not viewing the latest version.
         <footer class="md-footer">
   
     
+      
+        
       
       <nav class="md-footer__inner md-grid" aria-label="页脚" >
         
