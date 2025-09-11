@@ -37,3 +37,9 @@ flowchart LR
     A[/Video/] --Extract subtitle key frame--> B(VideoSubFinder) --OCR-->C(RapidVideOCR)
     C --Convert--> D[/"SRT | ASS | TXT"/]
 ```
+
+### [在线Demo](https://huggingface.co/spaces/SWHL/RapidVideOCR)
+
+<div align="center">
+    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="100%" height="100%">
+</div>

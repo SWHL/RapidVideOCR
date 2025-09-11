@@ -15,10 +15,12 @@ Hugging Face上的Demo和魔搭Demo是同一套代码，都是基于[streamlit](
 
 ## Demo源码
 
-- Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR/tree/main>
-- 魔搭社区: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/files>
+Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR/tree/main>
+
+魔搭社区: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/files>
 
 ## 在线Demo
 
-- Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR>
-- 魔搭社区: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary>
+Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR>
+
+魔搭社区: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary>

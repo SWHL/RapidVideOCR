@@ -76,7 +76,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 ### 文档
 
-完整文档请移步：[docs](https://swhl.github.io/RapidVideOCR/docs)
+完整文档请移步：[docs](https://swhl.github.io/RapidVideOCR/)
 
 ### 贡献者
 
@@ -90,12 +90,13 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 我们感谢所有的贡献者为改进和提升 RapidVideOCR 所作出的努力。
 
-- 欢迎提交请求。对于重大更改，请先打开issue讨论您想要改变的内容。
-- 请确保适当更新测试。
+欢迎提交请求。对于重大更改，请先打开issue讨论您想要改变的内容。
+
+请确保适当更新测试。
 
 ### 加入我们
 
-- 微信扫描以下二维码，关注**RapidAI公众号**，回复video即可加入RapidVideOCR微信交流群：
+- 微信扫描以下二维码，关注 **RapidAI公众号**，回复video即可加入RapidVideOCR微信交流群：
     <div align="center">
         <img src="https://raw.githubusercontent.com/RapidAI/.github/main/assets/RapidAI_WeChatAccount_round_corner.png" width="25%" height="25%" align="center">
     </div>
@@ -107,7 +108,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 ### [赞助](https://swhl.github.io/RapidVideOCR/docs/sponsor/)
 
-如果您想要赞助该项目，可直接点击当前页最上面的Sponsor按钮，请写好备注(**您的Github账号名称**)，方便添加到赞助列表中。
+如果您想要赞助该项目，可直接点击当前页最上面的Sponsor按钮，请写好备注( **您的Github账号名称** )，方便添加到赞助列表中。
 
 ### 开源许可证
 

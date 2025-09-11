@@ -1,5 +1,7 @@
 ---
 comments: true
+hide:
+  - toc
 ---
 
 ### 📣 Subsequent update logs will be moved to [Release](https://github.com/SWHL/RapidVideOCR/releases), and will no longer be updated here

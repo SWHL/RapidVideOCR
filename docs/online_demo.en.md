@@ -16,10 +16,12 @@ The purpose of the demos are to：Quickly preview the results of extracted subti
 
 ## Demo Source Code
 
-- Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR/tree/main>
-- MoDa Spaces: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/files>
+Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR/tree/main>
+
+ModelScope Spaces: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/files>
 
 ## Online Demo
 
-- Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR>
-- MoDa Spaces: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary>
+Hugging Face Demo: <https://huggingface.co/spaces/SWHL/RapidVideOCR>
+
+ModelScope Spaces: <https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary>

@@ -1,5 +1,7 @@
 ---
 comments: true
+hide:
+  - toc
 ---
 
 #### Q: 装完环境之后，运行`python main.py`之后，报错**OSError: [WinError 126] 找不到指定的模組**

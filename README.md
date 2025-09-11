@@ -76,7 +76,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 ### Documentation
 
-Full documentation can be found on [docs](https://swhl.github.io/RapidVideOCR/docs), in Chinese.
+Full documentation can be found on [docs](https://swhl.github.io/RapidVideOCR), in Chinese.
 
 ### Code Contributors
 
@@ -88,9 +88,10 @@ Full documentation can be found on [docs](https://swhl.github.io/RapidVideOCR/do
 
 ### Contributing
 
-- Pull requests are welcome. For major changes, please open an issue first
+Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
-- Please make sure to update tests as appropriate.
+
+Please make sure to update tests as appropriate.
 
 ### [Sponsor](https://swhl.github.io/RapidVideOCR/docs/sponsor/)
 
