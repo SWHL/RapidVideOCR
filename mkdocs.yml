@@ -61,12 +61,6 @@ theme:
 
 plugins:
   - tags
-  - blog:
-      archive: false
-      post_date_format: short
-      blog_toc: true
-      categories_toc: true
-      pagination: false
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - i18n:
@@ -92,6 +86,7 @@ plugins:
             中级教程: Intermediate Tutorial
             高级教程: Senior Tutorial
             博客: Blog
+            如何识别其他语言字幕？: How to recognize other language subtitle?
             常见问题: FAQ
             赞助: Sponsor
             更新日志: Changelog
@@ -154,6 +149,6 @@ nav:
     - 高级教程: tutorial/senior.md
   - 常见问题: faq.md
   - 博客:
-    - blog/index.md
+    - 如何识别其他语言字幕？: blog/posts/rec_other_lan.md
   - 赞助: sponsor.md
   - 更新日志: changelog.md
