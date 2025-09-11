@@ -9,7 +9,8 @@ import numpy as np
 from rapidocr import RapidOCR
 from tqdm import tqdm
 
-from .utils.logger import Logger
+from .utils.logger import logger
+from .utils.typings import LOG_LEVEL_MAP
 from .utils.utils import (
     compute_centroid,
     compute_poly_iou,
@@ -21,11 +22,15 @@ from .utils.utils import (
 
 class OCRProcessor:
     def __init__(self, ocr_params: Optional[Dict] = None, batch_size: int = 10):
-        self.logger = Logger(logger_name=__name__).get_log()
         self.ocr_engine = self._init_ocr_engine(ocr_params)
         self.batch_size = batch_size
 
     def _init_ocr_engine(self, ocr_params: Optional[Dict] = None) -> RapidOCR:
+        log_level_dict = {"Global.log_level": LOG_LEVEL_MAP[logger.level]}
+        if ocr_params is None:
+            return RapidOCR(params=log_level_dict)
+
+        ocr_params.update(log_level_dict)
         return RapidOCR(params=ocr_params)
 
     def __call__(
@@ -40,7 +45,7 @@ class OCRProcessor:
         return srt_results, ass_results, txt_results
 
     def single_rec(self, img_list: List[Path]) -> List[Tuple[int, str, str, str]]:
-        self.logger.info("[OCR] Running with single recognition.")
+        logger.info("[OCR] Running with single recognition.")
 
         rec_results = []
         for i, img_path in enumerate(tqdm(img_list, desc="OCR")):
@@ -112,7 +117,7 @@ class OCRProcessor:
     def _generate_srt_results(
         rec_results: List[Tuple[int, str, str, str]],
     ) -> List[str]:
-        return [f"{i+1}\n{time_str}\n{txt}\n" for i, time_str, txt, _ in rec_results]
+        return [f"{i + 1}\n{time_str}\n{txt}\n" for i, time_str, txt, _ in rec_results]
 
     @staticmethod
     def _generate_ass_results(
@@ -128,7 +133,7 @@ class OCRProcessor:
         return [f"{txt}\n" for _, _, txt, _ in rec_results]
 
     def batch_rec(self, img_list: List[Path]) -> List[Tuple[int, str, str, str]]:
-        self.logger.info("[OCR] Running with concat recognition.")
+        logger.info("[OCR] Running with concat recognition.")
 
         img_nums = len(img_list)
         rec_results = []

@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 
 from .main import OutputFormat, RapidVideOCR, RapidVideOCRInput
-from .utils.logger import Logger
+from .utils.logger import logger
 from .utils.typings import VideoFormat
 from .utils.utils import float_range
 from .vsf_cli import VideoSubFinder, VideoSubFinderInput
@@ -17,7 +17,6 @@ class RapidVideoSubFinderOCR:
         vsf_input_params: VideoSubFinderInput,
         ocr_input_params: RapidVideOCRInput,
     ):
-        self.logger = Logger(logger_name=__name__).get_log()
         self.vsf = VideoSubFinder(vsf_input_params)
         self.video_ocr = RapidVideOCR(ocr_input_params)
         self.video_formats = [VideoFormat[v].value for v in VideoFormat.__members__]
@@ -31,13 +30,13 @@ class RapidVideoSubFinderOCR:
         else:
             video_list = [video_path]
 
-        self.logger.info(
+        logger.info(
             "Extracting subtitle images with VideoSubFinder (takes quite a long time) ..."
         )
         video_num = len(video_list)
         for i, one_video in enumerate(video_list):
-            self.logger.info(
-                "[%s/%s] Starting to extract %s key frame", i + 1, video_num, one_video
+            logger.info(
+                f"[{i + 1}{video_num}] Starting to extract {one_video} key frame"
             )
 
             save_name = Path(one_video).stem
@@ -47,16 +46,14 @@ class RapidVideoSubFinderOCR:
             try:
                 self.vsf(str(one_video), str(save_vsf_dir))
             except Exception as e:
-                self.logger.error("Extract %s error, %s, skip", one_video, e)
+                logger.error(f"Extract {one_video} error, {e}, skip")
                 continue
 
-            self.logger.info(
-                "[%s/%s] Starting to run %s ocr", i + 1, video_num, one_video
-            )
+            logger.info(f"{i + 1}/{video_num}] Starting to run {one_video} ocr")
 
             rgb_dir = Path(save_vsf_dir) / "RGBImages"
             if not list(rgb_dir.iterdir()):
-                self.logger.warning("Extracting frames from %s is 0, skip", one_video)
+                logger.warning(f"Extracting frames from {one_video} is 0, skip")
                 continue
             self.video_ocr(rgb_dir, save_dir, save_name=save_name)
 

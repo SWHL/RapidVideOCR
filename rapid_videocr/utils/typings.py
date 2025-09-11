@@ -28,3 +28,14 @@ class RapidVideOCRInput:
     batch_size: int = 10
     out_format: str = OutputFormat.ALL.value
     ocr_params: Optional[Dict[str, Any]] = None
+    log_level: str = "info"  # debug / info / warning / error / critical
+
+
+LOG_LEVEL_MAP = {
+    50: "CRITICAL",
+    40: "ERROR",
+    30: "WARNING",
+    20: "INFO",
+    10: "DEBUG",
+    0: "NOTSET",
+}

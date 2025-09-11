@@ -8,14 +8,14 @@ from typing import List, Union
 from .export import ExportStrategyFactory, OutputFormat
 from .ocr_processor import OCRProcessor
 from .utils.crop_by_project import CropByProject
-from .utils.logger import Logger
+from .utils.logger import logger
 from .utils.typings import IMAGE_EXTENSIONS, RapidVideOCRInput
 from .utils.utils import mkdir
 
 
 class RapidVideOCR:
     def __init__(self, input_params: RapidVideOCRInput):
-        self.logger = Logger(logger_name=__name__).get_log()
+        logger.setLevel(input_params.log_level.upper())
 
         self.ocr_processor = OCRProcessor(
             input_params.ocr_params, input_params.batch_size
@@ -78,12 +78,11 @@ class RapidVideOCR:
     ):
         try:
             strategy = ExportStrategyFactory.create_strategy(self.out_format)
-
             mkdir(save_dir)
             strategy.export(save_dir, save_name, srt_result, ass_result, txt_result)
-            self.logger.info("[OCR] Results saved to directory: %s", save_dir)
+            logger.info(f"[OCR] Results saved to directory: {save_dir}")
         except ValueError as e:
-            self.logger.error("Export failed: %s", str(e))
+            logger.error(f"Export failed: {e}")
             raise
 
     def print_console(self, txt_result: List):

@@ -13,7 +13,7 @@ class Logger:
         self.logger.propagate = False
 
         formatter = colorlog.ColoredFormatter(
-            "%(log_color)s[%(levelname)s] %(asctime)s [RapidVideOCR] %(filename)s:%(lineno)d: %(message)s",
+            "%(log_color)s[%(levelname)s] %(asctime)s %(filename)s:%(lineno)d: %(message)s",
             log_colors={
                 "DEBUG": "cyan",
                 "INFO": "green",
@@ -35,3 +35,6 @@ class Logger:
 
     def get_log(self):
         return self.logger
+
+
+logger = Logger(log_level=logging.INFO).get_log()

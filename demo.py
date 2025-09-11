@@ -21,7 +21,7 @@ vsf_ocr(video_path, save_dir)
 # 只识别
 from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
-input_args = RapidVideOCRInput(is_batch_rec=False)
+input_args = RapidVideOCRInput(is_batch_rec=False, log_level="critical")
 extractor = RapidVideOCR(input_args)
 
 rgb_dir = "tests/test_files/RGBImages"
