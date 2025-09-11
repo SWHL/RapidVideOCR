@@ -45,5 +45,5 @@ flowchart LR
 ### [Online Demo](https://huggingface.co/spaces/SWHL/RapidVideOCR)
 
 <div align="center">
-    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="100%" height="100%">
+    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="60%" height="60%">
 </div>

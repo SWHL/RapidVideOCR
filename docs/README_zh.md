@@ -18,20 +18,24 @@
 
 ### 简介
 
-- 视频硬字幕提取，自动生成对应`srt | ass | txt`文件。
-- 支持字幕语言：中文 | 英文 （其他可以支持的语言参见：[支持语种列表](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
-- 优势如下：
-    - **提取更快**：与[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件结合使用，提取关键字幕帧更快。
-    - **识别更准**：采用[RapidOCR](https://github.com/RapidAI/RapidOCR)作为识别库。
-    - **使用更方便**：pip直接安装即可使用。
+`rapid_videocr`是一个自动视频硬字幕提取，生成对应`srt | ass | txt`文件的工具。
 
-- 桌面EXE版，请移步[RapidVideOCRDesktop](https://github.com/SWHL/RapidVideOCRDesktop)
-- 如果有帮助到您的话，请给个小星星⭐。
+支持字幕语言：[支持语种列表](https://rapidai.github.io/RapidOCRDocs/main/model_list/#_4)，因为该工具依赖`rapidocr`库，因此`rapidocr`支持识别的语言，`rapid_videocr`均是支持的。
+
+优势如下：
+
+- **提取更快**：与[VideoSubFinder](https://sourceforge.net/projects/videosubfinder/)软件结合使用，提取关键字幕帧更快。
+- **识别更准**：采用[RapidOCR](https://github.com/RapidAI/RapidOCR)作为识别库。
+- **使用更方便**：pip直接安装即可使用。
+
+桌面EXE版，请移步[RapidVideOCRDesktop](https://github.com/SWHL/RapidVideOCRDesktop)
+
+如果有帮助到您的话，请给个小星星⭐。
 
 ### [在线Demo](https://www.modelscope.cn/studios/liekkas/RapidVideOCR/summary)
 
 <div align="center">
-    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="100%" height="100%">
+    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="60%" height="60%">
 </div>
 
 ### 整体框架
@@ -94,17 +98,17 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 请确保适当更新测试。
 
-### 加入我们
+### 加入社区
 
-- 微信扫描以下二维码，关注 **RapidAI公众号**，回复video即可加入RapidVideOCR微信交流群：
-    <div align="center">
-        <img src="https://raw.githubusercontent.com/RapidAI/.github/main/assets/RapidAI_WeChatAccount_round_corner.png" width="25%" height="25%" align="center">
-    </div>
+微信扫描以下二维码，关注 **RapidAI公众号**，回复video即可加入RapidVideOCR微信交流群：
+<div align="left">
+    <img src="https://raw.githubusercontent.com/RapidAI/.github/main/assets/RapidAI_WeChatAccount_round_corner.png" width="20%" height="20%" align="center">
+</div>
 
-- 扫码加入QQ群（706807542）：
-    <div align="center">
-        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.png" width="25%" height="25%" align="center">
-    </div>
+扫码加入QQ群（706807542）：
+<div align="left">
+    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/QQGroup.png" width="20%" height="20%" align="center">
+</div>
 
 ### [赞助](https://swhl.github.io/RapidVideOCR/docs/sponsor/)
 

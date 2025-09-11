@@ -18,20 +18,24 @@
 
 ### Introduction
 
-- Video hard subtitle extraction, automatically generate the corresponding `srt | ass | txt` file.
-- Supported subtitle languages: Chinese | English (For other supported languages, see: [List of supported languages](https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_ch/multi_languages.md#%E8%AF%AD%E7%A7%8D%E7%BC%A9%E5%86%99))
-- The advantages are as follows:
-    - **Faster extraction**: Used in conjunction with [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software to extract key subtitle frames faster.
-    - **More accurate recognition**: Use [RapidOCR](https://github.com/RapidAI/RapidOCR) as the recognition library.
-    - **More convenient to use**: pip can be installed directly and used.
+`rapid_videocr` is a tool designed for the automatic extraction of hard subtitles from videos and generates corresponding `srt | ass | txt` files.
 
-- For desktop EXE version, please go to [RapidVideOCRDesktop](https://github.com/SWHL/RapidVideOCRDesktop).
-- If it helps you, please give a star ⭐.
+Supported subtitle languages: [List of Supported Languages](https://rapidai.github.io/RapidOCRDocs/main/model_list/#_4). Since this tool relies on the `rapidocr` library, any language supported by `rapidocr` for recognition is also supported by `rapid_videocr`.
+
+Its advantages include:
+
+- **Faster Extraction**: When used in conjunction with the [VideoSubFinder](https://sourceforge.net/projects/videosubfinder/) software, it can extract key subtitle frames more quickly.
+- **More Accurate Recognition**: It utilizes [RapidOCR](https://github.com/RapidAI/RapidOCR) as its recognition library.
+- **Easier to Use**: It can be installed directly via pip and is ready to use.
+
+For the desktop EXE version, please visit [RapidVideOCRDesktop](https://github.com/SWHL/RapidVideOCRDesktop).
+
+If this tool has been helpful to you, please give it a star ⭐.
 
 ### [Online Demo](https://huggingface.co/spaces/SWHL/RapidVideOCR)
 
 <div align="center">
-    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="100%" height="100%">
+    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/OnlineDemo.gif" alt="Demo" width="60%" height="60%">
 </div>
 
 ### Overall framework
@@ -76,7 +80,7 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 
 ### Documentation
 
-Full documentation can be found on [docs](https://swhl.github.io/RapidVideOCR), in Chinese.
+Full documentation can be found on [docs](https://swhl.github.io/RapidVideOCR) in Chinese.
 
 ### Code Contributors
 
