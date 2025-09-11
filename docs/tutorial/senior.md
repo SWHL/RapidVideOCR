@@ -1,13 +1,18 @@
 ---
 comments: true
+hide:
+  - toc
 ---
 
 ### 1. 安装使用VideoSubFinder软件
 
-- 下载地址：Windows & Linux ([videosubfinder官网](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件) | [Mac版](https://github.com/eritpchy/videosubfinder-cli)
-- 使用教程：[VideoSubFinder提取字幕关键帧教程](https://juejin.cn/post/7203362527082053691)
-- 最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
-- ✧ 推荐用`RGBImages`目录中图像（感谢小伙伴[dyphire](https://github.com/dyphire)在[#21](https://github.com/SWHL/RapidVideOCR/issues/21)的反馈）
+下载地址：Windows & Linux ([videosubfinder官网](https://sourceforge.net/projects/videosubfinder/) / QQ群（706807542）共享文件) | [Mac版](https://github.com/eritpchy/videosubfinder-cli)
+
+使用教程：[VideoSubFinder提取字幕关键帧教程](https://juejin.cn/post/7203362527082053691)
+
+最终生成的`RGBImages`和`TXTImages`目录一般会在软件安装目录下
+
+✧ 推荐用`RGBImages`目录中图像（感谢小伙伴[dyphire](https://github.com/dyphire)在[#21](https://github.com/SWHL/RapidVideOCR/issues/21)的反馈）
 
 ### 2. 安装rapid_videocr
 
@@ -17,68 +22,59 @@ pip install rapid_videocr
 
 ### 3. Python使用
 
-{{< tabs tabTotal="2">}}
-{{% tab tabName="Only OCR" %}}
+=== "Only OCR"
 
-```python linenums="1"
-from rapid_videocr import RapidVideOCR
+    ```python linenums="1"
+    from rapid_videocr import RapidVideOCR
 
-# RapidVideOCRInput有两个初始化参数
-# is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
-# concat_batch: 叠图识别的图像张数，默认10，可自行调节
-# out_format: 输出格式选择，[srt, ass, txt, all], 默认是 all
-# is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
-input_args = RapidVideOCRInput(
-is_batch_rec=False, ocr_params={"Global.with_paddle": True}
-)
-extractor = RapidVideOCR(input_args)
+    # RapidVideOCRInput有两个初始化参数
+    # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
+    # concat_batch: 叠图识别的图像张数，默认10，可自行调节
+    # out_format: 输出格式选择，[srt, ass, txt, all], 默认是 all
+    # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
+    input_args = RapidVideOCRInput(
+    is_batch_rec=False, ocr_params={"Global.with_paddle": True}
+    )
+    extractor = RapidVideOCR(input_args)
 
-rgb_dir = "tests/test_files/RGBImages"
-save_dir = "outputs"
-save_name = "a"
+    rgb_dir = "tests/test_files/RGBImages"
+    save_dir = "outputs"
+    save_name = "a"
 
-# outputs/a.srt  outputs/a.ass  outputs/a.t
-extractor(rgb_dir, save_dir, save_name=save_name)
-```
+    # outputs/a.srt  outputs/a.ass  outputs/a.t
+    extractor(rgb_dir, save_dir, save_name=save_name)
+    ```
 
-{{% /tab %}}
-{{% tab tabName="Extract + OCR" %}}
+=== "Extract + OCR"
 
-```python linenums="1"
-from rapid_videocr import RapidVideoSubFinderOCR
+    ```python linenums="1"
+    from rapid_videocr import RapidVideoSubFinderOCR
 
-vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
-extractor = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True)
+    vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
+    extractor = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True)
 
-# video_path can be directory path or video full path.
-video_path = 'test_files/tiny/2.mp4'
-save_dir = 'outputs'
-extractor(video_path, save_dir)
-```
-
-{{% /tab %}}
-{{< /tabs >}}
+    # video_path can be directory path or video full path.
+    video_path = 'test_files/tiny/2.mp4'
+    save_dir = 'outputs'
+    extractor(video_path, save_dir)
+    ```
 
 ### 4. 命令行使用
 
-{{< tabs tabTotal="2">}}
-{{% tab tabName="Only OCR" %}}
+=== "Only OCR"
 
-```bash linenums="1"
-rapid_videocr -i RGBImages
-```
+    ```bash linenums="1"
+    rapid_videocr -i RGBImages
+    ```
 
-{{% /tab %}}
-{{% tab tabName="Extract + OCR" %}}
+=== "Extract + OCR"
 
-```bash linenums="1"
-rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe -video_dir G:\ProgramFiles\RapidVideOCR\test_files\tiny
-```
-
-{{% /tab %}}
-{{< /tabs >}}
+    ```bash linenums="1"
+    rapid_videocr -vsf G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe -video_dir G:\ProgramFiles\RapidVideOCR\test_files\tiny
+    ```
 
 详细参数:
+
 <details>
 
 ```bash linenums="1"
@@ -170,4 +166,6 @@ VSFParameters:
 
 前往`save_dir`目录下即可查看结果。
 
-{{< alert context="info" text="如果想要让视频播放软件自动挂载srt文件或ass文件，需要更改srt或ass文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。" />}}
+!!! info
+
+    "如果想要让视频播放软件自动挂载srt文件或ass文件，需要更改srt或ass文件名字为视频文件名字，且放到同一目录下，亦或者手动指定加载。

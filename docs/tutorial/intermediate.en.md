@@ -1,26 +1,32 @@
 ---
 comments: true
+hide:
+  - toc
 ---
 
 
 ## Introduction
 
-- This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool
-- Supported operating systems: `Windows | Mac | Linux`
+This article is aimed towards helping beginner Python programmers to quickly start using the RapidVideOCR subtitle extraction tool
+
+Supported operating systems: `Windows | Mac | Linux`
 
 ## Environment Configuration
 
 ### 1. Install VideoSubFinder (used for extracting subtitle keyframes)
 
-- [[RapidVideOCR extras] VideoSubFinder subtitle keyframe extraction tutorial](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)
+[[RapidVideOCR extras] VideoSubFinder subtitle keyframe extraction tutorial](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)
 
 ### 2. Install python（used for running RapidVideOCR）
 
-{{< alert context="info" text="Disclaimer: Some of the following images are from [终极保姆教's tutorial on installing Python_3.10.7](https://www.cnblogs.com/zyc-666/p/16689739.html)" />}}
+!!! tip
+
+    Disclaimer: Some of the following images are from [终极保姆教's tutorial on installing Python_3.10.7](https://www.cnblogs.com/zyc-666/p/16689739.html)
 
 #### 1. Download the Python installer
 
-Open the official Python website → <https://www.python.org>, and select the installer for your own operating system (VideoSubFinder is currently only available for Windows)>
+Open the official Python website → <https://www.python.org>, and select the installer for your own operating system (VideoSubFinder is currently only available for Windows)
+
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/1.png">
 </div>
@@ -28,6 +34,7 @@ Open the official Python website → <https://www.python.org>, and select the in
 #### 2. Find the version you want
 
 Take Python 3.10.7 for example, if the download speed is too slow you can join the RapidVideOCR QQ group: (706807542) to download the files.
+
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/2.png">
 </div>
@@ -35,6 +42,7 @@ Take Python 3.10.7 for example, if the download speed is too slow you can join t
 #### 3. After the download is complete, double-click to open the exe and start the installation
 
 Click Customize installation and select the installation location. Also, remember to check the last item `Add Python 3.10 to PATH`
+
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/3.png" width=80%>
 </div>
@@ -71,17 +79,17 @@ Click Customize installation and select the installation location. Also, remembe
 
 #### 9. Add the `Scripts` directory to the environment variables
 
-- Press `Win + q` enter `Edit the system`→ Click **Edit the system environment variables**
+1. Press `Win + q` enter `Edit the system`→ Click **Edit the system environment variables**
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/9.png" width=80%>
     </div>
 
-- Click **Environment Variables** → **User variables** → **Path** → **Edit**
+2. Click **Environment Variables** → **User variables** → **Path** → **Edit**
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/10.png">
     </div>
 
-- Create a new entry for the Script directory under the Python installation directory, as shown in the image below, and remember to click save.
+3. Create a new entry for the Script directory under the Python installation directory, as shown in the image below, and remember to click save.
 
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/11.png">

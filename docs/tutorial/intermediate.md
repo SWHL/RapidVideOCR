@@ -1,5 +1,7 @@
 ---
 comments: true
+hide:
+  - toc
 ---
 
 
@@ -12,15 +14,18 @@ comments: true
 
 ### 1. 安装VideoSubFinder软件（用于提取字幕关键帧）
 
-- [[RapidVideOCR周边] VideoSubFinder提取字幕关键帧教程](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)
+[[RapidVideOCR周边] VideoSubFinder提取字幕关键帧教程](https://blog.csdn.net/shiwanghualuo/article/details/129174857?spm=1001.2014.3001.5501)
 
 ### 2. 安装python软件（用于运行RapidVideOCR）
 
-{{< alert context="info" text="声明：以下部分图像来自[终极保姆教程之安装python的教程_3.10.7版本](https://www.cnblogs.com/zyc-666/p/16689739.html)" />}}
+!!! tip
+
+    声明：以下部分图像来自[终极保姆教程之安装python的教程_3.10.7版本](https://www.cnblogs.com/zyc-666/p/16689739.html)
 
 #### 1. 下载python安装包
 
-打开python官网 → <https://www.python.org>，选择自己系统进入下载界面（VideoSubFinder工具目前只有Windows的）>
+打开python官网 → <https://www.python.org>，选择自己系统进入下载界面（VideoSubFinder工具目前只有Windows的）
+
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/1.png">
 </div>
@@ -28,6 +33,7 @@ comments: true
 #### 2. 找到自己想要的版本
 
 以python 3.10.7 为例。如果网速下载较慢的话，可以加入RapidVideOCR QQ群（706807542），群文件获取。
+
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/2.png">
 </div>
@@ -35,6 +41,7 @@ comments: true
 #### 3. 下载完成之后，双击打开这个exe，即可开始准备安装
 
 点击自定义安装，选择安装位置。同时，记得勾选最后一项`Add Python 3.10 to PATH`
+
 <div align="center">
     <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/3.png" width=80%>
 </div>
@@ -71,21 +78,21 @@ comments: true
 
 #### 9. 添加`Scripts`目录到环境变量中
 
-- `Win + q` 输入“编辑” → 点击**编辑系统环境变量**
+1. `Win + q` 输入“编辑” → 点击 **编辑系统环境变量**
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/9.png" width=80%>
     </div>
 
-- 打开**环境变量** → **用户变量** → **Path** → **编辑**
+2. 打开 **环境变量** → **用户变量** → **Path** → **编辑**
     <div align="center">
         <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/10.png">
     </div>
 
-- 新建Python安装目录下的Script目录路径，如下图所示，记得点击保存哈。
+3. 新建Python安装目录下的Script目录路径，如下图所示，记得点击保存哈。
 
-<div align="center">
-    <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/11.png">
-</div>
+    <div align="center">
+        <img src="https://github.com/SWHL/RapidVideOCR/releases/download/v2.0.1/11.png">
+    </div>
 
 ### 3. 安装RapidVideOCR工具
 
@@ -127,7 +134,7 @@ rapid_videocr -i RGBImages -s result -m concat
 
 #### 5. 脚本使用
 
-1. 在桌面上新建TXT文件，命名为`rapid_videocr.py`，注意后缀名改为`*.py`。
+1. 在桌面上新建TXT文件，命名为`rapid_videocr.py`，注意后缀名改为`.py`。
 2. 用记事本打开，将以下代码拷贝到`rapid_videocr.py`里面
 
     ```python linenums="1"
