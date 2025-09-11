@@ -2,20 +2,13 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-from enum import Enum
 from pathlib import Path
 
 from .main import OutputFormat, RapidVideOCR, RapidVideOCRInput
 from .utils.logger import Logger
+from .utils.typings import VideoFormat
 from .utils.utils import float_range
 from .vsf_cli import VideoSubFinder, VideoSubFinderInput
-
-
-class VideoFormat(Enum):
-    MP4 = ".mp4"
-    AVI = ".avi"
-    MOV = ".mov"
-    MKV = ".mkv"
 
 
 class RapidVideoSubFinderOCR:

@@ -2,25 +2,15 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 import argparse
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Union
 
 from .export import ExportStrategyFactory, OutputFormat
 from .ocr_processor import OCRProcessor
 from .utils.crop_by_project import CropByProject
 from .utils.logger import Logger
+from .utils.typings import IMAGE_EXTENSIONS, RapidVideOCRInput
 from .utils.utils import mkdir
-
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"}
-
-
-@dataclass
-class RapidVideOCRInput:
-    is_batch_rec: bool = False
-    batch_size: int = 10
-    out_format: str = OutputFormat.ALL.value
-    ocr_params: Optional[Dict[str, Any]] = None
 
 
 class RapidVideOCR:

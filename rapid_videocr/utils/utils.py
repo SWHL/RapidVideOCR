@@ -89,7 +89,7 @@ def compute_poly_iou(a: np.ndarray, b: np.ndarray) -> float:
     try:
         inter_area = poly1.intersection(poly2).area
         union_area = MultiPoint(union_poly).convex_hull.area
-    except shapely.geos.TopologicalError:
+    except shapely._geos.TopologicalError:
         print("shapely.geos.TopologicalError occured, iou set to 0")
         return 0.0
 

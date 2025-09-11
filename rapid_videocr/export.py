@@ -2,18 +2,11 @@
 # @Author: SWHL
 # @Contact: liekkaskono@163.com
 from abc import ABC, abstractmethod
-from enum import Enum
 from pathlib import Path
 from typing import List
 
+from .utils.typings import OutputFormat
 from .utils.utils import write_txt
-
-
-class OutputFormat(Enum):
-    TXT = "txt"
-    SRT = "srt"
-    ASS = "ass"
-    ALL = "all"
 
 
 class ExportStrategy(ABC):
@@ -60,7 +53,7 @@ class AssExportStrategy(ExportStrategy):
         self,
         save_dir: Path,
         save_name: str,
-        srt_result: List[str],    # unused here but kept for signature
+        srt_result: List[str],  # unused here but kept for signature
         ass_result: List[str],
         txt_result: List[str],
     ):
