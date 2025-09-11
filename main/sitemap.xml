@@ -64,6 +64,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://swhl.github.io/RapidVideOCR/mainen/blog/"/>
     </url>
     <url>
+        <loc>https://swhl.github.io/RapidVideOCR/main/blog/posts/rec_other_lan/</loc>
+        <lastmod>2025-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://swhl.github.io/RapidVideOCR/main/blog/posts/rec_other_lan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://swhl.github.io/RapidVideOCR/mainen/blog/posts/rec_other_lan/"/>
+    </url>
+    <url>
         <loc>https://swhl.github.io/RapidVideOCR/main/tutorial/beginner/</loc>
         <lastmod>2025-09-11</lastmod>
         <changefreq>daily</changefreq>
@@ -146,6 +153,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://swhl.github.io/RapidVideOCR/main/en/blog/"/>
         <xhtml:link rel="alternate" hreflang="zh" href="https://swhl.github.io/RapidVideOCR/mainblog/"/>
+    </url>
+    <url>
+        <loc>https://swhl.github.io/RapidVideOCR/main/en/blog/posts/rec_other_lan/</loc>
+        <lastmod>2025-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://swhl.github.io/RapidVideOCR/main/en/blog/posts/rec_other_lan/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://swhl.github.io/RapidVideOCR/mainblog/posts/rec_other_lan/"/>
     </url>
     <url>
         <loc>https://swhl.github.io/RapidVideOCR/main/en/tutorial/beginner/</loc>
