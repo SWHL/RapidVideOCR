@@ -140,13 +140,14 @@ rapid_videocr -i RGBImages -s result -m concat
     ```python linenums="1"
     from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
-    # RapidVideOCRInput有两个初始化参数
-    # is_concat_rec: 是否用单张图识别，默认是False，也就是默认用单图识别
-    # concat_batch: 叠图识别的图像张数，默认10，可自行调节
-    # out_format: 输出格式选择，[srt, ass, txt, all], 默认是 all
-    # is_print_console: 是否打印结果，[0, 1], 默认是0，不打印
+    # RapidVideOCRInput 初始化参数：
+    # is_batch_rec: 是否用叠图(concat)识别，默认 False（单图识别）
+    # batch_size: 叠图识别时每批拼接的图像张数，默认 10
+    # out_format: 输出格式 [srt, ass, txt, all]，默认 all
+    # ocr_params: 透传给 RapidOCR 的自定义参数（点号路径），默认 None
+    # log_level: 日志级别 [debug/info/warning/error/critical]，默认 info
     input_args = RapidVideOCRInput(
-        is_batch_rec=False, ocr_params={"Global.with_paddle": True}
+        is_batch_rec=False
     )
     extractor = RapidVideOCR(input_args)
 

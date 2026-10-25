@@ -23,15 +23,16 @@ pip install rapid_videocr
 {{% tab tabName="Only OCR" %}}
 
 ```python linenums="1"
-from rapid_videocr import RapidVideOCR
+from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
-# RapidVideOCRInput has two initialization parameters
-# is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default.
-# concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted
-# out_format: Output format selection, [srt, ass, txt, all], the default is all
-# is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing
+# RapidVideOCRInput initialization parameters:
+# is_batch_rec: Use concat recognition or not. Default False (single-image recognition).
+# batch_size: Number of images concatenated per batch in concat mode. Default 10.
+# out_format: Output format [srt, ass, txt, all]. Default all.
+# ocr_params: Custom params passed through to RapidOCR (dotted keys). Default None.
+# log_level: Log level [debug/info/warning/error/critical]. Default info.
 ocr_input_params = RapidVideOCRInput(
-is_batch_rec=False, ocr_params={"Global.with_paddle": True}
+    is_batch_rec=False
 )
 extractor = RapidVideOCR(ocr_input_params)
 
@@ -39,7 +40,7 @@ rgb_dir = "tests/test_files/RGBImages"
 save_dir = "outputs"
 save_name = "a"
 
-# outputs/a.srt  outputs/a.ass  outputs/a.t
+# outputs/a.srt  outputs/a.ass  outputs/a.txt
 extractor(rgb_dir, save_dir, save_name=save_name)
 ```
 
@@ -47,10 +48,17 @@ extractor(rgb_dir, save_dir, save_name=save_name)
 {{% tab tabName="Extract + OCR" %}}
 
 ```python linenums="1"
-from rapid_videocr import RapidVideoSubFinderOCR
+from rapid_videocr import (
+    RapidVideoSubFinderOCR,
+    RapidVideOCRInput,
+    VideoSubFinderInput,
+)
 
 vsf_exe = r"G:\ProgramFiles\VideoSubFinder_6.10_x64\Release_x64\VideoSubFinderWXW.exe"
-extractor = RapidVideoSubFinderOCR(vsf_exe_path=vsf_exe, is_concat_rec=True)
+vsf_input_params = VideoSubFinderInput(vsf_exe_path=vsf_exe)
+ocr_input_params = RapidVideOCRInput(is_batch_rec=True)
+
+extractor = RapidVideoSubFinderOCR(vsf_input_params, ocr_input_params)
 
 # video_path can be directory path or video full path.
 video_path = 'test_files/tiny/2.mp4'
@@ -61,7 +69,85 @@ extractor(video_path, save_dir)
 {{% /tab %}}
 {{< /tabs >}}
 
-### 4. Command line usage
+### 4. Inference backend (OCR defaults to CPU)
+
+RapidVideOCR depends on RapidOCR 3.x (currently aligned to **3.10.0**). **OCR
+inference runs on CPU by default** (RapidOCR's ONNX engine) — it works out of the
+box with no extra dependencies and is more than sufficient for offline subtitle
+extraction.
+
+- To customize any RapidOCR parameter (e.g. language, or enabling GPU yourself),
+  pass it through via `RapidVideOCRInput(ocr_params={...})` — it is forwarded
+  to `RapidOCR` as-is, with no magic injection.
+- The frame-extraction tool **VideoSubFinder** can still use its own GPU via
+  `--vsf_use_cuda` (short `-vc`); this switch is unrelated to the OCR engine.
+
+#### Enabling GPU (optional / advanced)
+
+This project **ships no GPU dependencies by default** — OCR inference uses
+RapidOCR's ONNX-CPU engine and works out of the box. If you do need GPU
+acceleration, you must **install the matching GPU runtime yourself** and enable it
+explicitly via `RapidVideOCRInput(ocr_params=...)`; this project performs no
+automatic switching.
+
+> ⚠️ Note
+>
+> - For offline subtitle extraction, CPU is usually sufficient. The GPU path is
+>   **neither bundled nor tested in CI** — you are on your own to verify it.
+> - `ocr_params` uses **dotted keys** (e.g. `EngineConfig.onnxruntime.use_cuda`).
+>   Fields such as `engine_type` / `model_type` / `ocr_version` / `task_type` **must
+>   be RapidOCR Enum objects** — passing a plain string raises `TypeError`.
+
+**Option 1: enable CUDA on the ONNX engine (the default engine)**
+
+The default engine is already `onnxruntime`; just turn `use_cuda` on — no need to
+touch `engine_type`:
+
+```bash
+# install the GPU build of onnxruntime (replacing the CPU build) and set up CUDA / cuDNN
+pip uninstall onnxruntime
+pip install onnxruntime-gpu
+```
+
+```python
+from rapid_videocr import RapidVideOCR, RapidVideOCRInput
+
+input_args = RapidVideOCRInput(
+    ocr_params={"EngineConfig.onnxruntime.use_cuda": True},
+)
+extractor = RapidVideOCR(input_args)
+```
+
+**Option 2: switch to the Paddle engine and enable CUDA**
+
+Install `paddlepaddle-gpu` (with CUDA), and set `engine_type` of `Det` / `Cls` /
+`Rec` to `EngineType.PADDLE` (an Enum, not a string) before turning on Paddle's
+`use_cuda`:
+
+```bash
+pip install paddlepaddle-gpu
+```
+
+```python
+from rapidocr import EngineType
+from rapid_videocr import RapidVideOCR, RapidVideOCRInput
+
+input_args = RapidVideOCRInput(
+    ocr_params={
+        "Det.engine_type": EngineType.PADDLE,
+        "Cls.engine_type": EngineType.PADDLE,
+        "Rec.engine_type": EngineType.PADDLE,
+        "EngineConfig.paddle.use_cuda": True,
+    },
+)
+extractor = RapidVideOCR(input_args)
+```
+
+> 💡 Tip: if you keep the CPU runtime but set `use_cuda=True` (e.g. still using
+> `onnxruntime` while enabling CUDA), the runtime will fail because it cannot find a
+> CUDA execution provider. Keep the **runtime build** and the **switch** in sync.
+
+### 5. Command line usage
 
 {{< tabs tabTotal="2">}}
 {{% tab tabName="Only OCR" %}}
@@ -86,10 +172,10 @@ Parameter details:
 ```bash linenums="1"
 $ rapid_videocr -h
 usage: rapid_videocr [-h] [-video_dir VIDEO_DIR] [-i IMG_DIR] [-s SAVE_DIR]
-            [-o {srt,ass,txt,all}] [--is_concat_rec] [-b CONCAT_BATCH] [-p]
+            [-o {srt,ass,txt,all}] [--is_batch_rec] [-b BATCH_SIZE] [-p]
             [-vsf VSF_EXE_PATH] [-c] [-r] [-ccti] [-ces CREATE_EMPTY_SUB]
             [-cscti CREATE_SUB_FROM_CLEARED_TXT_IMAGES]
-            [-cstxt CREATE_SUB_FROM_TXT_RESULTS] [-ovocv] [-ovffmpeg] [-uc]
+            [-cstxt CREATE_SUB_FROM_TXT_RESULTS] [-ovocv] [-ovffmpeg] [-vc]
             [--start_time START_TIME] [--end_time END_TIME]
             [-te TOP_VIDEO_IMAGE_PERCENT_END]
             [-be BOTTOM_VIDEO_IMAGE_PERCENT_END]
@@ -110,9 +196,9 @@ VideOCRParameters:
                         "outputs" under the current directory.
 -o {srt,ass,txt,all}, --out_format {srt,ass,txt,all}
                         Output file format. Default is "all".
---is_concat_rec       Which mode to run (concat recognition or single
+--is_batch_rec        Which mode to run (concat recognition or single
                         recognition). Default is False.
--b CONCAT_BATCH, --concat_batch CONCAT_BATCH
+-b BATCH_SIZE, --batch_size BATCH_SIZE
                         The batch of concating image nums in concat
                         recognition mode. Default is 10.
 -p, --print_console   Whether to print the subtitle results to console. -p
@@ -140,7 +226,7 @@ VSFParameters:
                         open video by OpenCV (default). Default is True
 -ovffmpeg, --open_video_ffmpeg
                         open video by FFMPEG
--uc, --use_cuda       use cuda
+-vc, --vsf_use_cuda   (VideoSubFinder) use CUDA for frame extraction
 --start_time START_TIME
                         start time, default = 0:00:00:000 (in format
                         hour:min:sec:milisec)
@@ -168,7 +254,7 @@ VSFParameters:
 
 </details>
 
-### 5. View results
+### 6. View results
 
 Go to the `save_dir` directory to view the results.
 

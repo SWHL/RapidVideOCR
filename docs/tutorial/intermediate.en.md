@@ -141,13 +141,14 @@ rapid_videocr -i RGBImages -s result -m concat
     ```python linenums="1"
     from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
-    # RapidVideOCRInput has two initialization parameters
-    # is_concat_rec: Use a single image for recognition or not. The default is False, which means that a single image is used for recognition by default.
-    # concat_batch: The number of images to be used in overlay is 10 by default and can be adjusted
-    # out_format: Output format selection, [srt, ass, txt, all], the default is all
-    # is_print_console: Whether to print the result, [0, 1], the default is 0 for not printing
+    # RapidVideOCRInput initialization parameters:
+    # is_batch_rec: Use concat recognition or not. Default False (single-image recognition).
+    # batch_size: Number of images concatenated per batch in concat mode. Default 10.
+    # out_format: Output format [srt, ass, txt, all]. Default all.
+    # ocr_params: Custom params passed through to RapidOCR (dotted keys). Default None.
+    # log_level: Log level [debug/info/warning/error/critical]. Default info.
     input_args = RapidVideOCRInput(
-        is_batch_rec=False, ocr_params={"Global.with_paddle": True}
+        is_batch_rec=False
     )
     extractor = RapidVideOCR(input_args)
 

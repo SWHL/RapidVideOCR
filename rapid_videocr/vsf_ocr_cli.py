@@ -104,7 +104,6 @@ def main():
         default=10,
         help="The batch of concating image nums in concat recognition mode. Default is 10.",
     )
-
     vsf_param_group = parser.add_argument_group(title="VSFParameters")
     vsf_param_group.add_argument(
         "-vsf",
@@ -170,7 +169,13 @@ def main():
         help="open video by FFMPEG",
     )
     vsf_param_group.add_argument(
-        "-uc", "--use_cuda", action="store_true", default=False, help="use cuda"
+        "-vc",
+        "--vsf_use_cuda",
+        "-uc",
+        dest="use_cuda",
+        action="store_true",
+        default=False,
+        help="(VideoSubFinder) use CUDA for frame extraction. Unrelated to the OCR engine.",
     )
     vsf_param_group.add_argument(
         "--start_time",

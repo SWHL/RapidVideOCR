@@ -21,6 +21,8 @@ vsf_ocr(video_path, save_dir)
 # 只识别
 from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
+# OCR 默认走 CPU（RapidOCR 的 ONNX 引擎）。如需自定义 RapidOCR 参数，
+# 可通过 ocr_params 原样透传（例如 ocr_params={"Global.lang_type": "ch"}）。
 input_args = RapidVideOCRInput(is_batch_rec=False, log_level="critical")
 extractor = RapidVideOCR(input_args)
 

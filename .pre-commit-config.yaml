@@ -1,17 +1,14 @@
 repos:
-- repo: https://github.com/myint/autoflake
-  rev: v2.1.1
-  hooks:
-    - id: autoflake
-      args:
-        [
-          "--recursive",
-          "--in-place",
-          "--remove-all-unused-imports",
-          "--remove-unused-variable",
-          "--ignore-init-module-imports",
-        ]
-- repo: https://github.com/psf/black
-  rev: 23.1.0
-  hooks:
-    - id: black
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.0
+    hooks:
+      - id: ruff-check
+        args:
+          - --fix
+          - --unsafe-fixes
+          - --line-length=88
+          - --select=F401,F841,I
+          - --per-file-ignores=__init__.py:F401
+      - id: ruff-format
+        args:
+          - --line-length=88

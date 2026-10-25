@@ -17,9 +17,12 @@ class RapidVideOCR:
     def __init__(self, input_params: RapidVideOCRInput):
         logger.setLevel(input_params.log_level.upper())
 
-        self.ocr_processor = OCRProcessor(
-            input_params.ocr_params, input_params.batch_size
-        )
+        # OCR runs on CPU by default (RapidOCR's default ONNX engine). Advanced
+        # users may pass custom RapidOCR params via `ocr_params` (e.g. to enable
+        # a different engine) — they are forwarded as-is, with no magic injection.
+        ocr_params = input_params.ocr_params
+
+        self.ocr_processor = OCRProcessor(ocr_params, input_params.batch_size)
 
         self.cropper = CropByProject()
 

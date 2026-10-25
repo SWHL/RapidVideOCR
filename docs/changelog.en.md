@@ -6,6 +6,17 @@ hide:
 
 ### 📣 Subsequent update logs will be moved to [Release](https://github.com/SWHL/RapidVideOCR/releases), and will no longer be updated here
 
+!!! note "OCR uses CPU by default (RapidOCR 3.x)"
+
+    This project has been adapted to the RapidOCR 3.x interface (`rapidocr>=3.0.0`; its dotted-key params such as `EngineConfig` have been supported since 3.0.0, so the lower bound stays at 3.0.0).
+
+    - **OCR inference runs on CPU by default** (RapidOCR's ONNX engine) — works out of the box with no extra dependencies.
+    - To customize any RapidOCR parameter (including enabling GPU yourself), pass it through
+      as-is via `RapidVideOCRInput(ocr_params=...)` to `RapidOCR`. No magic injection is performed.
+    - The "GPU support" links in the historical changelog (legacy `rapidocr_onnxruntime` tutorials) no longer apply to the current version.
+    - The frame-extraction tool **VideoSubFinder** can still use its own GPU via `--vsf_use_cuda`
+      (short `-vc`); this switch is unrelated to the OCR engine. See the tutorial docs for details.
+
 #### 🚩2023-10-08 v2.2.8 update
 
 - Adapt the relevant parameters of `rapidocr_onnxruntime`, which can be passed in through the RapidVideOCR class, so as to more flexibly specify models of different languages.

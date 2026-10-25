@@ -7,6 +7,17 @@ hide:
 
 ### 📣 后续更新日志将移步到[Release](https://github.com/SWHL/RapidVideOCR/releases)界面，这里不再更新
 
+!!! note "OCR 默认使用 CPU（RapidOCR 3.x）"
+
+    本项目已适配 RapidOCR 3.x 接口（`rapidocr>=3.0.0`；其 `EngineConfig` 等点号路径参数自 3.0.0 起即支持，故依赖下限保持 3.0.0）。
+
+    - **OCR 推理默认走 CPU**（RapidOCR 的 ONNX 引擎），开箱即用、无需额外依赖。
+    - 如需自定义 RapidOCR 参数（包括自行开启 GPU），可通过 `RapidVideOCRInput(ocr_params=...)`
+      原样透传给 `RapidOCR`，不做任何魔法注入。
+    - 历史记录中的「GPU 支持」链接（旧版 `rapidocr_onnxruntime` 教程）已不适用于当前版本。
+    - 抽帧工具 **VideoSubFinder** 仍可通过 `--vsf_use_cuda`（短写 `-vc`）开启其自身的 GPU
+      加速（与 OCR 引擎无关）。详见教程文档。
+
 #### 🚩2023-10-08 v2.2.8 update
 
 - 适配`rapidocr_onnxruntime`的相关参数，可以通过RapidVideOCR类传入，从而更加灵活指定不同语言的模型。

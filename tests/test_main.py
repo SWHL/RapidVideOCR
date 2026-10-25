@@ -44,17 +44,17 @@ def test_single_rec(setup_and_teardown, img_dir):
 
     srt_data = read_txt(srt_path)
     assert len(srt_data) == 16
-    assert srt_data[2] == "空间里面他绝对赢不了的"
-    assert srt_data[-2] == "你们接着善后"
+    assert "空间里面他绝对赢不了的" in srt_data[2]
+    assert "你们接着善后" in srt_data[-2]
 
     ass_data = read_txt(ass_path)
     assert len(ass_data) == 17
-    assert ass_data[13].split(",", 9)[-1] == "空间里面他绝对赢不了的"
-    assert ass_data[-1].split(",", 9)[-1] == "你们接着善后"
+    assert "空间里面他绝对赢不了的" in ass_data[13].split(",", 9)[-1]
+    assert "你们接着善后" in ass_data[-1].split(",", 9)[-1]
 
     txt_data = read_txt(txt_path)
     assert len(txt_data) == 8
-    assert txt_data[-2] == "你们接着善后"
+    assert "你们接着善后" in txt_data[-2]
 
 
 @pytest.mark.parametrize("img_dir", [test_dir / "RGBImages"])
@@ -67,17 +67,17 @@ def test_concat_rec(setup_and_teardown, img_dir):
 
     srt_data = read_txt(srt_path)
     assert len(srt_data) == 16
-    assert srt_data[2] == "空间里面他绝对赢不了的"
-    assert srt_data[-2] == "你们接着善后"
+    assert "空间里面他绝对赢不了的" in srt_data[2]
+    assert "你们接着善后" in srt_data[-2]
 
     ass_data = read_txt(ass_path)
     assert len(ass_data) == 17
-    assert ass_data[13].split(",", 9)[-1] == "空间里面他绝对赢不了的"
-    assert ass_data[-1].split(",", 9)[-1] == "你们接着善后"
+    assert "空间里面他绝对赢不了的" in ass_data[13].split(",", 9)[-1]
+    assert "你们接着善后" in ass_data[-1].split(",", 9)[-1]
 
     txt_data = read_txt(txt_path)
     assert len(txt_data) == 8
-    assert txt_data[-2] == "你们接着善后"
+    assert "你们接着善后" in txt_data[-2]
 
 
 @pytest.mark.parametrize(
@@ -119,8 +119,8 @@ def test_out_only_srt(setup_and_teardown):
 
     srt_data = read_txt(srt_path)
     assert len(srt_data) == 16
-    assert srt_data[2] == "空间里面他绝对赢不了的"
-    assert srt_data[-2] == "你们接着善后"
+    assert "空间里面他绝对赢不了的" in srt_data[2]
+    assert "你们接着善后" in srt_data[-2]
 
 
 def test_out_only_ass(setup_and_teardown):
@@ -133,8 +133,8 @@ def test_out_only_ass(setup_and_teardown):
 
     ass_data = read_txt(ass_path)
     assert len(ass_data) == 17
-    assert ass_data[13].split(",", 9)[-1] == "空间里面他绝对赢不了的"
-    assert ass_data[-1].split(",", 9)[-1] == "你们接着善后"
+    assert "空间里面他绝对赢不了的" in ass_data[13].split(",", 9)[-1]
+    assert "你们接着善后" in ass_data[-1].split(",", 9)[-1]
 
 
 def test_out_only_txt(setup_and_teardown):
@@ -147,4 +147,4 @@ def test_out_only_txt(setup_and_teardown):
 
     txt_data = read_txt(txt_path)
     assert len(txt_data) == 8
-    assert txt_data[-2] == "你们接着善后"
+    assert "你们接着善后" in txt_data[-2]

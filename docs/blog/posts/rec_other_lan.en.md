@@ -10,9 +10,9 @@ comments: true
 ---
 ### Introduction
 
-Currently, RapidVideOCR directly uses the default configuration of `rapidocr_onnxruntime`, so it can only do OCR for subtitles in Chinese and English.
+Currently, RapidVideOCR uses the default configuration of [RapidOCR](https://github.com/RapidAI/RapidOCR) 3.x (`rapidocr`) by default, so it only does OCR for subtitles in Chinese and English out of the box.
 
-Since `rapidocr_onnxruntime` has an interface for passing in other multilingual recognition models, RapidVieOCR has scalability. This article is here to explain how to use it.
+Since RapidVideOCR passes any RapidOCR parameter **as-is** to the underlying `RapidOCR` via `RapidVideOCRInput(ocr_params=...)`, it is extensible: just pass a recognition model for another language through `ocr_params`. No magic injection is performed by this tool.
 
 This article takes the French OCR solution proposed in [discussions #40](https://github.com/SWHL/RapidVideOCR/discussions/40) as an example, and other languages can be done in the same way.
 
@@ -34,19 +34,20 @@ For model download links for other languages, please refer to: [paddleocr whl](h
 
 For dictionary models, see: [link](https://github.com/PaddlePaddle/PaddleOCR/tree/799c144ab3b0b5d19a37c7e85c47e88ff27c643d/ppocr/utils/dict)
 
-Finally, a French recognition model can be obtained: `french_mobile_v2.0_rec_infer.onnx`
+Since RapidOCR 3.x uses the ONNX inference engine by default, the final model must be in ONNX format: `french_mobile_v2.0_rec_infer.onnx`
 
 ### 3. OCR French subtitles
 
 !!! note
 
-    `rapid_videocr>=v3.0.0`
+    `rapid_videocr>=v3.0.0` (with `rapidocr>=3.10.0` as the backend dependency)
 
 ```python linenums="1"
 from rapid_videocr import RapidVideOCR, RapidVideOCRInput
 
 input_args = RapidVideOCRInput(
     is_batch_rec=False,
+    # dotted-key passthrough: feed the custom French recognition model to RapidOCR's Rec module
     ocr_params={"Rec.model_path": "french_mobile_v2.0_rec_infer.onnx"},
 )
 extractor = RapidVideOCR(input_args)
@@ -58,3 +59,7 @@ save_name = "a"
 # outputs/a.srt  outputs/a.ass  outputs/a.txt
 extractor(rgb_dir, save_dir, save_name=save_name)
 ```
+
+!!! tip
+
+    More RapidOCR parameters you can pass through (language, detection / classification models, inference backend, etc.) all use dotted keys, e.g. `Det.model_path`, `Cls.model_path`. See the RapidOCR docs and the [senior tutorial](https://swhl.github.io/RapidVideOCR/en/docs/tutorial/senior/).
